@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<!-- Login Screen -->
+<!-- Login -->
 <div class="login-screen" id="login-screen">
   <div class="login-card">
     <h2>The PotPvP Directory</h2>
@@ -20,7 +20,7 @@
   </div>
 </div>
 
-<!-- Editor Screen -->
+<!-- Editor -->
 <div class="editor-screen" id="editor-screen" style="display:none;">
   <header class="admin-topbar">
     <a href="../" class="back-link">&larr; 返回</a>
@@ -37,7 +37,6 @@
       <ul class="file-tree" id="file-tree"></ul>
     </nav>
     <div class="editor-main">
-      <div class="editor-current" id="editor-current"></div>
       <div id="vditor"></div>
     </div>
   </div>
@@ -45,6 +44,21 @@
   <footer class="admin-footer">
     <span id="footer-status">就绪</span>
   </footer>
+</div>
+
+<!-- Context Menu -->
+<div class="ctx-menu" id="ctx-menu"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-card">
+    <div class="modal-title" id="modal-title"></div>
+    <input type="text" id="modal-input" autocomplete="off">
+    <div class="modal-actions">
+      <button class="modal-btn" id="modal-cancel">取消</button>
+      <button class="modal-btn modal-btn-primary" id="modal-confirm">确认</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vditor/dist/index.min.js"></script>

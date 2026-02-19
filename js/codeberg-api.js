@@ -66,5 +66,12 @@ const CodebergAPI = (function() {
     });
   }
 
-  return { getToken, setToken, clearToken, verifyToken, getFile, putFile, uploadImage, OWNER, REPO };
+  async function deleteFile(path, sha, message) {
+    return request(`/repos/${OWNER}/${REPO}/contents/${path}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sha, message: message || `Delete ${path}` })
+    });
+  }
+
+  return { getToken, setToken, clearToken, verifyToken, getFile, putFile, deleteFile, uploadImage, OWNER, REPO };
 })();
