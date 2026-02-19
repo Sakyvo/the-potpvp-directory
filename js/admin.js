@@ -104,7 +104,22 @@
       ],
       upload: { handler: handleImageUpload, accept: 'image/*' },
       input: debounce(saveDraft, 1500),
-      after: () => loadContent()
+      after: () => {
+        loadContent();
+        // Intercept paste to preserve blank lines from Shimo etc.
+        setTimeout(() => {
+          const el = document.querySelector('#vditor .vditor-reset');
+          if (el) el.addEventListener('paste', e => {
+            let text = e.clipboardData.getData('text/plain');
+            if (!text || !/\n\s*\n\s*\n/.test(text)) return;
+            e.preventDefault();
+            e.stopPropagation();
+            text = text.replace(/\r\n/g, '\n');
+            const processed = text.replace(/\n{3,}/g, m => '\n\n' + '&nbsp;\n\n'.repeat(m.length - 2));
+            vditor.insertValue(processed);
+          }, true);
+        }, 300);
+      }
     });
   }
 

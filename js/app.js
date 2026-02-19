@@ -12,6 +12,23 @@
     breaks: true
   });
 
+  // ── Markdown preprocessor ──
+  const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
+
+  function preprocessMd(md) {
+    md = md.replace(/\r\n/g, '\n');
+    // Preserve extra blank lines as &nbsp; paragraphs
+    md = md.replace(/\n{3,}/g, m => '\n\n' + '&nbsp;\n\n'.repeat(m.length - 2));
+    // Auto-convert bare image URLs to rendered images
+    let inCode = false;
+    md = md.split('\n').map(line => {
+      if (/^```/.test(line)) inCode = !inCode;
+      if (inCode || /^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
+      return line.replace(IMG_URL_RE, '![image]($1)');
+    }).join('\n');
+    return md;
+  }
+
   // ── DOM refs ──
   const $ = s => document.querySelector(s);
   const contentEl = $('#content');
@@ -71,7 +88,7 @@
           childrenHtml += `
             <div class="section-card" id="section-${ch.id}" data-section-id="${ch.id}">
               <div class="section-title">${ch.title}</div>
-              <div class="section-body">${marked.parse(ch.md)}</div>
+              <div class="section-body">${marked.parse(preprocessMd(ch.md))}</div>
             </div>`;
           tocChildren.push(`<a class="toc-item" data-target="section-${ch.id}">${ch.title}</a>`);
         }
@@ -90,7 +107,7 @@
             <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
             <div class="section-card" id="section-${sec.id}" data-section-id="${sec.id}">
               <div class="section-title">${sec.title}</div>
-              <div class="section-body">${marked.parse(sec.md)}</div>
+              <div class="section-body">${marked.parse(preprocessMd(sec.md))}</div>
             </div>
           </div>`);
         tocItems.push(`<li><a class="toc-single" data-target="section-${sec.id}">${sec.floor} ${sec.title}</a></li>`);
