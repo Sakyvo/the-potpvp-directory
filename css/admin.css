@@ -165,5 +165,7 @@ body {
   }
   .editor-layout { flex-direction: column; }
   .admin-title { display: none; }
+  .vditor-toolbar { flex-wrap: nowrap !important; overflow-x: auto; overflow-y: hidden; }
+  .vditor-toolbar::-webkit-scrollbar { display: none; }
   .tree-add { opacity: 1; }
 }
