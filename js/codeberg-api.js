@@ -3,7 +3,7 @@ const CodebergAPI = (function() {
 
   const API_BASE = 'https://codeberg.org/api/v1';
   const OWNER = 'Sakyvo';
-  const REPO = 'Sakyvo.codeberg.page';
+  const REPO = 'pages';
   const TOKEN_KEY = 'codeberg_token';
 
   function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
