@@ -26,7 +26,7 @@ const CodebergAPI = (function() {
   }
 
   async function verifyToken(token) {
-    const res = await fetch(API_BASE + '/user', { headers: { 'Authorization': 'token ' + token } });
+    const res = await fetch(`${API_BASE}/repos/${OWNER}/${REPO}`, { headers: { 'Authorization': 'token ' + token } });
     if (!res.ok) return null;
     return res.json();
   }
