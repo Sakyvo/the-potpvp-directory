@@ -136,8 +136,9 @@ body {
 .section-body h1 { font-size: 1.5em; margin: 0 0 .6em; display: none; }
 .section-body h2 { font-size: 1.25em; margin: 1.2em 0 .5em; }
 .section-body h3 { font-size: 1.1em; margin: 1em 0 .4em; }
-.section-body p { margin: 0 0 .8em; }
-.section-body ul, .section-body ol { margin: 0 0 .8em; padding-left: 1.5em; }
+.section-body p { margin: 0; }
+.section-body .bl { height: 1.7em; }
+.section-body ul, .section-body ol { margin: 0; padding-left: 1.5em; }
 .section-body blockquote {
   margin: 0 0 .8em; padding: 12px 16px;
   border-left: 3px solid var(--border-dark); background: var(--bg-card);

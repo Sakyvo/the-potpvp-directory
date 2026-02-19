@@ -106,17 +106,15 @@
       input: debounce(saveDraft, 1500),
       after: () => {
         loadContent();
-        // Intercept paste to preserve blank lines from Shimo etc.
+        // Intercept paste: always use plain text to preserve blank lines
         setTimeout(() => {
           const el = document.querySelector('#vditor .vditor-reset');
           if (el) el.addEventListener('paste', e => {
-            let text = e.clipboardData.getData('text/plain');
-            if (!text || !/\n\s*\n\s*\n/.test(text)) return;
+            const text = e.clipboardData.getData('text/plain');
+            if (!text) return;
             e.preventDefault();
             e.stopPropagation();
-            text = text.replace(/\r\n/g, '\n');
-            const processed = text.replace(/\n{3,}/g, m => '\n\n' + '&nbsp;\n\n'.repeat(m.length - 2));
-            vditor.insertValue(processed);
+            vditor.insertValue(text.replace(/\r\n/g, '\n'));
           }, true);
         }, 300);
       }

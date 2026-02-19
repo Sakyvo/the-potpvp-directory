@@ -12,21 +12,43 @@
     breaks: true
   });
 
-  // ── Markdown preprocessor ──
+  // ── Markdown renderer (preserves all blank lines) ──
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
 
-  function preprocessMd(md) {
+  function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
-    // Preserve extra blank lines as &nbsp; paragraphs
-    md = md.replace(/\n{3,}/g, m => '\n\n' + '&nbsp;\n\n'.repeat(m.length - 2));
-    // Auto-convert bare image URLs to rendered images
+
+    // Auto-convert bare image URLs
     let inCode = false;
     md = md.split('\n').map(line => {
       if (/^```/.test(line)) inCode = !inCode;
       if (inCode || /^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
       return line.replace(IMG_URL_RE, '![image]($1)');
     }).join('\n');
-    return md;
+
+    // Protect fenced code blocks from blank-line splitting
+    const codeBlocks = [];
+    md = md.replace(/```[\s\S]*?```/g, m => {
+      codeBlocks.push(m);
+      return `%%CB${codeBlocks.length - 1}%%`;
+    });
+
+    // Split by blank lines, keeping separators to count them
+    const parts = md.split(/(\n{2,})/);
+    let html = '';
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 1) {
+        // Separator: each \n\n = 1 visible blank line
+        const n = parts[i].length - 1;
+        for (let j = 0; j < n; j++) html += '<div class="bl"></div>';
+      } else {
+        let block = parts[i].trim();
+        if (!block) continue;
+        block = block.replace(/%%CB(\d+)%%/g, (_, k) => codeBlocks[+k]);
+        html += marked.parse(block);
+      }
+    }
+    return html;
   }
 
   // ── DOM refs ──
@@ -88,7 +110,7 @@
           childrenHtml += `
             <div class="section-card" id="section-${ch.id}" data-section-id="${ch.id}">
               <div class="section-title">${ch.title}</div>
-              <div class="section-body">${marked.parse(preprocessMd(ch.md))}</div>
+              <div class="section-body">${renderMd(ch.md)}</div>
             </div>`;
           tocChildren.push(`<a class="toc-item" data-target="section-${ch.id}">${ch.title}</a>`);
         }
@@ -107,7 +129,7 @@
             <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
             <div class="section-card" id="section-${sec.id}" data-section-id="${sec.id}">
               <div class="section-title">${sec.title}</div>
-              <div class="section-body">${marked.parse(preprocessMd(sec.md))}</div>
+              <div class="section-body">${renderMd(sec.md)}</div>
             </div>
           </div>`);
         tocItems.push(`<li><a class="toc-single" data-target="section-${sec.id}">${sec.floor} ${sec.title}</a></li>`);
