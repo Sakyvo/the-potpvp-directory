@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - The PotPvP Directory</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor/dist/index.css">
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <h2>The PotPvP Directory</h2>
+    <p>管理后台</p>
+    <input type="password" id="token-input" placeholder="Codeberg Personal Access Token" autocomplete="off">
+    <button id="login-btn">登录</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- Editor Screen -->
+<div class="editor-screen" id="editor-screen" style="display:none;">
+  <header class="admin-topbar">
+    <a href="../" class="back-link">&larr; 返回</a>
+    <span class="admin-title">The PotPvP Directory - Admin</span>
+    <div class="admin-actions">
+      <span class="status-text" id="status-text"></span>
+      <button class="btn-publish" id="publish-btn">发布</button>
+    </div>
+  </header>
+
+  <div class="editor-layout">
+    <nav class="editor-sidebar" id="editor-sidebar">
+      <div class="sidebar-toggle-mobile" id="sidebar-toggle-mobile">目录 ▼</div>
+      <ul class="file-tree" id="file-tree"></ul>
+    </nav>
+    <div class="editor-main">
+      <div class="editor-current" id="editor-current"></div>
+      <div id="vditor"></div>
+    </div>
+  </div>
+
+  <footer class="admin-footer">
+    <span id="footer-status">就绪</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vditor/dist/index.min.js"></script>
+<script src="../js/codeberg-api.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
