@@ -59,27 +59,27 @@
     await loadIndex();
     sourceBuffer = await loadAllContent();
 
-    // Check for draft
-    const draft = localStorage.getItem(DRAFT_KEY);
-    if (draft && confirm('发现本地未发布的草稿，是否恢复？\n选择「取消」将从服务器重新加载。')) {
-      sourceBuffer = draft;
-      setStatus('已恢复本地草稿');
-    } else {
-      localStorage.removeItem(DRAFT_KEY);
-      setStatus('就绪');
-    }
+    // Draft saving disabled for now
+    // const draft = localStorage.getItem(DRAFT_KEY);
+    // if (draft && confirm('发现本地未发布的草稿，是否恢复？\n选择「取消」将从服务器重新加载。')) {
+    //   sourceBuffer = draft;
+    //   setStatus('已恢复本地草稿');
+    // } else {
+    //   localStorage.removeItem(DRAFT_KEY);
+    // }
+    setStatus('就绪');
 
     updateView();
     initViewToggle();
     initPasteHandler();
-    initAutoSave();
+    // initAutoSave(); // Draft saving disabled for now
   }
 
   async function loadIndex() {
     try {
       const data = await CodebergAPI.getFile('content/_index.json');
       indexSha = data.sha;
-      indexData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      indexData = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
     } catch {
       const res = await fetch('../content/_index.json');
       indexData = await res.json();
@@ -111,7 +111,7 @@
       try {
         const data = await CodebergAPI.getFile(indexData.file);
         fileShas[indexData.file] = data.sha;
-        return decodeURIComponent(escape(atob(data.content)));
+        return decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
       } catch {
         try {
           const res = await fetch('../' + indexData.file);
@@ -125,7 +125,7 @@
       try {
         const data = await CodebergAPI.getFile(f.file);
         fileShas[f.file] = data.sha;
-        return decodeURIComponent(escape(atob(data.content)));
+        return decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
       } catch {
         try {
           const res = await fetch('../' + f.file);
@@ -179,6 +179,9 @@
 
   function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
+
+    // Convert lone "-" to horizontal rule
+    md = md.split('\n').map(line => /^\s*-\s*$/.test(line) ? '---' : line).join('\n');
 
     // Auto-convert bare image URLs
     let inCode = false;
@@ -558,19 +561,20 @@
     return md + '\n';
   }
 
-  // ═══ Auto Save ═══
+  // ═══ Auto Save (disabled for now) ═══
 
-  function initAutoSave() {
-    setInterval(() => {
-      if (currentView === 'source') {
-        sourceBuffer = $('#source-editor').value;
-      }
-    }, 5000);
-  }
+  // function initAutoSave() {
+  //   setInterval(() => {
+  //     if (currentView === 'source') {
+  //       sourceBuffer = $('#source-editor').value;
+  //     }
+  //   }, 5000);
+  // }
 
   function saveDraft() {
-    localStorage.setItem(DRAFT_KEY, sourceBuffer);
-    setStatus(`草稿已保存 | ${new Date().toLocaleTimeString()}`);
+    // Draft saving disabled for now
+    // localStorage.setItem(DRAFT_KEY, sourceBuffer);
+    // setStatus(`草稿已保存 | ${new Date().toLocaleTimeString()}`);
   }
 
   // ═══ Publish ═══

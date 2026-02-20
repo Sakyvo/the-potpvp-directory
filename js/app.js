@@ -18,6 +18,9 @@
   function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
 
+    // Convert lone "-" to horizontal rule
+    md = md.split('\n').map(line => /^\s*-\s*$/.test(line) ? '---' : line).join('\n');
+
     // Auto-convert bare image URLs
     let inCode = false;
     md = md.split('\n').map(line => {

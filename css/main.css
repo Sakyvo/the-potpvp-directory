@@ -116,12 +116,15 @@ body {
 }
 
 /* ── Markdown content styling ── */
+.floor-body { font-size: 14px; }
 .floor-body h1 { font-size: 1.6em; margin: 0 0 .6em; }
 .floor-body h2 { font-size: 1.3em; margin: 1.2em 0 .5em; }
 .floor-body h3 { font-size: 1.15em; margin: 1em 0 .4em; }
 .floor-body h4 { font-size: 1.05em; margin: .8em 0 .3em; }
+.floor-body h5 { font-size: 1em; margin: .6em 0 .2em; }
+.floor-body h6 { font-size: 1em; margin: .6em 0 .2em; font-weight: 600; }
 .floor-body p { margin: 0; }
-.floor-body .bl { height: 1.7em; }
+.floor-body .bl { height: 0.5em; }
 .floor-body ul, .floor-body ol { margin: 0; padding-left: 1.5em; }
 .floor-body blockquote {
   margin: 0 0 .8em; padding: 12px 16px;
@@ -129,7 +132,7 @@ body {
   color: var(--text-secondary);
 }
 .floor-body img { max-width: 100%; height: auto; margin: 8px 0; }
-.floor-body a { color: var(--accent); text-decoration: underline; }
+.floor-body a { color: #0097a7; text-decoration: underline; overflow-wrap: break-word; word-break: break-all; }
 .floor-body code {
   font-family: "JetBrains Mono", "Fira Code", monospace;
   background: var(--bg-card); padding: 2px 6px; font-size: .9em;
