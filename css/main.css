@@ -124,7 +124,7 @@ body {
 .floor-body h5 { font-size: 1em; margin: .6em 0 .2em; }
 .floor-body h6 { font-size: 1em; margin: .6em 0 .2em; font-weight: 600; }
 .floor-body p { margin: 0; }
-.floor-body .bl { height: 0.5em; }
+.floor-body .bl { height: 0.8em; }
 .floor-body ul, .floor-body ol { margin: 0; padding-left: 1.5em; }
 .floor-body blockquote {
   margin: 0 0 .8em; padding: 12px 16px;

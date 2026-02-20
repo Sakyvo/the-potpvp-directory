@@ -391,7 +391,7 @@
     removeEmptySpans(div);
     const result = processNode(div);
     // Clean up excessive blank lines (max 2 consecutive)
-    return result.replace(/\n{4,}/g, '\n\n\n').trim();
+    return result.trim();
   }
 
   function removeEmptySpans(el) {
