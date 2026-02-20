@@ -154,15 +154,27 @@
       const view = btn.dataset.view;
       if (view === currentView) return;
 
-      // Sync source buffer from textarea if switching away from source
+      // Save scroll ratio from current view
+      let scrollRatio = 0;
       if (currentView === 'source') {
-        sourceBuffer = $('#source-editor').value;
+        const el = $('#source-editor');
+        sourceBuffer = el.value;
+        scrollRatio = el.scrollHeight > el.clientHeight ? el.scrollTop / (el.scrollHeight - el.clientHeight) : 0;
+      } else {
+        const el = $('#rendered-preview');
+        scrollRatio = el.scrollHeight > el.clientHeight ? el.scrollTop / (el.scrollHeight - el.clientHeight) : 0;
       }
 
       currentView = view;
       $('#view-toggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       updateView();
+
+      // Restore scroll position in new view
+      requestAnimationFrame(() => {
+        const el = currentView === 'source' ? $('#source-editor') : $('#rendered-preview');
+        el.scrollTop = scrollRatio * (el.scrollHeight - el.clientHeight);
+      });
     });
   }
 
@@ -195,7 +207,7 @@
     md = md.split('\n').map(line => {
       if (/^```/.test(line)) inCode = !inCode;
       if (inCode) return line;
-      if (/^\s*-\s*$/.test(line)) return '\\-';
+      if (/^\s*-\s*$/.test(line)) return '<span>-</span>';
       if (/^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
       return line.replace(IMG_URL_RE, '![image]($1)');
     }).join('\n');

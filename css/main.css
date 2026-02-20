@@ -94,7 +94,7 @@ body {
   transition: background .15s, color .15s;
 }
 .toc-item:hover { background: var(--bg-card); color: var(--text-primary); }
-.toc-item.active { color: var(--accent); font-weight: 600; background: var(--bg-card); }
+.toc-item.active { color: #fff; font-weight: 600; background: #1a1a1a; }
 .toc-item.toc-h3 { padding-left: 40px; font-weight: 400; font-size: 13px; }
 .toc-item.toc-h4 { padding-left: 56px; font-weight: 400; font-size: 13px; }
 .toc-item.toc-h5 { padding-left: 72px; font-weight: 400; font-size: 12px; }
@@ -158,6 +158,18 @@ mark.search-hl { background: #fff3a8; padding: 1px 2px; }
 mark.search-hl.current { background: #ff9632; color: #fff; }
 
 /* ── Responsive ── */
+@media (min-width: 769px) {
+  #menu-btn { display: none; }
+  .sidebar-overlay { display: none; }
+  .sidebar {
+    transform: translateX(0);
+    top: var(--topbar-h);
+    z-index: 1;
+  }
+  .content {
+    margin-left: var(--sidebar-w);
+  }
+}
 @media (max-width: 768px) {
   .content { padding-left: 4px; padding-right: 4px; }
   .floor-body { padding: 16px; }

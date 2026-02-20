@@ -24,7 +24,7 @@
     md = md.split('\n').map(line => {
       if (/^```/.test(line)) inCode = !inCode;
       if (inCode) return line;
-      if (/^\s*-\s*$/.test(line)) return '\\-';
+      if (/^\s*-\s*$/.test(line)) return '<span>-</span>';
       if (/^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
       return line.replace(IMG_URL_RE, '![image]($1)');
     }).join('\n');
