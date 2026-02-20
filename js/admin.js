@@ -3,16 +3,27 @@
 
   const $ = s => document.querySelector(s);
   const DRAFT_KEY = 'ppd_global_draft';
-  const INDEX_KEY = 'ppd_index_draft';
 
   let indexData = null;
   let indexSha = null;
   let fileShas = {};
-  let vditor = null;
-  let deletedFiles = [];
+  let sourceBuffer = '';
+  let currentView = 'rendered';
 
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+  // ═══ Marked config ═══
+
+  marked.setOptions({
+    highlight: function(code, lang) {
+      if (lang && hljs && hljs.getLanguage && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return code;
+    },
+    breaks: true
+  });
 
   // ═══ Login ═══
 
@@ -41,31 +52,38 @@
   const saved = CodebergAPI.getToken();
   if (saved) tryLogin(saved);
 
-  // ═══ Init ═══
+  // ═══ Init Editor ═══
 
   async function initEditor() {
-    setStatus('加载索引...');
+    setStatus('加载内容...');
     await loadIndex();
-    buildTOC();
-    initVditor();
+    sourceBuffer = await loadAllContent();
+
+    // Check for draft
+    const draft = localStorage.getItem(DRAFT_KEY);
+    if (draft && confirm('发现本地未发布的草稿，是否恢复？\n选择「取消」将从服务器重新加载。')) {
+      sourceBuffer = draft;
+      setStatus('已恢复本地草稿');
+    } else {
+      localStorage.removeItem(DRAFT_KEY);
+      setStatus('就绪');
+    }
+
+    updateView();
+    initViewToggle();
+    initPasteHandler();
+    initAutoSave();
   }
 
   async function loadIndex() {
-    const draftIdx = localStorage.getItem(INDEX_KEY);
-    if (draftIdx) {
-      try { indexData = JSON.parse(draftIdx); } catch {}
+    try {
+      const data = await CodebergAPI.getFile('content/_index.json');
+      indexSha = data.sha;
+      indexData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    } catch {
+      const res = await fetch('../content/_index.json');
+      indexData = await res.json();
     }
-    if (!indexData) {
-      try {
-        const data = await CodebergAPI.getFile('content/_index.json');
-        indexSha = data.sha;
-        indexData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-      } catch {
-        const res = await fetch('../content/_index.json');
-        indexData = await res.json();
-      }
-    }
-    // Always try to get latest SHA for index
     if (!indexSha) {
       try {
         const data = await CodebergAPI.getFile('content/_index.json');
@@ -75,6 +93,7 @@
   }
 
   function flatFiles() {
+    if (indexData.file) return [{ file: indexData.file }];
     const list = [];
     for (const sec of indexData.sections) {
       if (sec.children) {
@@ -86,406 +105,463 @@
     return list;
   }
 
-  // ═══ Vditor ═══
-
-  function initVditor() {
-    vditor = new Vditor('vditor', {
-      height: '100%',
-      mode: 'ir',
-      placeholder: '加载中...',
-      cache: { enable: false },
-      toolbar: [
-        'headings', 'bold', 'italic', 'strike', '|',
-        'list', 'ordered-list', 'check', '|',
-        'quote', 'code', 'inline-code', '|',
-        'link', 'upload', 'table', '|',
-        'undo', 'redo', '|',
-        'edit-mode', 'outline'
-      ],
-      upload: { handler: handleImageUpload, accept: 'image/*' },
-      input: debounce(saveDraft, 1500),
-      after: () => {
-        loadContent();
-        // Intercept paste: always use plain text to preserve blank lines
-        setTimeout(() => {
-          const el = document.querySelector('#vditor .vditor-reset');
-          if (el) el.addEventListener('paste', e => {
-            const text = e.clipboardData.getData('text/plain');
-            if (!text) return;
-            e.preventDefault();
-            e.stopPropagation();
-            vditor.insertValue(text.replace(/\r\n/g, '\n'));
-          }, true);
-        }, 300);
-      }
-    });
-  }
-
-  async function loadContent() {
-    const draft = localStorage.getItem(DRAFT_KEY);
-    if (draft && confirm('发现本地未发布的草稿，是否恢复？\n选择「取消」将从服务器重新加载。')) {
-      vditor.setValue(draft);
-      setStatus('已恢复本地草稿');
-    } else {
-      localStorage.removeItem(DRAFT_KEY);
-      setStatus('加载内容...');
-      const content = await loadAllContent();
-      vditor.setValue(content);
-      setStatus('就绪');
-    }
-  }
-
   async function loadAllContent() {
+    // Single file mode
+    if (indexData.file) {
+      try {
+        const data = await CodebergAPI.getFile(indexData.file);
+        fileShas[indexData.file] = data.sha;
+        return decodeURIComponent(escape(atob(data.content)));
+      } catch {
+        try {
+          const res = await fetch('../' + indexData.file);
+          return await res.text();
+        } catch { return ''; }
+      }
+    }
+    // Multi-file mode
     const flat = flatFiles();
     const results = await Promise.all(flat.map(async f => {
       try {
         const data = await CodebergAPI.getFile(f.file);
         fileShas[f.file] = data.sha;
-        return { file: f.file, content: decodeURIComponent(escape(atob(data.content))) };
+        return decodeURIComponent(escape(atob(data.content)));
       } catch {
         try {
           const res = await fetch('../' + f.file);
-          return { file: f.file, content: await res.text() };
-        } catch {
-          return { file: f.file, content: '' };
-        }
+          return await res.text();
+        } catch { return ''; }
       }
     }));
-    return results.map(r => `<!-- @file: ${r.file} -->\n\n${r.content.trim()}`).join('\n\n---\n\n');
+    return results.join('\n\n');
   }
 
-  function splitDocument(md) {
-    const regex = /<!-- @file:\s*(.+?)\s*-->/g;
-    const markers = [];
-    let m;
-    while ((m = regex.exec(md))) {
-      markers.push({ file: m[1], start: m.index, end: m.index + m[0].length });
-    }
-    if (markers.length > 0) {
-      return markers.map((mk, i) => {
-        const start = mk.end;
-        const end = i + 1 < markers.length ? markers[i + 1].start : md.length;
-        return { file: mk.file, content: md.slice(start, end).replace(/^\s+/, '').replace(/\s*---\s*$/, '').trim() };
-      });
-    }
-    // Fallback: order-based
-    const flat = flatFiles();
-    const chunks = md.split(/\n{2,}---\n{2,}/);
-    return chunks.map((c, i) => ({
-      file: flat[i] ? flat[i].file : `content/unknown-${i}.md`,
-      content: c.replace(/<!-- @file:.*?-->/g, '').trim()
-    }));
-  }
+  // ═══ View Toggle ═══
 
-  function rebuildDocument() {
-    const sections = splitDocument(vditor.getValue());
-    const contentMap = {};
-    for (const sec of sections) contentMap[sec.file] = sec.content;
+  function initViewToggle() {
+    $('#view-toggle').addEventListener('click', e => {
+      const btn = e.target.closest('.toggle-btn');
+      if (!btn) return;
+      const view = btn.dataset.view;
+      if (view === currentView) return;
 
-    const flat = flatFiles();
-    const parts = flat.map(f => {
-      const content = contentMap[f.file] || '*新建章节，待编辑...*';
-      return `<!-- @file: ${f.file} -->\n\n${content}`;
-    });
-    vditor.setValue(parts.join('\n\n---\n\n'));
-  }
-
-  // ═══ TOC ═══
-
-  function buildTOC() {
-    const tree = $('#file-tree');
-    let html = '';
-    for (const sec of indexData.sections) {
-      if (sec.children) {
-        html += `<li class="tree-group">
-          <div class="tree-part" data-id="${sec.id}" data-type="part">
-            <span class="tree-text">${sec.floor} ${sec.title}</span>
-            <button class="tree-add" data-parent="${sec.id}" title="添加子项">+</button>
-          </div>
-          <ul class="tree-children">`;
-        for (const ch of sec.children) {
-          html += `<li class="tree-child" data-id="${ch.id}" data-file="${ch.file}" data-type="child">
-            <span class="tree-text">${ch.title}</span>
-          </li>`;
-        }
-        html += `</ul></li>`;
-      } else {
-        html += `<li class="tree-single" data-id="${sec.id}" data-file="${sec.file}" data-type="single">
-          <span class="tree-text">${sec.floor} ${sec.title}</span>
-        </li>`;
+      // Sync source buffer from textarea if switching away from source
+      if (currentView === 'source') {
+        sourceBuffer = $('#source-editor').value;
       }
-    }
-    html += `<li class="tree-action"><button id="add-part-btn">+ 添加 Part</button></li>`;
-    tree.innerHTML = html;
-    bindTreeEvents();
-  }
 
-  function bindTreeEvents() {
-    const tree = $('#file-tree');
-
-    tree.addEventListener('click', e => {
-      // Add child button
-      const addBtn = e.target.closest('.tree-add');
-      if (addBtn) {
-        e.stopPropagation();
-        showModal('添加子章节', '', title => {
-          if (title.trim()) addChild(addBtn.dataset.parent, title.trim());
-        });
-        return;
-      }
-      // Navigate to section
-      const item = e.target.closest('[data-file]');
-      if (item) {
-        scrollToSection(item.dataset.file);
-        tree.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-        $('#editor-sidebar').classList.remove('open');
-        return;
-      }
-      // Part click → scroll to first child
-      const part = e.target.closest('.tree-part');
-      if (part) {
-        const sec = indexData.sections.find(s => s.id === part.dataset.id);
-        if (sec && sec.children && sec.children[0]) scrollToSection(sec.children[0].file);
-      }
+      currentView = view;
+      $('#view-toggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateView();
     });
-
-    // Right-click context menu
-    tree.addEventListener('contextmenu', e => {
-      const item = e.target.closest('[data-id]');
-      if (!item) return;
-      e.preventDefault();
-      showContextMenu(e.clientX, e.clientY, item.dataset.id, item.dataset.type);
-    });
-
-    // Add Part button
-    const addPartBtn = $('#add-part-btn');
-    if (addPartBtn) {
-      addPartBtn.addEventListener('click', () => {
-        showModal('添加 Part', '', title => {
-          if (title.trim()) addPart(title.trim());
-        });
-      });
-    }
-
-    // Mobile toggle
-    const toggle = $('#sidebar-toggle-mobile');
-    if (toggle) toggle.addEventListener('click', () => $('#editor-sidebar').classList.toggle('open'));
   }
 
-  function scrollToSection(file) {
-    const flat = flatFiles();
-    const idx = flat.findIndex(f => f.file === file);
-    if (idx < 0) return;
+  function updateView() {
+    const source = $('#source-editor');
+    const rendered = $('#rendered-preview');
 
-    const editorEl = document.querySelector('#vditor .vditor-ir .vditor-reset')
-      || document.querySelector('#vditor .vditor-wysiwyg .vditor-reset')
-      || document.querySelector('#vditor .vditor-sv .vditor-reset');
-    if (!editorEl) return;
-
-    if (idx === 0) { editorEl.scrollTop = 0; return; }
-
-    const hrs = editorEl.querySelectorAll('hr');
-    if (hrs[idx - 1]) hrs[idx - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ═══ Context Menu ═══
-
-  function showContextMenu(x, y, id, type) {
-    const menu = $('#ctx-menu');
-    menu.innerHTML = '';
-    const add = (label, action, cls) => {
-      const d = document.createElement('div');
-      d.className = 'ctx-item' + (cls ? ' ' + cls : '');
-      d.textContent = label;
-      d.addEventListener('click', () => { hideContextMenu(); action(); });
-      menu.appendChild(d);
-    };
-
-    add('重命名', () => {
-      const item = findById(id);
-      if (!item) return;
-      const cur = item.title.replace(/^\d+F\s*/, '');
-      showModal('重命名', cur, val => { if (val.trim()) renameItem(id, val.trim()); });
-    });
-
-    if (type === 'part') {
-      add('添加子项', () => {
-        showModal('添加子章节', '', title => { if (title.trim()) addChild(id, title.trim()); });
-      });
-    }
-
-    add('删除', () => {
-      if (confirm('确认删除？此操作将在发布时生效。')) deleteItem(id);
-    }, 'ctx-danger');
-
-    // Position
-    menu.style.left = Math.min(x, window.innerWidth - 140) + 'px';
-    menu.style.top = Math.min(y, window.innerHeight - 100) + 'px';
-    menu.style.display = 'block';
-    setTimeout(() => document.addEventListener('click', hideContextMenu, { once: true }));
-  }
-
-  function hideContextMenu() { $('#ctx-menu').style.display = 'none'; }
-
-  // ═══ Modal ═══
-
-  function showModal(title, defaultVal, onConfirm) {
-    const modal = $('#modal');
-    $('#modal-title').textContent = title;
-    const input = $('#modal-input');
-    input.value = defaultVal;
-    modal.classList.add('open');
-    setTimeout(() => input.focus(), 50);
-
-    let done = false;
-    const finish = (confirmed) => {
-      if (done) return;
-      done = true;
-      modal.classList.remove('open');
-      if (confirmed) onConfirm(input.value);
-      cleanup();
-    };
-    const onKey = e => { if (e.key === 'Enter') finish(true); if (e.key === 'Escape') finish(false); };
-    const onConfirmClick = () => finish(true);
-    const onCancelClick = () => finish(false);
-
-    const cleanup = () => {
-      $('#modal-confirm').removeEventListener('click', onConfirmClick);
-      $('#modal-cancel').removeEventListener('click', onCancelClick);
-      input.removeEventListener('keydown', onKey);
-    };
-
-    $('#modal-confirm').addEventListener('click', onConfirmClick);
-    $('#modal-cancel').addEventListener('click', onCancelClick);
-    input.addEventListener('keydown', onKey);
-  }
-
-  // ═══ CRUD ═══
-
-  function findById(id) {
-    for (const sec of indexData.sections) {
-      if (sec.id === id) return sec;
-      if (sec.children) for (const ch of sec.children) { if (ch.id === id) return ch; }
-    }
-    return null;
-  }
-
-  function slugify(t) {
-    return t.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').substring(0, 30) || 'untitled';
-  }
-
-  function renumberFloors() {
-    indexData.sections.forEach((s, i) => { s.floor = i + 'F'; });
-  }
-
-  function addChild(parentId, title) {
-    const parent = indexData.sections.find(s => s.id === parentId);
-    if (!parent || !parent.children) return;
-
-    const partIdx = indexData.sections.filter(s => s.children).indexOf(parent) + 1;
-    const childNum = parent.children.length + 1;
-    const id = `${partIdx}.${childNum}`;
-    const slug = slugify(title);
-    const file = `content/part${partIdx}/${id}-${slug}.md`;
-
-    parent.children.push({ id, title: `${id} ${title}`, file });
-    rebuildDocument();
-    buildTOC();
-    saveIndexDraft();
-    setStatus(`已添加: ${id} ${title}`);
-  }
-
-  function addPart(title) {
-    const partCount = indexData.sections.filter(s => s.children).length;
-    const newPart = {
-      id: `part${partCount + 1}`,
-      floor: '',
-      title: `Part ${partCount + 1}. ${title}`,
-      children: []
-    };
-    const epilogueIdx = indexData.sections.findIndex(s => s.id === 'epilogue');
-    if (epilogueIdx >= 0) indexData.sections.splice(epilogueIdx, 0, newPart);
-    else indexData.sections.push(newPart);
-
-    renumberFloors();
-    buildTOC();
-    saveIndexDraft();
-    setStatus(`已添加: ${newPart.title}`);
-  }
-
-  function renameItem(id, newTitle) {
-    const item = findById(id);
-    if (!item) return;
-
-    if (item.children !== undefined) {
-      // Part
-      const num = item.title.match(/Part\s*(\d+)/);
-      item.title = num ? `Part ${num[1]}. ${newTitle}` : newTitle;
+    if (currentView === 'source') {
+      source.style.display = '';
+      rendered.style.display = 'none';
+      source.value = sourceBuffer;
+      source.focus();
     } else {
-      const pre = item.title.match(/^(\d+\.\d+)\s/);
-      item.title = pre ? `${pre[1]} ${newTitle}` : newTitle;
-      // Single floor items (preface/epilogue)
-      const sec = indexData.sections.find(s => s.id === id && !s.children);
-      if (sec) sec.title = newTitle;
+      source.style.display = 'none';
+      rendered.style.display = '';
+      renderPreview();
     }
-
-    buildTOC();
-    saveIndexDraft();
-    setStatus(`已重命名: ${item.title}`);
   }
 
-  function deleteItem(id) {
-    for (let i = 0; i < indexData.sections.length; i++) {
-      const sec = indexData.sections[i];
-      if (sec.id === id) {
-        if (sec.children) sec.children.forEach(ch => { if (ch.file) deletedFiles.push(ch.file); });
-        else if (sec.file) deletedFiles.push(sec.file);
-        indexData.sections.splice(i, 1);
-        break;
+  // ═══ Rendered Preview ═══
+
+  const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:\?[^\s<>)\]"']*)?)/gi;
+
+  function renderMd(md) {
+    md = md.replace(/\r\n/g, '\n');
+
+    // Auto-convert bare image URLs
+    let inCode = false;
+    md = md.split('\n').map(line => {
+      if (/^```/.test(line)) inCode = !inCode;
+      if (inCode || /^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
+      return line.replace(IMG_URL_RE, '![image]($1)');
+    }).join('\n');
+
+    // Protect fenced code blocks
+    const codeBlocks = [];
+    md = md.replace(/```[\s\S]*?```/g, m => {
+      codeBlocks.push(m);
+      return `%%CB${codeBlocks.length - 1}%%`;
+    });
+
+    const parts = md.split(/(\n{2,})/);
+    let html = '';
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 1) {
+        const n = parts[i].length - 1;
+        for (let j = 0; j < n; j++) html += '<div class="bl"></div>';
+      } else {
+        let block = parts[i].trim();
+        if (!block) continue;
+        block = block.replace(/%%CB(\d+)%%/g, (_, k) => codeBlocks[+k]);
+        html += marked.parse(block);
       }
-      if (sec.children) {
-        const ci = sec.children.findIndex(ch => ch.id === id);
-        if (ci >= 0) {
-          if (sec.children[ci].file) deletedFiles.push(sec.children[ci].file);
-          sec.children.splice(ci, 1);
-          break;
+    }
+    return html;
+  }
+
+  function renderPreview() {
+    const container = $('#rendered-preview');
+    const md = sourceBuffer.trim();
+
+    if (!md) {
+      container.innerHTML = '<div class="paste-hint">从石墨文档粘贴内容到此处 (Ctrl+V)</div>';
+      return;
+    }
+
+    // Split by h2 and render as floors
+    const hasH2 = /^## .+/m.test(md);
+    if (hasH2) {
+      const floors = splitByH2(md);
+      let html = '';
+      floors.forEach((floor, i) => {
+        const title = floor.title || '序';
+        html += `<div class="floor">
+          <div class="floor-header">#${i}F &nbsp; ${title}</div>
+          <div class="floor-body">${renderMd(floor.md)}</div>
+        </div>`;
+      });
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = `<div class="floor">
+        <div class="floor-body">${renderMd(md)}</div>
+      </div>`;
+    }
+  }
+
+  function splitByH2(md) {
+    const lines = md.split('\n');
+    const floors = [];
+    let current = { title: '', lines: [] };
+
+    for (const line of lines) {
+      const m = line.match(/^## (.+)/);
+      if (m) {
+        if (current.title || current.lines.some(l => l.trim())) {
+          floors.push({ title: current.title, md: current.lines.join('\n') });
         }
+        current = { title: m[1].trim(), lines: [] };
+      } else {
+        current.lines.push(line);
       }
     }
-    renumberFloors();
-    rebuildDocument();
-    buildTOC();
-    saveIndexDraft();
-    setStatus('已删除，发布时生效');
+    if (current.title || current.lines.some(l => l.trim())) {
+      floors.push({ title: current.title, md: current.lines.join('\n') });
+    }
+    return floors;
   }
 
-  // ═══ Image Upload ═══
+  // ═══ Paste Handler ═══
 
-  function handleImageUpload(files) {
+  function initPasteHandler() {
+    const sourceEl = $('#source-editor');
+    const renderedEl = $('#rendered-preview');
+
+    // Paste in source textarea
+    sourceEl.addEventListener('paste', e => {
+      const html = e.clipboardData.getData('text/html');
+      const files = e.clipboardData.files;
+
+      // Handle pasted images
+      if (files && files.length > 0) {
+        e.preventDefault();
+        handlePastedImages(files, sourceEl);
+        return;
+      }
+
+      if (html && html.trim()) {
+        e.preventDefault();
+        const md = htmlToMarkdown(html);
+        insertAtCursor(sourceEl, md);
+        sourceBuffer = sourceEl.value;
+        saveDraft();
+      }
+      // If no HTML, let default plain text paste happen
+    });
+
+    // Paste in rendered preview
+    renderedEl.addEventListener('paste', e => {
+      e.preventDefault();
+      const html = e.clipboardData.getData('text/html');
+      const text = e.clipboardData.getData('text/plain');
+      const files = e.clipboardData.files;
+
+      // Handle pasted images
+      if (files && files.length > 0) {
+        handlePastedImagesBuffer(files);
+        return;
+      }
+
+      let md = '';
+      if (html && html.trim()) {
+        md = htmlToMarkdown(html);
+      } else if (text) {
+        md = text;
+      }
+
+      if (md) {
+        sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
+        renderPreview();
+        saveDraft();
+      }
+    });
+
+    // Also handle paste on source input change
+    sourceEl.addEventListener('input', debounce(() => {
+      sourceBuffer = sourceEl.value;
+      saveDraft();
+    }, 1500));
+  }
+
+  function insertAtCursor(textarea, text) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    textarea.value = before + text + after;
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+  }
+
+  function handlePastedImages(files, textarea) {
     for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
       const reader = new FileReader();
-      reader.onload = () => vditor.insertValue(`![${file.name}](${reader.result})`);
+      reader.onload = () => {
+        const md = `![${file.name || 'image'}](${reader.result})`;
+        insertAtCursor(textarea, md);
+        sourceBuffer = textarea.value;
+        saveDraft();
+      };
       reader.readAsDataURL(file);
     }
-    return null;
   }
 
-  // ═══ Draft ═══
+  function handlePastedImagesBuffer(files) {
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const md = `![${file.name || 'image'}](${reader.result})`;
+        sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
+        renderPreview();
+        saveDraft();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // ═══ HTML to Markdown Converter ═══
+
+  function htmlToMarkdown(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    // Clean up Shimo/Google Docs wrapper elements
+    removeEmptySpans(div);
+    const result = processNode(div);
+    // Clean up excessive blank lines (max 2 consecutive)
+    return result.replace(/\n{4,}/g, '\n\n\n').trim();
+  }
+
+  function removeEmptySpans(el) {
+    el.querySelectorAll('span').forEach(span => {
+      if (!span.getAttribute('style') && !span.className && span.childNodes.length === 1 && span.firstChild.nodeType === Node.TEXT_NODE) {
+        span.replaceWith(span.firstChild);
+      }
+    });
+  }
+
+  function processNode(node) {
+    let result = '';
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        result += child.textContent;
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        result += processElement(child);
+      }
+    }
+    return result;
+  }
+
+  function processElement(el) {
+    const tag = el.tagName.toLowerCase();
+    const inner = processNode(el);
+
+    switch (tag) {
+      case 'h1': return `# ${inner.trim()}\n\n`;
+      case 'h2': return `## ${inner.trim()}\n\n`;
+      case 'h3': return `### ${inner.trim()}\n\n`;
+      case 'h4': return `#### ${inner.trim()}\n\n`;
+      case 'h5': return `##### ${inner.trim()}\n\n`;
+      case 'h6': return `###### ${inner.trim()}\n\n`;
+
+      case 'p': {
+        const trimmed = inner.trim();
+        if (!trimmed) return '\n';
+        return `${trimmed}\n\n`;
+      }
+
+      case 'br': return '\n';
+      case 'hr': return '\n---\n\n';
+
+      case 'strong': case 'b':
+        return inner.trim() ? `**${inner}**` : '';
+      case 'em': case 'i':
+        return inner.trim() ? `*${inner}*` : '';
+      case 'u':
+        return inner.trim() ? `<u>${inner}</u>` : '';
+      case 's': case 'del': case 'strike':
+        return inner.trim() ? `~~${inner}~~` : '';
+
+      case 'a': {
+        const href = el.getAttribute('href');
+        if (href && inner.trim()) return `[${inner.trim()}](${href})`;
+        return inner;
+      }
+
+      case 'img': {
+        const src = el.getAttribute('src');
+        const alt = el.getAttribute('alt') || 'image';
+        if (src) return `![${alt}](${src})`;
+        return '';
+      }
+
+      case 'ul': {
+        let items = '';
+        for (const li of el.children) {
+          if (li.tagName && li.tagName.toLowerCase() === 'li') {
+            items += `- ${processNode(li).trim()}\n`;
+          }
+        }
+        return items + '\n';
+      }
+
+      case 'ol': {
+        let items = '';
+        let idx = 1;
+        for (const li of el.children) {
+          if (li.tagName && li.tagName.toLowerCase() === 'li') {
+            items += `${idx++}. ${processNode(li).trim()}\n`;
+          }
+        }
+        return items + '\n';
+      }
+
+      case 'li':
+        return inner;
+
+      case 'blockquote': {
+        const lines = inner.trim().split('\n');
+        return lines.map(l => `> ${l}`).join('\n') + '\n\n';
+      }
+
+      case 'code': {
+        if (el.parentElement && el.parentElement.tagName.toLowerCase() === 'pre') {
+          return inner;
+        }
+        return `\`${inner}\``;
+      }
+
+      case 'pre': {
+        const codeEl = el.querySelector('code');
+        const lang = codeEl ? (codeEl.className.match(/language-(\w+)/)?.[1] || '') : '';
+        const content = codeEl ? codeEl.textContent : inner;
+        return `\`\`\`${lang}\n${content}\n\`\`\`\n\n`;
+      }
+
+      case 'span': {
+        const style = el.getAttribute('style') || '';
+        const colorMatch = style.match(/color:\s*([^;]+)/i);
+        const bgMatch = style.match(/background-color:\s*([^;]+)/i);
+
+        if (colorMatch) {
+          const color = colorMatch[1].trim();
+          // Skip black/default colors
+          if (!/^(rgb\(0,?\s*0,?\s*0\)|#000|black)$/i.test(color)) {
+            return `<span style="color:${color}">${inner}</span>`;
+          }
+        }
+        if (bgMatch) {
+          const bg = bgMatch[1].trim();
+          if (!/^(transparent|rgba?\(0,?\s*0,?\s*0,?\s*0\))$/i.test(bg)) {
+            return `<span style="background-color:${bg}">${inner}</span>`;
+          }
+        }
+        return inner;
+      }
+
+      case 'div': {
+        const trimmed = inner.trim();
+        if (!trimmed) return '\n';
+        return trimmed + '\n';
+      }
+
+      case 'table': return processTable(el);
+      case 'thead': case 'tbody': case 'tfoot': return inner;
+      case 'tr': case 'th': case 'td': return inner;
+
+      case 'sup': return `<sup>${inner}</sup>`;
+      case 'sub': return `<sub>${inner}</sub>`;
+
+      default: return inner;
+    }
+  }
+
+  function processTable(table) {
+    const rows = table.querySelectorAll('tr');
+    if (!rows.length) return '';
+
+    const data = [];
+    rows.forEach(tr => {
+      const cells = [];
+      tr.querySelectorAll('th, td').forEach(cell => {
+        cells.push(processNode(cell).trim().replace(/\|/g, '\\|'));
+      });
+      data.push(cells);
+    });
+
+    if (!data.length) return '';
+
+    const colCount = Math.max(...data.map(r => r.length));
+    let md = '';
+
+    // Header row
+    md += '| ' + data[0].map(c => c || ' ').join(' | ') + ' |\n';
+    md += '| ' + Array(colCount).fill('---').join(' | ') + ' |\n';
+
+    // Data rows
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      while (row.length < colCount) row.push(' ');
+      md += '| ' + row.map(c => c || ' ').join(' | ') + ' |\n';
+    }
+
+    return md + '\n';
+  }
+
+  // ═══ Auto Save ═══
+
+  function initAutoSave() {
+    setInterval(() => {
+      if (currentView === 'source') {
+        sourceBuffer = $('#source-editor').value;
+      }
+    }, 5000);
+  }
 
   function saveDraft() {
-    if (!vditor) return;
-    localStorage.setItem(DRAFT_KEY, vditor.getValue());
+    localStorage.setItem(DRAFT_KEY, sourceBuffer);
     setStatus(`草稿已保存 | ${new Date().toLocaleTimeString()}`);
-  }
-
-  function saveIndexDraft() {
-    localStorage.setItem(INDEX_KEY, JSON.stringify(indexData));
-  }
-
-  function clearDrafts() {
-    localStorage.removeItem(DRAFT_KEY);
-    localStorage.removeItem(INDEX_KEY);
   }
 
   // ═══ Publish ═══
@@ -493,14 +569,19 @@
   $('#publish-btn').addEventListener('click', publish);
 
   async function publish() {
+    // Sync from textarea if in source view
+    if (currentView === 'source') {
+      sourceBuffer = $('#source-editor').value;
+    }
+
     const btn = $('#publish-btn');
     btn.disabled = true;
     btn.textContent = '发布中...';
 
     try {
-      let md = vditor.getValue();
+      let md = sourceBuffer;
 
-      // Upload base64 images
+      // Upload base64 images to images/ folder
       const imgRe = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
       let im;
       const imgs = [];
@@ -512,70 +593,56 @@
         setStatus(`上传图片: ${fname}...`);
         try {
           await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
-          const url = `https://codeberg.org/${CodebergAPI.OWNER}/${CodebergAPI.REPO}/raw/branch/pages/assets/images/${fname}`;
+          const url = `https://codeberg.org/${CodebergAPI.OWNER}/${CodebergAPI.REPO}/raw/branch/pages/images/${fname}`;
           md = md.replace(img.full, `![${img.alt}](${url})`);
         } catch(e) { console.error('Image upload failed:', e); }
       }
-      if (imgs.length) vditor.setValue(md);
+      if (imgs.length) sourceBuffer = md;
 
-      // Split & upload files
-      const sections = splitDocument(md);
-      const total = sections.length;
-      for (let i = 0; i < total; i++) {
-        const sec = sections[i];
-        setStatus(`上传 ${sec.file} (${i + 1}/${total})...`);
-        try {
-          const result = await CodebergAPI.putFile(sec.file, sec.content, `Update ${sec.file}`, fileShas[sec.file]);
-          fileShas[sec.file] = result.content.sha;
-        } catch(e) {
-          if (e.status === 422 || e.status === 409) {
-            try {
-              const fresh = await CodebergAPI.getFile(sec.file);
-              const result = await CodebergAPI.putFile(sec.file, sec.content, `Update ${sec.file}`, fresh.sha);
-              fileShas[sec.file] = result.content.sha;
-            } catch(e2) {
-              // New file — create without sha
-              try {
-                const result = await CodebergAPI.putFile(sec.file, sec.content, `Create ${sec.file}`);
-                fileShas[sec.file] = result.content.sha;
-              } catch(e3) { console.error(`Failed: ${sec.file}`, e3); }
-            }
+      // Save to content/main.md
+      const mainFile = 'content/main.md';
+      setStatus('上传内容...');
+      try {
+        const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fileShas[mainFile]);
+        fileShas[mainFile] = result.content.sha;
+      } catch(e) {
+        if (e.status === 422 || e.status === 409) {
+          try {
+            const fresh = await CodebergAPI.getFile(mainFile);
+            const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fresh.sha);
+            fileShas[mainFile] = result.content.sha;
+          } catch {
+            const result = await CodebergAPI.putFile(mainFile, md, 'Create content');
+            fileShas[mainFile] = result.content.sha;
           }
         }
       }
 
-      // Delete removed files
-      for (const file of deletedFiles) {
-        if (fileShas[file]) {
-          setStatus(`删除 ${file}...`);
-          try {
-            await CodebergAPI.deleteFile(file, fileShas[file], `Delete ${file}`);
-            delete fileShas[file];
-          } catch(e) { console.error(`Failed to delete ${file}:`, e); }
-        }
-      }
-      deletedFiles = [];
-
-      // Update _index.json
+      // Update _index.json to single file mode
+      const newIndex = {
+        title: indexData.title || 'The PotPvP Directory ~ 漠海拾遗',
+        file: mainFile
+      };
       setStatus('更新索引...');
       try {
         const result = await CodebergAPI.putFile(
           'content/_index.json',
-          JSON.stringify(indexData, null, 2),
-          'Update content index',
+          JSON.stringify(newIndex, null, 2),
+          'Update index to single file mode',
           indexSha
         );
         indexSha = result.content.sha;
+        indexData = newIndex;
       } catch(e) {
-        // SHA conflict, retry
         try {
           const fresh = await CodebergAPI.getFile('content/_index.json');
-          const result = await CodebergAPI.putFile('content/_index.json', JSON.stringify(indexData, null, 2), 'Update content index', fresh.sha);
+          const result = await CodebergAPI.putFile('content/_index.json', JSON.stringify(newIndex, null, 2), 'Update index', fresh.sha);
           indexSha = result.content.sha;
+          indexData = newIndex;
         } catch(e2) { console.error('Index update failed:', e2); }
       }
 
-      clearDrafts();
+      localStorage.removeItem(DRAFT_KEY);
       setStatus(`发布成功 | ${new Date().toLocaleTimeString()}`);
       $('#status-text').textContent = '已发布';
     } catch(e) {

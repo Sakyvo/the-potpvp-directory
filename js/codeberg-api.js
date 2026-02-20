@@ -48,7 +48,7 @@ const CodebergAPI = (function() {
   }
 
   async function uploadImage(filename, base64Data, message) {
-    const path = `assets/images/${filename}`;
+    const path = `images/${filename}`;
     // Check if file exists first
     let sha;
     try {

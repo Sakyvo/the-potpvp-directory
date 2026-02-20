@@ -38,7 +38,6 @@
     let html = '';
     for (let i = 0; i < parts.length; i++) {
       if (i % 2 === 1) {
-        // Separator: each \n\n = 1 visible blank line
         const n = parts[i].length - 1;
         for (let j = 0; j < n; j++) html += '<div class="bl"></div>';
       } else {
@@ -75,22 +74,117 @@
   async function fetchMd(path) {
     try {
       const res = await fetch(path);
-      if (!res.ok) return '*内容加载失败*';
+      if (!res.ok) return '';
       return await res.text();
-    } catch { return '*内容加载失败*'; }
+    } catch { return ''; }
   }
 
-  // ── Build floors ──
-  const sectionIds = [];
+  // ── Slugify for IDs ──
+  function slugify(text) {
+    return text.replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').substring(0, 40) || 'floor';
+  }
 
-  async function buildContent() {
-    const fragments = [];
-    const tocItems = [];
-    const fetchTasks = [];
+  // ── Split markdown by h2 headings ──
+  function splitByH2(md) {
+    const lines = md.split('\n');
+    const floors = [];
+    let current = { title: '', lines: [] };
 
+    for (const line of lines) {
+      const m = line.match(/^## (.+)/);
+      if (m) {
+        if (current.title || current.lines.some(l => l.trim())) {
+          floors.push({ title: current.title, md: current.lines.join('\n') });
+        }
+        current = { title: m[1].trim(), lines: [] };
+      } else {
+        current.lines.push(line);
+      }
+    }
+    if (current.title || current.lines.some(l => l.trim())) {
+      floors.push({ title: current.title, md: current.lines.join('\n') });
+    }
+
+    return floors;
+  }
+
+  // ── Load all content files ──
+  async function loadAllMd() {
+    // Single file mode
+    if (indexData.file) {
+      return await fetchMd(indexData.file);
+    }
+    // Multi-file mode (legacy)
+    const files = [];
     for (const sec of indexData.sections) {
       if (sec.children) {
-        // Part with children
+        for (const ch of sec.children) files.push(ch.file);
+      } else if (sec.file) {
+        files.push(sec.file);
+      }
+    }
+    const contents = await Promise.all(files.map(f => fetchMd(f)));
+    return contents.join('\n\n');
+  }
+
+  // ── Build content ──
+  async function buildContent() {
+    const allMd = await loadAllMd();
+
+    // Check if content has h2 headings for auto-splitting
+    const hasH2 = /^## .+/m.test(allMd);
+
+    if (hasH2) {
+      buildH2Floors(allMd);
+    } else {
+      buildLegacyFloors(allMd);
+    }
+
+    initInteraction();
+  }
+
+  // ── H2-based floor building ──
+  function buildH2Floors(allMd) {
+    const floors = splitByH2(allMd);
+    let html = '';
+    let tocHtml = '';
+
+    floors.forEach((floor, i) => {
+      const id = floor.title ? slugify(floor.title) : `floor-${i}`;
+      const floorNum = `#${i}F`;
+      const title = floor.title || '序';
+
+      html += `
+        <div class="floor" id="floor-${id}" data-section-id="${id}">
+          <div class="floor-header">${floorNum} &nbsp; ${title}</div>
+          <div class="floor-body">${renderMd(floor.md)}</div>
+        </div>`;
+
+      tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${floorNum} ${title}</a></li>`;
+    });
+
+    contentEl.innerHTML = html;
+    tocEl.innerHTML = tocHtml;
+  }
+
+  // ── Legacy floor building (no h2 splitting, uses _index.json structure) ──
+  function buildLegacyFloors(allMd) {
+    // Fall back to _index.json based structure
+    if (indexData.file) {
+      // Single file, no h2 → one big floor
+      contentEl.innerHTML = `
+        <div class="floor" id="floor-main" data-section-id="main">
+          <div class="floor-header">#0F &nbsp; ${indexData.title || '内容'}</div>
+          <div class="floor-body">${renderMd(allMd)}</div>
+        </div>`;
+      tocEl.innerHTML = `<li><a class="toc-item" data-target="floor-main">${indexData.title || '内容'}</a></li>`;
+      return;
+    }
+
+    // Multi-file legacy mode - build from _index.json sections
+    const fetchTasks = [];
+    for (const sec of indexData.sections) {
+      if (sec.children) {
         const childTasks = sec.children.map(ch => fetchMd(ch.file).then(md => ({ ...ch, md })));
         fetchTasks.push(Promise.all(childTasks).then(children => ({ ...sec, childrenData: children })));
       } else {
@@ -98,47 +192,37 @@
       }
     }
 
-    const sections = await Promise.all(fetchTasks);
+    Promise.all(fetchTasks).then(sections => {
+      let html = '';
+      let tocHtml = '';
 
-    for (const sec of sections) {
-      if (sec.childrenData) {
-        // Part floor
-        let childrenHtml = '';
-        const tocChildren = [];
-        for (const ch of sec.childrenData) {
-          sectionIds.push(ch.id);
-          childrenHtml += `
-            <div class="section-card" id="section-${ch.id}" data-section-id="${ch.id}">
-              <div class="section-title">${ch.title}</div>
-              <div class="section-body">${renderMd(ch.md)}</div>
+      for (const sec of sections) {
+        if (sec.childrenData) {
+          let bodyHtml = '';
+          for (const ch of sec.childrenData) {
+            bodyHtml += renderMd(ch.md);
+          }
+          const id = sec.id;
+          html += `
+            <div class="floor" id="floor-${id}" data-section-id="${id}">
+              <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
+              <div class="floor-body">${bodyHtml}</div>
             </div>`;
-          tocChildren.push(`<a class="toc-item" data-target="section-${ch.id}">${ch.title}</a>`);
+          tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${sec.floor} ${sec.title}</a></li>`;
+        } else {
+          const id = sec.id;
+          html += `
+            <div class="floor" id="floor-${id}" data-section-id="${id}">
+              <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
+              <div class="floor-body">${renderMd(sec.md)}</div>
+            </div>`;
+          tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${sec.floor} ${sec.title}</a></li>`;
         }
-        fragments.push(`
-          <div class="floor" id="floor-${sec.id}">
-            <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
-            ${childrenHtml}
-          </div>`);
-        tocItems.push(`<li class="toc-part">${sec.floor} ${sec.title}</li>`);
-        tocItems.push(...tocChildren.map(c => `<li>${c}</li>`));
-      } else {
-        // Single section floor
-        sectionIds.push(sec.id);
-        fragments.push(`
-          <div class="floor" id="floor-${sec.id}">
-            <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
-            <div class="section-card" id="section-${sec.id}" data-section-id="${sec.id}">
-              <div class="section-title">${sec.title}</div>
-              <div class="section-body">${renderMd(sec.md)}</div>
-            </div>
-          </div>`);
-        tocItems.push(`<li><a class="toc-single" data-target="section-${sec.id}">${sec.floor} ${sec.title}</a></li>`);
       }
-    }
 
-    contentEl.innerHTML = fragments.join('');
-    tocEl.innerHTML = tocItems.join('');
-    initInteraction();
+      contentEl.innerHTML = html;
+      tocEl.innerHTML = tocHtml;
+    });
   }
 
   // ── Interaction setup ──
@@ -167,7 +251,7 @@
       if (topId) {
         history.replaceState(null, '', '#' + topId);
         tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
-        const active = tocEl.querySelector(`[data-target="section-${topId}"]`);
+        const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
         if (active) active.classList.add('active');
       }
     }, { rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')} 0px -60% 0px`, threshold: [0, 0.25, 0.5] });
@@ -176,7 +260,7 @@
 
     // Initial hash scroll
     if (location.hash) {
-      const target = document.getElementById('section-' + location.hash.slice(1));
+      const target = document.getElementById('floor-' + location.hash.slice(1));
       if (target) setTimeout(() => target.scrollIntoView({ block: 'start' }), 100);
     }
   }
