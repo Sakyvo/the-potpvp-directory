@@ -40,16 +40,22 @@ const CodebergAPI = (function() {
       content: btoa(unescape(encodeURIComponent(content))),
       message: message || `Update ${path}`
     };
-    if (sha) body.sha = sha;
+    if (sha) {
+      body.sha = sha;
+      return request(`/repos/${OWNER}/${REPO}/contents/${path}`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+    }
+    // No SHA → create new file via POST
     return request(`/repos/${OWNER}/${REPO}/contents/${path}`, {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(body)
     });
   }
 
   async function uploadImage(filename, base64Data, message) {
     const path = `images/${filename}`;
-    // Check if file exists first
     let sha;
     try {
       const existing = await getFile(path);
@@ -59,9 +65,15 @@ const CodebergAPI = (function() {
       content: base64Data,
       message: message || `Upload image ${filename}`
     };
-    if (sha) body.sha = sha;
+    if (sha) {
+      body.sha = sha;
+      return request(`/repos/${OWNER}/${REPO}/contents/${path}`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+    }
     return request(`/repos/${OWNER}/${REPO}/contents/${path}`, {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(body)
     });
   }

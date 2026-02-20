@@ -603,19 +603,18 @@
       const mainFile = 'content/main.md';
       setStatus('上传内容...');
       try {
+        // Try to get existing file SHA first
+        if (!fileShas[mainFile]) {
+          try {
+            const existing = await CodebergAPI.getFile(mainFile);
+            fileShas[mainFile] = existing.sha;
+          } catch {} // File doesn't exist yet, that's fine
+        }
         const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fileShas[mainFile]);
         fileShas[mainFile] = result.content.sha;
       } catch(e) {
-        if (e.status === 422 || e.status === 409) {
-          try {
-            const fresh = await CodebergAPI.getFile(mainFile);
-            const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fresh.sha);
-            fileShas[mainFile] = result.content.sha;
-          } catch {
-            const result = await CodebergAPI.putFile(mainFile, md, 'Create content');
-            fileShas[mainFile] = result.content.sha;
-          }
-        }
+        console.error('Save content failed:', e, e.data);
+        throw e;
       }
 
       // Update _index.json to single file mode
