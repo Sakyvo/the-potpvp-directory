@@ -17,9 +17,7 @@
 
   function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
-
-    // Convert lone "-" to horizontal rule
-    md = md.split('\n').map(line => /^\s*-\s*$/.test(line) ? '---' : line).join('\n');
+    md = md.split('\n').map(l => l.trimEnd()).join('\n');
 
     // Auto-convert bare image URLs
     let inCode = false;
@@ -35,6 +33,13 @@
       codeBlocks.push(m);
       return `%%CB${codeBlocks.length - 1}%%`;
     });
+
+    // Escape < outside code blocks and known HTML tags
+    const protectedHtml = [];
+    md = md.replace(/`[^`]+`/g, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
+    md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
+    md = md.replace(/</g, '&lt;');
+    md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
 
     // Split by blank lines, keeping separators to count them
     const parts = md.split(/(\n{2,})/);
@@ -150,7 +155,6 @@
   function buildH2Floors(allMd) {
     const floors = splitByH2(allMd);
     let html = '';
-    let tocHtml = '';
 
     floors.forEach((floor, i) => {
       const id = floor.title ? slugify(floor.title) : `floor-${i}`;
@@ -162,11 +166,31 @@
           <div class="floor-header">${floorNum} &nbsp; ${title}</div>
           <div class="floor-body">${renderMd(floor.md)}</div>
         </div>`;
-
-      tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${floorNum} ${title}</a></li>`;
     });
 
     contentEl.innerHTML = html;
+    buildToc();
+  }
+
+  // ── Build hierarchical TOC from h2-h5 ──
+  function buildToc() {
+    let tocHtml = '';
+    document.querySelectorAll('.floor').forEach((floorEl, i) => {
+      const id = floorEl.dataset.sectionId || `floor-${i}`;
+      const floorNum = `#${i}F`;
+      const headerEl = floorEl.querySelector('.floor-header');
+      let title = headerEl ? headerEl.textContent.trim() : '';
+      title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
+
+      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}">${floorNum} ${title}</a></li>`;
+
+      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5').forEach((h, j) => {
+        const level = h.tagName.toLowerCase();
+        const hId = `${id}-h${j}`;
+        h.id = hId;
+        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}">${h.textContent}</a></li>`;
+      });
+    });
     tocEl.innerHTML = tocHtml;
   }
 
@@ -180,7 +204,7 @@
           <div class="floor-header">#0F &nbsp; ${indexData.title || '内容'}</div>
           <div class="floor-body">${renderMd(allMd)}</div>
         </div>`;
-      tocEl.innerHTML = `<li><a class="toc-item" data-target="floor-main">${indexData.title || '内容'}</a></li>`;
+      buildToc();
       return;
     }
 
@@ -197,7 +221,6 @@
 
     Promise.all(fetchTasks).then(sections => {
       let html = '';
-      let tocHtml = '';
 
       for (const sec of sections) {
         if (sec.childrenData) {
@@ -211,7 +234,6 @@
               <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
               <div class="floor-body">${bodyHtml}</div>
             </div>`;
-          tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${sec.floor} ${sec.title}</a></li>`;
         } else {
           const id = sec.id;
           html += `
@@ -219,12 +241,11 @@
               <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
               <div class="floor-body">${renderMd(sec.md)}</div>
             </div>`;
-          tocHtml += `<li><a class="toc-item" data-target="floor-${id}">${sec.floor} ${sec.title}</a></li>`;
         }
       }
 
       contentEl.innerHTML = html;
-      tocEl.innerHTML = tocHtml;
+      buildToc();
     });
   }
 

@@ -188,9 +188,7 @@
 
   function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
-
-    // Convert lone "-" to horizontal rule
-    md = md.split('\n').map(line => /^\s*-\s*$/.test(line) ? '---' : line).join('\n');
+    md = md.split('\n').map(l => l.trimEnd()).join('\n');
 
     // Auto-convert bare image URLs
     let inCode = false;
@@ -206,6 +204,13 @@
       codeBlocks.push(m);
       return `%%CB${codeBlocks.length - 1}%%`;
     });
+
+    // Escape < outside code blocks and known HTML tags
+    const protectedHtml = [];
+    md = md.replace(/`[^`]+`/g, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
+    md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
+    md = md.replace(/</g, '&lt;');
+    md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
 
     const parts = md.split(/(\n{2,})/);
     let html = '';
