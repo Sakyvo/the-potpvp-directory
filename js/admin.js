@@ -13,6 +13,15 @@
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 
+  // ═══ Base64 UTF-8 helpers ═══
+
+  function decodeBase64Utf8(b64) {
+    const bin = atob(b64.replace(/\s/g, ''));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
   // ═══ Marked config ═══
 
   marked.setOptions({
@@ -79,7 +88,7 @@
     try {
       const data = await CodebergAPI.getFile('content/_index.json');
       indexSha = data.sha;
-      indexData = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
+      indexData = JSON.parse(decodeBase64Utf8(data.content));
     } catch {
       const res = await fetch('../content/_index.json');
       indexData = await res.json();
@@ -111,7 +120,7 @@
       try {
         const data = await CodebergAPI.getFile(indexData.file);
         fileShas[indexData.file] = data.sha;
-        return decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+        return decodeBase64Utf8(data.content);
       } catch {
         try {
           const res = await fetch('../' + indexData.file);
@@ -125,7 +134,7 @@
       try {
         const data = await CodebergAPI.getFile(f.file);
         fileShas[f.file] = data.sha;
-        return decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+        return decodeBase64Utf8(data.content);
       } catch {
         try {
           const res = await fetch('../' + f.file);
