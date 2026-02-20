@@ -227,6 +227,15 @@
 
   // ── Interaction setup ──
   function initInteraction() {
+    // External links → new tab
+    contentEl.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && /^https?:\/\//.test(href)) {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+
     // TOC click → scroll
     tocEl.addEventListener('click', e => {
       const item = e.target.closest('[data-target]');

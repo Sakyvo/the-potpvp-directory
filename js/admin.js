@@ -238,6 +238,15 @@
         <div class="floor-body">${renderMd(md)}</div>
       </div>`;
     }
+
+    // External links → new tab
+    container.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && /^https?:\/\//.test(href)) {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
   }
 
   function splitByH2(md) {
