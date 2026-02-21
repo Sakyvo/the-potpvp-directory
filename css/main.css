@@ -127,7 +127,7 @@ body {
 .floor-body h5 { font-size: 1em; margin: .6em 0 .2em; }
 .floor-body h6 { font-size: 1em; margin: .6em 0 .2em; font-weight: 600; }
 .floor-body p { margin: 0; }
-.floor-body br { display: block; margin-bottom: 2px; }
+.floor-body br { display: block; margin-bottom: 1px; }
 .floor-body .bl { height: calc(0.8em + 2px); }
 .floor-body ul, .floor-body ol { margin: 0; padding-left: 1.5em; }
 .floor-body blockquote {

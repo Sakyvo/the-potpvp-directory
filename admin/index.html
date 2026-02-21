@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - The PotPvP Directory</title>
 <link rel="icon" type="image/png" href="../favicon.png">
-<link rel="stylesheet" href="../css/admin.css">
-<link rel="stylesheet" href="../css/main.css?v=4">
+<link rel="stylesheet" href="../css/main.css?v=5">
+<link rel="stylesheet" href="../css/admin.css?v=5">
 </head>
 <body>
 
@@ -21,10 +21,14 @@
   </div>
 </div>
 
-<!-- Simple Editor -->
+<!-- Editor -->
 <div class="editor-screen" id="editor-screen" style="display:none;">
   <header class="admin-topbar">
-    <a href="../" class="back-link">&larr; 返回</a>
+    <button class="topbar-btn" id="admin-menu-btn" aria-label="目录">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
     <span class="admin-title">Admin</span>
     <div class="admin-actions">
       <div class="view-toggle" id="view-toggle">
@@ -36,10 +40,14 @@
     </div>
   </header>
 
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">目录</div>
+    <ul class="toc" id="admin-toc"></ul>
+  </nav>
+
   <div class="editor-main" id="editor-main">
-    <!-- Source view (hidden by default) -->
     <textarea class="source-editor" id="source-editor" style="display:none;" spellcheck="false" placeholder="在此处粘贴石墨文档内容，或直接编辑 Markdown..."></textarea>
-    <!-- Rendered preview (default) -->
     <div class="rendered-preview" id="rendered-preview" tabindex="0"></div>
   </div>
 
@@ -48,31 +56,11 @@
   </footer>
 </div>
 
-<!-- ═══ Hidden old editing UI (preserved, not removed) ═══ -->
-<div style="display:none;" id="old-editor-ui">
-  <nav class="editor-sidebar" id="editor-sidebar">
-    <div class="sidebar-toggle-mobile" id="sidebar-toggle-mobile">目录 ▼</div>
-    <ul class="file-tree" id="file-tree"></ul>
-  </nav>
-  <div id="vditor"></div>
-  <div class="ctx-menu" id="ctx-menu"></div>
-  <div class="modal-overlay" id="modal">
-    <div class="modal-card">
-      <div class="modal-title" id="modal-title"></div>
-      <input type="text" id="modal-input" autocomplete="off">
-      <div class="modal-actions">
-        <button class="modal-btn" id="modal-cancel">取消</button>
-        <button class="modal-btn modal-btn-primary" id="modal-confirm">确认</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/json.min.js"></script>
-<script src="../js/codeberg-api.js?v=3"></script>
-<script src="../js/admin.js?v=4"></script>
+<script src="../js/codeberg-api.js?v=5"></script>
+<script src="../js/admin.js?v=5"></script>
 </body>
 </html>

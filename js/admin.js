@@ -81,7 +81,7 @@
     updateView();
     initViewToggle();
     initPasteHandler();
-    // initAutoSave(); // Draft saving disabled for now
+    initAdminSidebar();
   }
 
   async function loadIndex() {
@@ -170,11 +170,12 @@
       btn.classList.add('active');
       updateView();
 
-      // Restore scroll position in new view
-      requestAnimationFrame(() => {
+      // Restore scroll position in new view (delayed for layout)
+      setTimeout(() => {
         const el = currentView === 'source' ? $('#source-editor') : $('#rendered-preview');
-        el.scrollTop = scrollRatio * (el.scrollHeight - el.clientHeight);
-      });
+        const max = el.scrollHeight - el.clientHeight;
+        if (max > 0) el.scrollTop = scrollRatio * max;
+      }, 50);
     });
   }
 
@@ -258,14 +259,14 @@
       let html = '';
       floors.forEach((floor, i) => {
         const title = floor.title || '序';
-        html += `<div class="floor">
+        html += `<div class="floor" id="admin-floor-${i}">
           <div class="floor-header">#${i}F &nbsp; ${title}</div>
           <div class="floor-body">${renderMd(floor.md)}</div>
         </div>`;
       });
       container.innerHTML = html;
     } else {
-      container.innerHTML = `<div class="floor">
+      container.innerHTML = `<div class="floor" id="admin-floor-0">
         <div class="floor-body">${renderMd(md)}</div>
       </div>`;
     }
@@ -278,6 +279,8 @@
         a.setAttribute('rel', 'noopener noreferrer');
       }
     });
+
+    buildAdminToc();
   }
 
   function splitByH2(md) {
@@ -692,5 +695,90 @@
       btn.disabled = false;
       btn.textContent = '发布';
     }
+  }
+
+  // ═══ Admin Sidebar & TOC ═══
+
+  function buildAdminToc() {
+    const tocEl = $('#admin-toc');
+    if (!tocEl) return;
+    let html = '';
+    document.querySelectorAll('#rendered-preview .floor').forEach((floorEl, i) => {
+      const headerEl = floorEl.querySelector('.floor-header');
+      let title = headerEl ? headerEl.textContent.trim() : '';
+      title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
+      html += `<li><a class="toc-item toc-h2" data-target="admin-floor-${i}">#${i}F ${title}</a></li>`;
+      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5').forEach((h, j) => {
+        const level = h.tagName.toLowerCase();
+        const hId = `admin-${i}-h${j}`;
+        h.id = hId;
+        html += `<li><a class="toc-item toc-${level}" data-target="${hId}">${h.textContent}</a></li>`;
+      });
+    });
+    tocEl.innerHTML = html;
+  }
+
+  function initAdminSidebar() {
+    const menuBtn = $('#admin-menu-btn');
+    const overlay = $('#sidebar-overlay');
+    const sidebar = $('#sidebar');
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        sidebar.classList.contains('open') ? closeAdminSidebar() : openAdminSidebar();
+      });
+    }
+    if (overlay) {
+      overlay.addEventListener('click', closeAdminSidebar);
+    }
+
+    const tocEl = $('#admin-toc');
+    if (tocEl) {
+      tocEl.addEventListener('click', e => {
+        const item = e.target.closest('[data-target]');
+        if (!item) return;
+
+        if (currentView === 'source') {
+          sourceBuffer = $('#source-editor').value;
+          currentView = 'rendered';
+          $('#view-toggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+          $('#btn-rendered').classList.add('active');
+          updateView();
+        }
+
+        setTimeout(() => {
+          const target = document.getElementById(item.dataset.target);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+
+        closeAdminSidebar();
+      });
+    }
+
+    // Scroll-based TOC active highlight
+    const preview = $('#rendered-preview');
+    if (preview) {
+      preview.addEventListener('scroll', () => {
+        const floors = document.querySelectorAll('#rendered-preview .floor');
+        const scrollTop = preview.scrollTop;
+        let activeIdx = 0;
+        floors.forEach((floor, i) => {
+          if (floor.offsetTop - 60 <= scrollTop) activeIdx = i;
+        });
+        const tocItems = document.querySelectorAll('#admin-toc .toc-h2');
+        tocItems.forEach(item => item.classList.remove('active'));
+        if (tocItems[activeIdx]) tocItems[activeIdx].classList.add('active');
+      });
+    }
+  }
+
+  function openAdminSidebar() {
+    $('#sidebar').classList.add('open');
+    $('#sidebar-overlay').classList.add('open');
+  }
+
+  function closeAdminSidebar() {
+    $('#sidebar').classList.remove('open');
+    $('#sidebar-overlay').classList.remove('open');
   }
 })();
