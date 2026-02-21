@@ -19,12 +19,12 @@
     md = md.replace(/\r\n/g, '\n');
     md = md.split('\n').map(l => l.trimEnd()).join('\n');
 
-    // Auto-convert bare image URLs, escape lone "-"
+    // Auto-convert bare image URLs, protect lone "-"
     let inCode = false;
     md = md.split('\n').map(line => {
       if (/^```/.test(line)) inCode = !inCode;
       if (inCode) return line;
-      if (/^\s*-\s*$/.test(line)) return '<span>-</span>';
+      if (/^\s*-\s*$/.test(line)) return '\uFFFC';
       if (/^\s{4}/.test(line) || /!\[.*?\]\(/.test(line)) return line;
       return line.replace(IMG_URL_RE, '![image]($1)');
     }).join('\n');
@@ -57,7 +57,7 @@
         html += marked.parse(block);
       }
     }
-    return html;
+    return html.replace(/\uFFFC/g, '-');
   }
 
   // ── DOM refs ──
