@@ -288,25 +288,52 @@
       }
       if (topId) {
         history.replaceState(null, '', '#' + topId);
-        tocEl.querySelectorAll('.active, .active-sub').forEach(el => { el.classList.remove('active'); el.classList.remove('active-sub'); });
+        tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
         const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
-        if (active) {
-          active.classList.add('active');
-          let sib = active.closest('li');
-          if (sib) {
-            sib = sib.nextElementSibling;
-            while (sib) {
-              const a = sib.querySelector('.toc-item');
-              if (!a || a.classList.contains('toc-h2')) break;
-              a.classList.add('active-sub');
-              sib = sib.nextElementSibling;
-            }
-          }
-        }
+        if (active) active.classList.add('active');
+        updateTocSub();
       }
     }, { rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')} 0px -60% 0px`, threshold: [0, 0.25, 0.5] });
 
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
+
+    // Sub-heading ancestry highlight
+    function updateTocSub() {
+      tocEl.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
+      const activeH2 = tocEl.querySelector('.toc-item.active');
+      if (!activeH2) return;
+      const subItems = [];
+      let sib = activeH2.closest('li')?.nextElementSibling;
+      while (sib) {
+        const a = sib.querySelector('.toc-item');
+        if (!a || a.classList.contains('toc-h2')) break;
+        subItems.push(a);
+        sib = sib.nextElementSibling;
+      }
+      if (!subItems.length) return;
+      const topbarH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) || 48;
+      let currentSub = null;
+      for (const item of subItems) {
+        const target = document.getElementById(item.dataset.target);
+        if (target && target.getBoundingClientRect().top <= topbarH + 20) currentSub = item;
+      }
+      if (!currentSub) return;
+      currentSub.classList.add('active-sub');
+      const level = currentSub.classList.contains('toc-h5') ? 5 :
+                    currentSub.classList.contains('toc-h4') ? 4 : 3;
+      if (level > 3) {
+        let prev = currentSub.closest('li')?.previousElementSibling;
+        let needH4 = level === 5, needH3 = true;
+        while (prev && (needH3 || needH4)) {
+          const a = prev.querySelector('.toc-item');
+          if (!a || a.classList.contains('toc-h2')) break;
+          if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); needH4 = false; }
+          if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); needH3 = false; }
+          prev = prev.previousElementSibling;
+        }
+      }
+    }
+    window.addEventListener('scroll', updateTocSub);
 
     // Initial hash scroll
     if (location.hash) {

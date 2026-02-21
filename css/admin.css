@@ -125,10 +125,24 @@ body {
 }
 
 /* ── Mobile ── */
+/* ── Undo/Redo buttons ── */
+.undo-redo-btn {
+  width: 28px; height: 28px; border: 1px solid var(--border);
+  background: var(--bg); cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text); flex-shrink: 0;
+}
+.undo-redo-btn:hover { background: var(--bg-alt); }
+
 @media (max-width: 768px) {
   .admin-title { display: none; }
   .view-toggle { font-size: 11px; }
   .toggle-btn { padding: 4px 10px; }
+  .admin-topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+  }
   .editor-main {
     position: fixed;
     top: var(--topbar-h); left: 0; right: 0; bottom: var(--footer-h);
@@ -136,4 +150,8 @@ body {
   }
   .rendered-preview { max-width: none; padding: 16px 8px; overflow-y: scroll; }
   .source-editor { overflow-y: scroll; }
+  .admin-footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+  }
 }

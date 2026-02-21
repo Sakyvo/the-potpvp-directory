@@ -151,6 +151,19 @@
 
   // ═══ View Toggle ═══
 
+  function getFloorLines(text) {
+    const lines = text.split('\n');
+    const result = [];
+    for (let i = 0; i < lines.length; i++) {
+      if (/^## .+/.test(lines[i])) {
+        if (result.length === 0 && lines.slice(0, i).some(l => l.trim())) result.push(0);
+        result.push(i);
+      }
+    }
+    if (result.length === 0) result.push(0);
+    return result;
+  }
+
   function initViewToggle() {
     $('#view-toggle').addEventListener('click', e => {
       const btn = e.target.closest('.toggle-btn');
@@ -158,23 +171,17 @@
       const view = btn.dataset.view;
       if (view === currentView) return;
 
-      // Find anchor floor index before switch
       let anchorIdx = 0;
       if (currentView === 'source') {
         const el = $('#source-editor');
         pushUndo();
         sourceBuffer = el.value;
-        // Count ## headings above scrollTop position
-        const lines = sourceBuffer.split('\n');
-        const charAtScroll = Math.round((el.scrollTop / (el.scrollHeight || 1)) * sourceBuffer.length);
-        let chars = 0;
-        let floorCount = 0;
-        for (const line of lines) {
-          if (chars >= charAtScroll) break;
-          if (/^## .+/.test(line)) floorCount++;
-          chars += line.length + 1;
+        const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
+        const firstLine = Math.floor(el.scrollTop / lineH);
+        const floorLines = getFloorLines(sourceBuffer);
+        for (let k = floorLines.length - 1; k >= 0; k--) {
+          if (floorLines[k] <= firstLine) { anchorIdx = k; break; }
         }
-        anchorIdx = floorCount > 0 ? floorCount - 1 : 0;
       } else {
         const preview = $('#rendered-preview');
         const floors = preview.querySelectorAll('.floor');
@@ -189,27 +196,16 @@
       btn.classList.add('active');
       updateView();
 
-      // Scroll to anchor floor in new view
       setTimeout(() => {
         if (currentView === 'source') {
           const el = $('#source-editor');
-          const lines = sourceBuffer.split('\n');
-          let floorCount = 0;
-          let charPos = 0;
-          for (let i = 0; i < lines.length; i++) {
-            if (/^## .+/.test(lines[i])) {
-              if (floorCount === anchorIdx) break;
-              floorCount++;
-            }
-            charPos += lines[i].length + 1;
-          }
-          const ratio = charPos / (sourceBuffer.length || 1);
-          el.scrollTop = ratio * (el.scrollHeight - el.clientHeight);
+          const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
+          const floorLines = getFloorLines(sourceBuffer);
+          const targetLine = anchorIdx < floorLines.length ? floorLines[anchorIdx] : 0;
+          el.scrollTop = targetLine * lineH;
         } else {
           const floors = document.querySelectorAll('#rendered-preview .floor');
-          if (floors[anchorIdx]) {
-            floors[anchorIdx].scrollIntoView({ block: 'start' });
-          }
+          if (floors[anchorIdx]) floors[anchorIdx].scrollIntoView({ block: 'start' });
         }
       }, 50);
     });
@@ -697,11 +693,17 @@
     if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
   });
 
+  // Undo/Redo buttons
+  const undoBtn = $('#undo-btn');
+  const redoBtn = $('#redo-btn');
+  if (undoBtn) undoBtn.addEventListener('click', undo);
+  if (redoBtn) redoBtn.addEventListener('click', redo);
+
   // ═══ Shimo Image Download ═══
 
   async function fetchAsDataUrl(url) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { mode: 'cors' });
       const blob = await res.blob();
       return await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -709,7 +711,23 @@
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
-    } catch { return null; }
+    } catch {}
+    // Fallback: canvas approach
+    try {
+      return await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img, 0, 0);
+          resolve(c.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    } catch {}
+    return null;
   }
 
   async function downloadShimoImages(md) {
@@ -760,11 +778,33 @@
         setStatus(`上传图片: ${fname}...`);
         try {
           await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
-          const url = `https://codeberg.org/${CodebergAPI.OWNER}/${CodebergAPI.REPO}/raw/branch/pages/images/${fname}`;
-          md = md.replace(img.full, `![${img.alt}](${url})`);
+          md = md.replace(img.full, `![${img.alt}](images/${fname})`);
         } catch(e) { console.error('Image upload failed:', e); }
       }
       if (imgs.length) sourceBuffer = md;
+
+      // Download & upload external images
+      const extRe = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
+      let extMatch;
+      const extImgs = [];
+      while ((extMatch = extRe.exec(md))) {
+        extImgs.push({ full: extMatch[0], alt: extMatch[1], url: extMatch[2] });
+      }
+      for (const img of extImgs) {
+        const extM = img.url.match(/\.(png|jpe?g|gif|webp|svg|bmp)/i);
+        const ext = extM ? (extM[1] === 'jpeg' ? 'jpg' : extM[1]) : 'png';
+        const fname = `img_${Date.now()}_${Math.random().toString(36).slice(2, 6)}.${ext}`;
+        setStatus(`下载外部图片: ${fname}...`);
+        try {
+          const dataUrl = await fetchAsDataUrl(img.url);
+          if (dataUrl) {
+            const b64 = dataUrl.split(',')[1];
+            await CodebergAPI.uploadImage(fname, b64, `Upload ${fname}`);
+            md = md.replace(img.full, `![${img.alt}](images/${fname})`);
+          }
+        } catch(e) { console.error('External image failed:', e); }
+      }
+      if (extImgs.length) sourceBuffer = md;
 
       // Save to content/main.md
       const mainFile = 'content/main.md';
@@ -893,14 +933,37 @@
         const tocH2s = document.querySelectorAll('#admin-toc .toc-h2');
         if (tocH2s[activeIdx]) {
           tocH2s[activeIdx].classList.add('active');
-          let sib = tocH2s[activeIdx].closest('li');
-          if (sib) {
+          // Sub-heading ancestry highlight
+          const subItems = [];
+          let sib = tocH2s[activeIdx].closest('li')?.nextElementSibling;
+          while (sib) {
+            const a = sib.querySelector('.toc-item');
+            if (!a || a.classList.contains('toc-h2')) break;
+            subItems.push(a);
             sib = sib.nextElementSibling;
-            while (sib) {
-              const a = sib.querySelector('.toc-item');
-              if (!a || a.classList.contains('toc-h2')) break;
-              a.classList.add('active-sub');
-              sib = sib.nextElementSibling;
+          }
+          if (subItems.length) {
+            const containerRect = preview.getBoundingClientRect();
+            let currentSub = null;
+            for (const item of subItems) {
+              const target = document.getElementById(item.dataset.target);
+              if (target && target.getBoundingClientRect().top <= containerRect.top + 60) currentSub = item;
+            }
+            if (currentSub) {
+              currentSub.classList.add('active-sub');
+              const level = currentSub.classList.contains('toc-h5') ? 5 :
+                            currentSub.classList.contains('toc-h4') ? 4 : 3;
+              if (level > 3) {
+                let prev = currentSub.closest('li')?.previousElementSibling;
+                let needH4 = level === 5, needH3 = true;
+                while (prev && (needH3 || needH4)) {
+                  const a = prev.querySelector('.toc-item');
+                  if (!a || a.classList.contains('toc-h2')) break;
+                  if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); needH4 = false; }
+                  if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); needH3 = false; }
+                  prev = prev.previousElementSibling;
+                }
+              }
             }
           }
         }

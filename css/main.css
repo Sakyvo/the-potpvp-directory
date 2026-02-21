@@ -130,7 +130,7 @@ body {
 .floor-body h5 { font-size: 1em; margin: .6em 0 .2em; }
 .floor-body h6 { font-size: 1em; margin: .6em 0 .2em; font-weight: 600; }
 .floor-body p { margin: 0; }
-.floor-body br { display: block; margin-bottom: 1px; }
+.floor-body br { display: block; margin-bottom: 3px; }
 .floor-body .bl { height: calc(0.8em + 2px); }
 .floor-body ul, .floor-body ol { margin: 0; padding-left: 1.5em; }
 .floor-body blockquote {
@@ -157,8 +157,8 @@ body {
 .floor-body hr { border: none; border-top: 1px solid var(--border); margin: 1.2em 0; }
 
 /* ── Search highlight ── */
-mark.search-hl { background: linear-gradient(transparent 60%, #fff3a8 60%); padding: 0; }
-mark.search-hl.current { background: linear-gradient(transparent 60%, #ff9632 60%); }
+mark.search-hl { background: #fff3a8; padding: 0; }
+mark.search-hl.current { background: #ff9632; }
 
 /* ── Responsive ── */
 @media (min-width: 769px) {
