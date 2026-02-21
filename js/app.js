@@ -43,6 +43,9 @@
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
 
+    // White text → inherit
+    md = md.replace(/color:\s*rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)/gi, 'color:inherit');
+
     // Split by blank lines, keeping separators to count them
     const parts = md.split(/(\n{2,})/);
     let html = '';
@@ -285,9 +288,21 @@
       }
       if (topId) {
         history.replaceState(null, '', '#' + topId);
-        tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+        tocEl.querySelectorAll('.active, .active-sub').forEach(el => { el.classList.remove('active'); el.classList.remove('active-sub'); });
         const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
-        if (active) active.classList.add('active');
+        if (active) {
+          active.classList.add('active');
+          let sib = active.closest('li');
+          if (sib) {
+            sib = sib.nextElementSibling;
+            while (sib) {
+              const a = sib.querySelector('.toc-item');
+              if (!a || a.classList.contains('toc-h2')) break;
+              a.classList.add('active-sub');
+              sib = sib.nextElementSibling;
+            }
+          }
+        }
       }
     }, { rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')} 0px -60% 0px`, threshold: [0, 0.25, 0.5] });
 

@@ -129,4 +129,11 @@ body {
   .admin-title { display: none; }
   .view-toggle { font-size: 11px; }
   .toggle-btn { padding: 4px 10px; }
+  .editor-main {
+    position: fixed;
+    top: var(--topbar-h); left: 0; right: 0; bottom: var(--footer-h);
+    height: auto;
+  }
+  .rendered-preview { max-width: none; padding: 16px 8px; overflow-y: scroll; }
+  .source-editor { overflow-y: scroll; }
 }

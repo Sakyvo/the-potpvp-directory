@@ -48,6 +48,7 @@
       $('#editor-screen').style.display = '';
       initEditor();
     } catch(e) {
+      $('#login-screen').style.display = '';
       $('#login-error').textContent = e.message || '验证失败';
     } finally {
       $('#login-btn').disabled = false;
@@ -59,7 +60,10 @@
   $('#token-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin($('#token-input').value.trim()); });
 
   const saved = CodebergAPI.getToken();
-  if (saved) tryLogin(saved);
+  if (saved) {
+    $('#login-screen').style.display = 'none';
+    tryLogin(saved);
+  }
 
   // ═══ Init Editor ═══
 
@@ -154,15 +158,30 @@
       const view = btn.dataset.view;
       if (view === currentView) return;
 
-      // Save scroll ratio from current view
-      let scrollRatio = 0;
+      // Find anchor floor index before switch
+      let anchorIdx = 0;
       if (currentView === 'source') {
         const el = $('#source-editor');
+        pushUndo();
         sourceBuffer = el.value;
-        scrollRatio = el.scrollHeight > el.clientHeight ? el.scrollTop / (el.scrollHeight - el.clientHeight) : 0;
+        // Count ## headings above scrollTop position
+        const lines = sourceBuffer.split('\n');
+        const charAtScroll = Math.round((el.scrollTop / (el.scrollHeight || 1)) * sourceBuffer.length);
+        let chars = 0;
+        let floorCount = 0;
+        for (const line of lines) {
+          if (chars >= charAtScroll) break;
+          if (/^## .+/.test(line)) floorCount++;
+          chars += line.length + 1;
+        }
+        anchorIdx = floorCount > 0 ? floorCount - 1 : 0;
       } else {
-        const el = $('#rendered-preview');
-        scrollRatio = el.scrollHeight > el.clientHeight ? el.scrollTop / (el.scrollHeight - el.clientHeight) : 0;
+        const preview = $('#rendered-preview');
+        const floors = preview.querySelectorAll('.floor');
+        const scrollTop = preview.scrollTop;
+        floors.forEach((floor, i) => {
+          if (floor.offsetTop - 60 <= scrollTop) anchorIdx = i;
+        });
       }
 
       currentView = view;
@@ -170,11 +189,28 @@
       btn.classList.add('active');
       updateView();
 
-      // Restore scroll position in new view (delayed for layout)
+      // Scroll to anchor floor in new view
       setTimeout(() => {
-        const el = currentView === 'source' ? $('#source-editor') : $('#rendered-preview');
-        const max = el.scrollHeight - el.clientHeight;
-        if (max > 0) el.scrollTop = scrollRatio * max;
+        if (currentView === 'source') {
+          const el = $('#source-editor');
+          const lines = sourceBuffer.split('\n');
+          let floorCount = 0;
+          let charPos = 0;
+          for (let i = 0; i < lines.length; i++) {
+            if (/^## .+/.test(lines[i])) {
+              if (floorCount === anchorIdx) break;
+              floorCount++;
+            }
+            charPos += lines[i].length + 1;
+          }
+          const ratio = charPos / (sourceBuffer.length || 1);
+          el.scrollTop = ratio * (el.scrollHeight - el.clientHeight);
+        } else {
+          const floors = document.querySelectorAll('#rendered-preview .floor');
+          if (floors[anchorIdx]) {
+            floors[anchorIdx].scrollIntoView({ block: 'start' });
+          }
+        }
       }, 50);
     });
   }
@@ -226,6 +262,9 @@
     md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
+
+    // White text → inherit
+    md = md.replace(/color:\s*rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)/gi, 'color:inherit');
 
     const parts = md.split(/(\n{2,})/);
     let html = '';
@@ -329,6 +368,13 @@
         insertAtCursor(sourceEl, md);
         sourceBuffer = sourceEl.value;
         saveDraft();
+        downloadShimoImages(sourceBuffer).then(updated => {
+          if (updated !== sourceBuffer) {
+            sourceBuffer = updated;
+            sourceEl.value = sourceBuffer;
+            saveDraft();
+          }
+        });
       }
       // If no HTML, let default plain text paste happen
     });
@@ -354,9 +400,17 @@
       }
 
       if (md) {
+        pushUndo();
         sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
         renderPreview();
         saveDraft();
+        downloadShimoImages(sourceBuffer).then(updated => {
+          if (updated !== sourceBuffer) {
+            sourceBuffer = updated;
+            renderPreview();
+            saveDraft();
+          }
+        });
       }
     });
 
@@ -451,7 +505,7 @@
       case 'p': {
         const trimmed = inner.trim();
         if (!trimmed) return '\n';
-        return `${trimmed}\n\n`;
+        return `${trimmed}\n`;
       }
 
       case 'br': return '\n';
@@ -529,6 +583,10 @@
 
         if (colorMatch) {
           const color = colorMatch[1].trim();
+          // Skip white colors
+          if (/^(rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|#fff(?:fff)?|white)$/i.test(color)) {
+            return inner;
+          }
           // Skip black/default colors
           if (!/^(rgb\(0,?\s*0,?\s*0\)|#000|black)$/i.test(color)) {
             return `<span style="color:${color}">${inner}</span>`;
@@ -606,6 +664,71 @@
     // Draft saving disabled for now
     // localStorage.setItem(DRAFT_KEY, sourceBuffer);
     // setStatus(`草稿已保存 | ${new Date().toLocaleTimeString()}`);
+  }
+
+  // ═══ Undo / Redo ═══
+
+  let undoStack = [];
+  let redoStack = [];
+
+  function pushUndo() {
+    undoStack.push(sourceBuffer);
+    if (undoStack.length > 50) undoStack.shift();
+    redoStack = [];
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    redoStack.push(sourceBuffer);
+    sourceBuffer = undoStack.pop();
+    renderPreview();
+  }
+
+  function redo() {
+    if (!redoStack.length) return;
+    undoStack.push(sourceBuffer);
+    sourceBuffer = redoStack.pop();
+    renderPreview();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (currentView === 'source') return;
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
+  });
+
+  // ═══ Shimo Image Download ═══
+
+  async function fetchAsDataUrl(url) {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch { return null; }
+  }
+
+  async function downloadShimoImages(md) {
+    const re = /(!\[[^\]]*\]\()(https?:\/\/[^\s)]*(?:shimonote\.com|shimo\.im)[^\s)]*\))/gi;
+    const matches = [...md.matchAll(re)];
+    if (!matches.length) return md;
+    setStatus(`下载石墨图片 (0/${matches.length})...`);
+    let result = md;
+    for (let i = 0; i < matches.length; i++) {
+      const m = matches[i];
+      const url = m[2].slice(0, -1); // remove trailing )
+      setStatus(`下载石墨图片 (${i + 1}/${matches.length})...`);
+      const dataUrl = await fetchAsDataUrl(url);
+      if (dataUrl) {
+        result = result.replace(m[0], `${m[1]}${dataUrl})`);
+      }
+    }
+    setStatus('就绪');
+    return result;
   }
 
   // ═══ Publish ═══
@@ -765,9 +888,22 @@
         floors.forEach((floor, i) => {
           if (floor.offsetTop - 60 <= scrollTop) activeIdx = i;
         });
-        const tocItems = document.querySelectorAll('#admin-toc .toc-h2');
-        tocItems.forEach(item => item.classList.remove('active'));
-        if (tocItems[activeIdx]) tocItems[activeIdx].classList.add('active');
+        const allItems = document.querySelectorAll('#admin-toc .toc-item');
+        allItems.forEach(item => { item.classList.remove('active'); item.classList.remove('active-sub'); });
+        const tocH2s = document.querySelectorAll('#admin-toc .toc-h2');
+        if (tocH2s[activeIdx]) {
+          tocH2s[activeIdx].classList.add('active');
+          let sib = tocH2s[activeIdx].closest('li');
+          if (sib) {
+            sib = sib.nextElementSibling;
+            while (sib) {
+              const a = sib.querySelector('.toc-item');
+              if (!a || a.classList.contains('toc-h2')) break;
+              a.classList.add('active-sub');
+              sib = sib.nextElementSibling;
+            }
+          }
+        }
       });
     }
   }
