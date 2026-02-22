@@ -14,7 +14,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](https://codeberg.org/Sakyvo/pages/raw/branch/pages/images/img_1771662430251_ssle.png)
+![image](images/img_1771728700520_lyud.png)
 
 
 
@@ -61,7 +61,7 @@ Part 4. Outra
 
 不同颜色文字之意: <span style="background-color:rgb(249, 237, 166)">重要</span> <span style="color:rgb(163, 224, 67)">优势 </span><span style="color:rgb(255, 0, 0)">挑刺</span> <span style="color:rgb(150, 111, 231)">锐评</span>
 
-<span style="color:rgb(249, 237, 166)">缺点＞优点。即使你很喜欢某个端的优势部分，但如果其缺点无法接受，还是建议换成最“不痛”的那个。至少目前没有一款能使所有人都满意的Client</span>
+<span style="background-color:rgb(249, 237, 166)">缺点＞优点。即使你很喜欢某个端的优势部分，但如果其缺点无法接受，还是建议换成最“不痛”的那个。至少目前没有一款能使所有人都满意的Client</span>
 
 [patcher]: 本指sk1er的mod [Patcher](https://sk1er.club/mods/patcher) for 1.8.9 / 1.12.2。这里把语义缩小，仅指“修复材质包读取时内存溢出问题bug”这一模块。
 ```
@@ -75,11 +75,11 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](https://codeberg.org/Sakyvo/pages/raw/branch/pages/images/img_1771662434593_uxmf.png)
+![image](images/img_1771728704466_vmtp.png)
 
 
 Q: 后门?
-<span style="color:rgb(249, 237, 166)">A: 所有端都没有后门。但你硬要觉得有那我希望它真有</span>
+<span style="background-color:rgb(249, 237, 166)">A: 所有端都没有后门。但你硬要觉得有那我希望它真有</span>
 
 
 
@@ -87,7 +87,7 @@ Q: 后门?
 
 
 这一分组保持着更新，但无一例外存在“对笔者而言极其恶劣的bug”，虽然将来有被修复之可能¿
-<span style="color:rgb(249, 237, 166)">此分组均包含patcher</span>
+<span style="background-color:rgb(249, 237, 166)">此分组均包含patcher</span>
 
 
 
@@ -171,8 +171,8 @@ Lunar Client - Offline: 献给配得上的人
 ##### 1.1.3. 收藏品
 
 
-上古老端，收藏价值＞使用价值，只建议录特定视频时拿出来得到特定观感
-<span style="color:rgb(249, 237, 166)">以下所有客户端均无patcher</span>
+上古老端，收藏价值＞使用价值，只建议录特定视频时使用得到特定观感
+<span style="background-color:rgb(249, 237, 166)">以下所有客户端均无patcher</span>
 
 
 MineHQ CheatBreaker-2017 [1.7.10]: [https://sakyvo.lanzouu.com/iPAid16gm7sb](https://sakyvo.lanzouu.com/iPAid16gm7sb)
@@ -266,7 +266,8 @@ ind: [https://pastebin.com/Y1TqE13q](https://pastebin.com/Y1TqE13q)
 “允许我打点广告”
 
 Sakyvo 2024 (我还不FAME吗?): [https://www.123684.com/s/uCWJjv-wL6N3](https://www.123684.com/s/uCWJjv-wL6N3)
-蓝奏云(不定期更新): [https://www.lanzn.com/b02e6bhzg](https://www.lanzn.com/b02e6bhzg) - 密码: pack (有的材质第一个里没有)
+蓝奏云(不定期更新): [https://www.lanzn.com/b02e6bhzg](https://www.lanzn.com/b02e6bhzg)
+密码: pack (有的材质第一个里没有)
 Q群2022遗留pack: [https://www.mediafire.com/folder/u4rnsxc8hwbdv/](https://www.mediafire.com/folder/u4rnsxc8hwbdv/)
 Q群2022遗留overlay: [https://www.mediafire.com/folder/q88yrv5x6hdz5/](https://www.mediafire.com/folder/q88yrv5x6hdz5/)
 
@@ -588,7 +589,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](https://codeberg.org/Sakyvo/pages/raw/branch/pages/images/img_1771662436689_kuwx.jpg)
+![image](images/img_1771728706670_0hb3.jpg)
 
 
 ---
@@ -959,6 +960,83 @@ another dead mode，给感兴趣的人
 
 (DEAD) [Intel Edits] pvp sense: [https://www.bilibili.com/video/BV12e4y1p7Ty](https://www.bilibili.com/video/BV12e4y1p7Ty)
 
+
+
+
+### 2.2. Whenever Whatever Whoever
+
+
+那些无论何时何地任何人都值得观看的
+
+Lunar Champs:
+[https://www.bilibili.com/video/BV19S4y1v7zP/](https://www.bilibili.com/video/BV19S4y1v7zP/)
+[https://www.bilibili.com/video/BV1jU5EzYE5Q/](https://www.bilibili.com/video/BV1jU5EzYE5Q/)
+[https://www.bilibili.com/video/BV1BmVvz5EA2/](https://www.bilibili.com/video/BV1BmVvz5EA2/)
+[https://www.bilibili.com/video/BV1wS4y1q7jV/](https://www.bilibili.com/video/BV1wS4y1q7jV/)
+[https://www.bilibili.com/video/BV1QS4y1t7YW/](https://www.bilibili.com/video/BV1QS4y1t7YW/)
+[https://www.bilibili.com/video/BV1aw41117Mb/](https://www.bilibili.com/video/BV1aw41117Mb/)
+[https://www.bilibili.com/video/BV1fd4y1S7aC/](https://www.bilibili.com/video/BV1fd4y1S7aC/)
+[https://www.bilibili.com/video/BV1ve4y1t7aT/](https://www.bilibili.com/video/BV1ve4y1t7aT/)
+
+
+Lastro elo series p1:
+[https://www.bilibili.com/video/BV1tA41137Jp/](https://www.bilibili.com/video/BV1tA41137Jp/)
+[https://www.bilibili.com/video/BV1EQ4y1a7y7/](https://www.bilibili.com/video/BV1EQ4y1a7y7/)
+[https://www.bilibili.com/video/BV1db4y117J2/](https://www.bilibili.com/video/BV1db4y117J2/)
+[https://www.bilibili.com/video/BV1C64y1h7yb/](https://www.bilibili.com/video/BV1C64y1h7yb/)
+[https://www.bilibili.com/video/BV1iL4y167po/](https://www.bilibili.com/video/BV1iL4y167po/)
+[https://www.bilibili.com/video/BV1eM4y1P7Ny/](https://www.bilibili.com/video/BV1eM4y1P7Ny/)
+[https://www.bilibili.com/video/BV1Fm4y1S7JC/](https://www.bilibili.com/video/BV1Fm4y1S7JC/)
+[https://www.bilibili.com/video/BV1JT4y1X7yH/](https://www.bilibili.com/video/BV1JT4y1X7yH/)
+[https://www.bilibili.com/video/BV1wP4y1w7Tk/](https://www.bilibili.com/video/BV1wP4y1w7Tk/)
+[https://www.bilibili.com/video/BV1HR4y1L7qh/](https://www.bilibili.com/video/BV1HR4y1L7qh/)
+[https://www.bilibili.com/video/BV1tU4y1o7YQ/](https://www.bilibili.com/video/BV1tU4y1o7YQ/)
+[https://www.bilibili.com/video/BV11a411b7SW/](https://www.bilibili.com/video/BV11a411b7SW/)
+[https://www.bilibili.com/video/BV1hq4y1e74M/](https://www.bilibili.com/video/BV1hq4y1e74M/)
+[https://www.bilibili.com/video/BV1Wq4y1Y7jL/](https://www.bilibili.com/video/BV1Wq4y1Y7jL/)
+[https://www.bilibili.com/video/BV1rT41137UD/](https://www.bilibili.com/video/BV1rT41137UD/)
+-
+Lastro elo series p2:
+[https://www.bilibili.com/video/BV1bz4y1v7sr/](https://www.bilibili.com/video/BV1bz4y1v7sr/)
+[https://www.bilibili.com/video/BV1Ym4y1g7o7/](https://www.bilibili.com/video/BV1Ym4y1g7o7/)
+[https://www.bilibili.com/video/BV1dN4y1C73q/](https://www.bilibili.com/video/BV1dN4y1C73q/)
+[https://www.bilibili.com/video/BV1284y1R75Q/](https://www.bilibili.com/video/BV1284y1R75Q/)
+[https://www.bilibili.com/video/BV1Zw411N7Pi/](https://www.bilibili.com/video/BV1Zw411N7Pi/)
+[https://www.bilibili.com/video/BV1Lj411W73G/](https://www.bilibili.com/video/BV1Lj411W73G/)
+[https://www.bilibili.com/video/BV1eN4y1q7RU/](https://www.bilibili.com/video/BV1eN4y1q7RU/)
+[https://www.bilibili.com/video/BV1nT4m1S7kF/](https://www.bilibili.com/video/BV1nT4m1S7kF/)
+[https://www.bilibili.com/video/BV1LA4m1G7az/](https://www.bilibili.com/video/BV1LA4m1G7az/)
+[https://www.bilibili.com/video/BV1vz421974j/](https://www.bilibili.com/video/BV1vz421974j/)
+[https://www.bilibili.com/video/BV1Pt421g7Ui/](https://www.bilibili.com/video/BV1Pt421g7Ui/)
+
+
+Idiol elo series: [https://www.bilibili.com/video/av685287849](https://www.bilibili.com/video/av685287849)
+
+
+Tringed elo series: [https://www.bilibili.com/video/BV1JP4y1s7jc/](https://www.bilibili.com/video/BV1JP4y1s7jc/)
+[https://www.bilibili.com/video/BV1DS4y1C7q2/](https://www.bilibili.com/video/BV1DS4y1C7q2/)
+
+
+isla elo series 2023: [https://www.bilibili.com/video/BV13c411J76V/](https://www.bilibili.com/video/BV13c411J76V/)
+
+
+DefeatBoy:
+-
+vs Staind: [https://www.bilibili.com/video/BV1ST4y1d7D6/](https://www.bilibili.com/video/BV1ST4y1d7D6/)
+vs Jewdah: [https://www.bilibili.com/video/BV1S34y1d7y2/](https://www.bilibili.com/video/BV1S34y1d7y2/)
+vs Jerseys: [https://www.bilibili.com/video/BV1RR4y1t7d8/](https://www.bilibili.com/video/BV1RR4y1t7d8/)
+vs How2: [https://www.bilibili.com/video/BV1UR4y1t7pj/](https://www.bilibili.com/video/BV1UR4y1t7pj/)
+vs Miami/Coxcum: [https://www.bilibili.com/video/BV13N411e7KY/](https://www.bilibili.com/video/BV13N411e7KY/)
+vs ZIBLACKINGGG: [https://www.bilibili.com/video/BV11t4y1e7q9/](https://www.bilibili.com/video/BV11t4y1e7q9/)
+vs Scholar: [https://www.bilibili.com/video/BV1DA41187Qh/](https://www.bilibili.com/video/BV1DA41187Qh/)
+vs HydriZe: [https://www.bilibili.com/video/BV1fE411H7nk/](https://www.bilibili.com/video/BV1fE411H7nk/)
+-
+elo series:
+[https://www.bilibili.com/video/BV1Bg411j7Bs/](https://www.bilibili.com/video/BV1Bg411j7Bs/)
+[https://www.bilibili.com/video/BV15541127ft/](https://www.bilibili.com/video/BV15541127ft/)
+[https://www.bilibili.com/video/BV1SC4y1b72s/](https://www.bilibili.com/video/BV1SC4y1b72s/)
+-
+Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bilibili.com/video/BV1JL4y1e71p/)
 
 
 ---
