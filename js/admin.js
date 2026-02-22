@@ -780,7 +780,7 @@
         setStatus(`上传图片: ${fname}...`);
         try {
           await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
-          md = md.replace(img.full, `![${img.alt}](images/${fname})`);
+          md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
         } catch(e) { console.error('Image upload failed:', e); }
       }
       if (imgs.length) sourceBuffer = md;
@@ -802,7 +802,7 @@
           if (dataUrl) {
             const b64 = dataUrl.split(',')[1];
             await CodebergAPI.uploadImage(fname, b64, `Upload ${fname}`);
-            md = md.replace(img.full, `![${img.alt}](images/${fname})`);
+            md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
           }
         } catch(e) { console.error('External image failed:', e); }
       }
