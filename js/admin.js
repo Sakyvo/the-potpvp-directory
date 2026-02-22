@@ -461,7 +461,9 @@
     div.innerHTML = html;
     // Clean up Shimo/Google Docs wrapper elements
     removeEmptySpans(div);
-    const result = processNode(div);
+    let result = processNode(div);
+    // Collapse blank lines after headings (Shimo inserts empty <p> after headings)
+    result = result.replace(/(^#{1,6} .+)\n{2,}/gm, '$1\n');
     // Clean up excessive blank lines (max 2 consecutive)
     return result.trim();
   }
@@ -491,12 +493,12 @@
     const inner = processNode(el);
 
     switch (tag) {
-      case 'h1': return `# ${inner.trim()}\n\n`;
-      case 'h2': return `## ${inner.trim()}\n\n`;
-      case 'h3': return `### ${inner.trim()}\n\n`;
-      case 'h4': return `#### ${inner.trim()}\n\n`;
-      case 'h5': return `##### ${inner.trim()}\n\n`;
-      case 'h6': return `###### ${inner.trim()}\n\n`;
+      case 'h1': return `# ${inner.trim()}\n`;
+      case 'h2': return `## ${inner.trim()}\n`;
+      case 'h3': return `### ${inner.trim()}\n`;
+      case 'h4': return `#### ${inner.trim()}\n`;
+      case 'h5': return `##### ${inner.trim()}\n`;
+      case 'h6': return `###### ${inner.trim()}\n`;
 
       case 'p': {
         const trimmed = inner.trim();
@@ -902,11 +904,33 @@
         if (!item) return;
 
         if (currentView === 'source') {
-          sourceBuffer = $('#source-editor').value;
-          currentView = 'rendered';
-          $('#view-toggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-          $('#btn-rendered').classList.add('active');
-          updateView();
+          // Navigate within source editor
+          const el = $('#source-editor');
+          sourceBuffer = el.value;
+          const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
+          const target = item.dataset.target;
+          const floorMatch = target.match(/^admin-floor-(\d+)$/);
+
+          if (floorMatch) {
+            const floorIdx = parseInt(floorMatch[1]);
+            const floorLines = getFloorLines(sourceBuffer);
+            const targetLine = floorIdx < floorLines.length ? floorLines[floorIdx] : 0;
+            el.scrollTop = targetLine * lineH;
+          } else {
+            // Sub-heading: find by text + level prefix
+            const text = item.textContent.trim();
+            const prefix = item.classList.contains('toc-h3') ? '### ' :
+                           item.classList.contains('toc-h4') ? '#### ' : '##### ';
+            const lines = sourceBuffer.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+              if (lines[i].startsWith(prefix) && lines[i].includes(text)) {
+                el.scrollTop = i * lineH;
+                break;
+              }
+            }
+          }
+          closeAdminSidebar();
+          return;
         }
 
         setTimeout(() => {
