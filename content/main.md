@@ -12,7 +12,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](images/img_1771729495047_5toi.png)
+![image](images/img_1771739884665_ejkb.png)
 
 
 
@@ -69,7 +69,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](images/img_1771729500710_rupb.png)
+![image](images/img_1771739889214_lcpd.png)
 
 
 Q: 后门?
@@ -553,7 +553,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](images/img_1771729503822_ow08.jpg)
+![image](images/img_1771739891727_clx9.jpg)
 
 
 ---
