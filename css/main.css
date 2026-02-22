@@ -169,8 +169,8 @@ mark.search-hl.current { background: #ff9632; }
     top: var(--topbar-h);
     z-index: 1;
   }
-  .topbar { justify-content: center; position: relative; }
-  #search-btn { position: absolute; right: 12px; }
+  .topbar { justify-content: center; }
+  #search-btn { margin-left: auto; }
   .content {
     margin-left: var(--sidebar-w);
     max-width: none;
