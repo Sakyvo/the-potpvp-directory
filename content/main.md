@@ -12,7 +12,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1771740236381_motp.png)
+![image](/images/img_1771914555390_q0bp.png)
 
 
 
@@ -69,7 +69,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1771740240489_zxfz.png)
+![image](/images/img_1771914561076_byf9.png)
 
 
 Q: 后门?
@@ -467,10 +467,16 @@ v2: [https://www.bilibili.com/video/av44455478](https://www.bilibili.com/video/a
 优质二创
 
 
-冰糖脆桃Deproveds: [https://www.bilibili.com/video/av113103148680144](https://www.bilibili.com/video/av113103148680144)
+Deproved 1ks:
+-
+BlatantCheater: [https://www.bilibili.com/video/av113103148680144](https://www.bilibili.com/video/av113103148680144)
 ind: [https://blatantcheater.lanzouu.com/b00jdnwy7a](https://blatantcheater.lanzouu.com/b00jdnwy7a)
 密码: 3cbp
-这视频帮了我大忙
+-
+jxwxn8 all color ski: [https://www.bilibili.com/video/av115994366381098](https://www.bilibili.com/video/av115994366381098)
+ind: [https://wwbbs.lanzouq.com/b00odnzmcb](https://wwbbs.lanzouq.com/b00odnzmcb) 密码: abu5
+aio: [https://www.123865.com/s/A4Nojv-4dg5d](https://www.123865.com/s/A4Nojv-4dg5d)
+or: [https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file](https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file)
 
 
 
@@ -505,16 +511,16 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 
 ##### 1.2.3. CHAN
-Timon Wong: [https://space.bilibili.com/15505075/](https://space.bilibili.com/15505075/)
+Timon Wong: [https://space.bilibili.com/15505075](https://space.bilibili.com/15505075/)
 国内顶尖原创材质作者
 
 Kazari: [https://space.bilibili.com/339244769](https://space.bilibili.com/339244769)
 #CN Arissi
 
-BlatantCheater (AngelBeat): [https://space.bilibili.com/630656685/](https://space.bilibili.com/630656685/)
+BlatantCheater (AngelBeat): [https://space.bilibili.com/630656685](https://space.bilibili.com/630656685/)
 解决策の宝库
 
-节哀 (900elo): [https://space.bilibili.com/630656685/](https://space.bilibili.com/630656685/)
+节哀 (900elo): [https://space.bilibili.com/412514398](https://space.bilibili.com/412514398)
 搬运
 
 
@@ -553,7 +559,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1771740243269_yjch.jpg)
+![image](/images/img_1771914563599_bchp.jpg)
 
 
 ---
@@ -944,7 +950,11 @@ Tringed elo series: [https://www.bilibili.com/video/BV1JP4y1s7jc/](https://www.b
 isla elo series 2023: [https://www.bilibili.com/video/BV13c411J76V/](https://www.bilibili.com/video/BV13c411J76V/)
 
 
-DefeatBoy:
+Staind vs Nakoso: [https://www.bilibili.com/video/av778003465](https://www.bilibili.com/video/av778003465)
+
+
+
+DefeatBoy in NA:
 -
 vs Staind: [https://www.bilibili.com/video/BV1ST4y1d7D6/](https://www.bilibili.com/video/BV1ST4y1d7D6/)
 vs Jewdah: [https://www.bilibili.com/video/BV1S34y1d7y2/](https://www.bilibili.com/video/BV1S34y1d7y2/)
@@ -961,6 +971,15 @@ elo series:
 [https://www.bilibili.com/video/BV1SC4y1b72s/](https://www.bilibili.com/video/BV1SC4y1b72s/)
 -
 Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bilibili.com/video/BV1JL4y1e71p/)
+
+
+
+
+### 2.3. Appreciation!
+「Mythological Artascope of PotPvP Dynasty」
+
+
+
 
 
 ---
