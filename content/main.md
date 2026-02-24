@@ -12,7 +12,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1771914555390_q0bp.png)
+![image](/images/img_1771922968249_thuq.png)
 
 
 
@@ -69,7 +69,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1771914561076_byf9.png)
+![image](/images/img_1771922972826_zdey.png)
 
 
 Q: 后门?
@@ -154,8 +154,7 @@ Protocol CheatBreaker-1.6.25 [1.7.10]: [https://www.mediafire.com/file/40uzwkfez
 Lunar Client - Offline: 献给配得上的人
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
 <span style="color:rgb(255, 0, 0)">拆东墙补西墙&难找</span>
-[https://pastebin.com/TJMPw3eH](https://pastebin.com/TJMPw3eH)
-
+LCQT: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
 
 
 ##### 1.1.3. 收藏品
@@ -559,7 +558,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1771914563599_bchp.jpg)
+![image](/images/img_1771922975472_nef3.jpg)
 
 
 ---
@@ -894,6 +893,12 @@ another dead mode，给感兴趣的人
 
 
 
+##### 2.1.5. Tweak
+JVM Arguments: [https://exa.y2k.diy/garden/jvm-args/](https://exa.y2k.diy/garden/jvm-args/)
+
+
+
+
 
 ### 2.2. Whenever Whatever Whoever
 那些无论何时何地任何人都值得观看的
@@ -978,6 +983,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 ### 2.3. Appreciation!
 「Mythological Artascope of PotPvP Dynasty」
 
+待填坑……
 
 
 
@@ -987,16 +993,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 待填坑……
 
 
+
+
 ## Part 4. Outra
 待填坑……
-
-
-
-
-
-
-
-
-
-
-[https://exa.y2k.diy/garden/jvm-args/](https://exa.y2k.diy/garden/jvm-args/)
