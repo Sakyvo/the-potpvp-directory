@@ -753,50 +753,84 @@
 
   // ═══ Publish ═══
 
+  const publishModal = $('#publish-modal');
+  const publishSteps = $('#publish-steps');
+  const publishFooter = $('#publish-modal-footer');
+  const publishCloseBtn = $('#publish-close-btn');
+  if (publishCloseBtn) publishCloseBtn.addEventListener('click', () => { publishModal.style.display = 'none'; });
+
+  let stepEls = [];
+  function initSteps(names) {
+    stepEls = [];
+    publishSteps.innerHTML = '';
+    names.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'publish-step pending';
+      div.innerHTML = `<span class="step-icon"></span><span class="step-label">${name}</span>`;
+      publishSteps.appendChild(div);
+      stepEls.push(div);
+    });
+  }
+  function setStep(idx, state) {
+    if (stepEls[idx]) stepEls[idx].className = `publish-step ${state}`;
+  }
+
   $('#publish-btn').addEventListener('click', publish);
 
   async function publish() {
-    // Sync from textarea if in source view
     if (currentView === 'source') {
       sourceBuffer = $('#source-editor').value;
     }
 
     const btn = $('#publish-btn');
     btn.disabled = true;
-    btn.textContent = '发布中...';
+
+    // Build step list
+    let md = sourceBuffer;
+    const imgRe = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
+    let im;
+    const imgs = [];
+    while ((im = imgRe.exec(md))) {
+      imgs.push({ full: im[0], alt: im[1], ext: im[2] === 'jpeg' ? 'jpg' : im[2], b64: im[3] });
+    }
+    const extRe = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
+    let extMatch;
+    const extImgs = [];
+    while ((extMatch = extRe.exec(md))) {
+      extImgs.push({ full: extMatch[0], alt: extMatch[1], url: extMatch[2] });
+    }
+
+    const stepNames = [];
+    imgs.forEach((_, i) => stepNames.push(`上传图片 ${i + 1}/${imgs.length}`));
+    extImgs.forEach((_, i) => stepNames.push(`下载外部图片 ${i + 1}/${extImgs.length}`));
+    stepNames.push('上传内容');
+    stepNames.push('更新索引');
+
+    initSteps(stepNames);
+    publishFooter.style.display = 'none';
+    publishModal.style.display = '';
+    let si = 0;
 
     try {
-      let md = sourceBuffer;
-
-      // Upload base64 images to images/ folder
-      const imgRe = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
-      let im;
-      const imgs = [];
-      while ((im = imgRe.exec(md))) {
-        imgs.push({ full: im[0], alt: im[1], ext: im[2] === 'jpeg' ? 'jpg' : im[2], b64: im[3] });
-      }
+      // Upload base64 images
       for (const img of imgs) {
+        setStep(si, 'running');
         const fname = `img_${Date.now()}_${Math.random().toString(36).slice(2, 6)}.${img.ext}`;
-        setStatus(`上传图片: ${fname}...`);
         try {
           await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
           md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
-        } catch(e) { console.error('Image upload failed:', e); }
+          setStep(si, 'done');
+        } catch(e) { console.error('Image upload failed:', e); setStep(si, 'error'); }
+        si++;
       }
       if (imgs.length) sourceBuffer = md;
 
       // Download & upload external images
-      const extRe = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
-      let extMatch;
-      const extImgs = [];
-      while ((extMatch = extRe.exec(md))) {
-        extImgs.push({ full: extMatch[0], alt: extMatch[1], url: extMatch[2] });
-      }
       for (const img of extImgs) {
+        setStep(si, 'running');
         const extM = img.url.match(/\.(png|jpe?g|gif|webp|svg|bmp)/i);
         const ext = extM ? (extM[1] === 'jpeg' ? 'jpg' : extM[1]) : 'png';
         const fname = `img_${Date.now()}_${Math.random().toString(36).slice(2, 6)}.${ext}`;
-        setStatus(`下载外部图片: ${fname}...`);
         try {
           const dataUrl = await fetchAsDataUrl(img.url);
           if (dataUrl) {
@@ -804,34 +838,38 @@
             await CodebergAPI.uploadImage(fname, b64, `Upload ${fname}`);
             md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
           }
-        } catch(e) { console.error('External image failed:', e); }
+          setStep(si, 'done');
+        } catch(e) { console.error('External image failed:', e); setStep(si, 'error'); }
+        si++;
       }
       if (extImgs.length) sourceBuffer = md;
 
-      // Save to content/main.md
+      // Save content
+      setStep(si, 'running');
       const mainFile = 'content/main.md';
-      setStatus('上传内容...');
       try {
-        // Try to get existing file SHA first
         if (!fileShas[mainFile]) {
           try {
             const existing = await CodebergAPI.getFile(mainFile);
             fileShas[mainFile] = existing.sha;
-          } catch {} // File doesn't exist yet, that's fine
+          } catch {}
         }
         const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fileShas[mainFile]);
         fileShas[mainFile] = result.content.sha;
+        setStep(si, 'done');
       } catch(e) {
-        console.error('Save content failed:', e, e.data);
+        console.error('Save content failed:', e);
+        setStep(si, 'error');
         throw e;
       }
+      si++;
 
-      // Update _index.json to single file mode
+      // Update index
+      setStep(si, 'running');
       const newIndex = {
         title: indexData.title || 'The PotPvP Directory ~ 漠海拾遗',
         file: mainFile
       };
-      setStatus('更新索引...');
       try {
         const result = await CodebergAPI.putFile(
           'content/_index.json',
@@ -841,24 +879,28 @@
         );
         indexSha = result.content.sha;
         indexData = newIndex;
+        setStep(si, 'done');
       } catch(e) {
         try {
           const fresh = await CodebergAPI.getFile('content/_index.json');
           const result = await CodebergAPI.putFile('content/_index.json', JSON.stringify(newIndex, null, 2), 'Update index', fresh.sha);
           indexSha = result.content.sha;
           indexData = newIndex;
-        } catch(e2) { console.error('Index update failed:', e2); }
+          setStep(si, 'done');
+        } catch(e2) { console.error('Index update failed:', e2); setStep(si, 'error'); }
       }
 
       localStorage.removeItem(DRAFT_KEY);
+      $('#publish-modal .publish-modal-title').textContent = '发布成功';
       setStatus(`发布成功 | ${new Date().toLocaleTimeString()}`);
       $('#status-text').textContent = '已发布';
     } catch(e) {
       console.error('Publish failed:', e);
+      $('#publish-modal .publish-modal-title').textContent = '发布失败';
       setStatus(`发布失败: ${e.message}`);
     } finally {
       btn.disabled = false;
-      btn.textContent = '发布';
+      publishFooter.style.display = '';
     }
   }
 

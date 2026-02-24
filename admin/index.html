@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - The PotPvP Directory</title>
 <link rel="icon" type="image/png" href="../favicon.png">
-<link rel="stylesheet" href="../css/main.css?v=9">
-<link rel="stylesheet" href="../css/admin.css?v=9">
+<link rel="stylesheet" href="../css/main.css?v=10">
+<link rel="stylesheet" href="../css/admin.css?v=10">
 </head>
 <body>
 
@@ -58,11 +58,22 @@
   </footer>
 </div>
 
+<!-- Publish Progress Modal -->
+<div class="publish-modal" id="publish-modal" style="display:none;">
+  <div class="publish-modal-card">
+    <div class="publish-modal-title">发布中</div>
+    <div class="publish-modal-steps" id="publish-steps"></div>
+    <div class="publish-modal-footer" id="publish-modal-footer" style="display:none;">
+      <button class="btn-publish" id="publish-close-btn">关闭</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/json.min.js"></script>
-<script src="../js/codeberg-api.js?v=9"></script>
-<script src="../js/admin.js?v=9"></script>
+<script src="../js/codeberg-api.js?v=10"></script>
+<script src="../js/admin.js?v=10"></script>
 </body>
 </html>

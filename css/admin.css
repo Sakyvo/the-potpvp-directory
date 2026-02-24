@@ -134,6 +134,34 @@ body {
 }
 .undo-redo-btn:hover { background: var(--bg-alt); }
 
+/* ── Publish Progress Modal ── */
+.publish-modal {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.publish-modal-card {
+  background: var(--bg); border: 1px solid var(--border);
+  width: 360px; max-width: 90vw; padding: 24px;
+}
+.publish-modal-title {
+  font-size: 15px; font-weight: 600; margin-bottom: 16px;
+}
+.publish-modal-steps {
+  font-size: 13px; line-height: 2;
+}
+.publish-step { display: flex; align-items: center; gap: 8px; }
+.publish-step .step-icon { width: 18px; text-align: center; flex-shrink: 0; }
+.publish-step.pending .step-icon::after { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+.publish-step.running .step-icon::after { content: ''; display: inline-block; width: 10px; height: 10px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; }
+.publish-step.done .step-icon { color: #2e7d32; }
+.publish-step.done .step-icon::after { content: '\2713'; }
+.publish-step.error .step-icon { color: var(--danger); }
+.publish-step.error .step-icon::after { content: '\2717'; }
+.publish-step.running .step-label { font-weight: 600; }
+.publish-modal-footer { margin-top: 16px; text-align: right; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 @media (max-width: 768px) {
   .admin-title { display: none; }
   .view-toggle { font-size: 11px; }
