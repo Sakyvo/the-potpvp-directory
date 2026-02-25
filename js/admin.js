@@ -462,8 +462,6 @@
     // Clean up Shimo/Google Docs wrapper elements
     removeEmptySpans(div);
     let result = processNode(div);
-    // Collapse blank lines after headings (Shimo inserts empty <p> after headings)
-    result = result.replace(/(^#{1,6} .+)\n{2,}/gm, '$1\n');
     // Clean up excessive blank lines (max 2 consecutive)
     return result.trim();
   }
