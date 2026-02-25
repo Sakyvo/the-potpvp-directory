@@ -12,7 +12,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1771987133725_g1t9.png)
+![image](/images/img_1771998601911_kppa.png)
 
 
 
@@ -69,7 +69,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1771987137713_txb8.png)
+![image](/images/img_1771998606391_wuip.png)
 
 
 Q: 后门?
@@ -558,7 +558,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1771987139895_ypvq.jpg)
+![image](/images/img_1771998608901_6hhg.jpg)
 
 
 ---
@@ -998,7 +998,52 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 ### 2.3. Appreciation!
 「Mythological Artascope of PotPvP Dynasty」
 
-待填坑……
+<span style="color:rgb(123, 127, 131)">*这是个脑子一热开了坑最终弃掉的，灵感来源于</span>[这个](https://tieba.baidu.com/p/6593286560)<span style="color:rgb(123, 127, 131)">和</span>[那个](https://tieba.baidu.com/p/5272254427)<span style="color:rgb(123, 127, 131)">的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了</span>
+
+
+##### 2.3.1. Classic
+[Jewdah] 8 blocking on lunar client: [https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
+神
+
+[Jewdah] smacking kids on the craft: [https://www.bilibili.com/video/BV1Eb4y1i7sc](https://www.bilibili.com/video/BV1Eb4y1i7sc)
+坟
+
+
+##### 2.3.2. Gang
+[Kyeick] Best in the Game: [https://www.bilibili.com/video/av373343351](https://www.bilibili.com/video/av373343351)
+5:52 part II看看看看看看看
+
+[Staind] Best in the Game: [https://www.bilibili.com/video/av1556497493](https://www.bilibili.com/video/av1556497493)
+掉药了谁的药啊
+
+[BCZ] I'm the best at this game: [https://www.bilibili.com/video/av18460181](https://www.bilibili.com/video/av18460181)
+飞起来
+
+
+##### 2.3.3. Chill
+[yungsaphars] i use reach lol (best eu): [https://www.bilibili.com/video/av1550313132](https://www.bilibili.com/video/av1550313132)
+爹
+
+[Zefew] Im the best (Pack Bundle) [Frozen]: [https://www.bilibili.com/video/av23480664](https://www.bilibili.com/video/av23480664)
+妈
+
+[Raucous] noob game: [https://www.bilibili.com/video/av208514606](https://www.bilibili.com/video/av208514606)
+大胖狼你别删视频啊😭😭😭
+
+[BCZ] old but gold: [https://www.bilibili.com/video/av221123445](https://www.bilibili.com/video/av221123445)
+BCZ抄袭酥桃吧·。。。。
+
+[d0wza] young but gold: [https://www.bilibili.com/video/av999775339](https://www.bilibili.com/video/av999775339)
+酥桃抄袭BCZ吧·。。。。
+
+[Staind] 1700Elo in a Day: [https://www.bilibili.com/video/av373847777](https://www.bilibili.com/video/av373847777)
+聊天框看见了我的仇人errxr
+
+
+##### 2.3.4. Drill
+[qVarious] Best of qVarious ~ Farewell 👋: [https://www.youtube.com/watch?v=kpBnzq_HldM](https://www.youtube.com/watch?v=kpBnzq_HldM)
+谁懂b站视频又没了，暂停施工
+
 
 
 
