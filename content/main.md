@@ -12,7 +12,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1771922968249_thuq.png)
+![image](/images/img_1771987133725_g1t9.png)
 
 
 
@@ -69,7 +69,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1771922972826_zdey.png)
+![image](/images/img_1771987137713_txb8.png)
 
 
 Q: 后门?
@@ -558,7 +558,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1771922975472_nef3.jpg)
+![image](/images/img_1771987139895_ypvq.jpg)
 
 
 ---
@@ -606,6 +606,10 @@ Kazer
 Jealousy
 [jealousy.cc](https://jealousy.cc) (湖北)
 rutar之遗志
+
+Micet
+[micet.cc](https://micet.cc) (上海)
+reborn from 2018
 
 
 Iceland
@@ -715,8 +719,14 @@ Mediafire: [https://app.mediafire.com/folder/myfiles](https://app.mediafire.com/
 Wormhole: [https://wormhole.app/](https://wormhole.app/)
 端到端加密&限时限量大文件分享
 
-WorkUpload: [https://workupload.com/](https://workupload.com/)
+workupload: [https://workupload.com/](https://workupload.com/)
 欧公子版奶牛快传，dmca去死吧。支持阅后即焚
+
+TmpLink: [https://www.tmp.link/](https://www.tmp.link/?tmpui_page=/vx&module=filelist&view=list)
+不限速不限文件大小，7d内无人下载文件会被删除
+
+dlgg: [https://download.gg/](https://download.gg/)
+端到端加密，25gb limit
 
 
 Pastebin: [https://pastebin.com/](https://pastebin.com/)
@@ -724,9 +734,6 @@ Pastebin: [https://pastebin.com/](https://pastebin.com/)
 
 pastefy: [https://pastefy.app/](https://pastefy.app/)
 隐私保护但不可更改长文本分享
-
-pasteRS: [https://paste.rs/web](https://paste.rs/web)
-同上
 
 PWpush: [https://eu.pwpush.com/](https://eu.pwpush.com/)
 限时限量&阅后即焚文本分享
@@ -958,6 +965,14 @@ isla elo series 2023: [https://www.bilibili.com/video/BV13c411J76V/](https://www
 Staind vs Nakoso: [https://www.bilibili.com/video/av778003465](https://www.bilibili.com/video/av778003465)
 
 
+Eloeis vs Kyeick: [https://www.bilibili.com/video/av629086454](https://www.bilibili.com/video/av629086454)
+
+
+Lizishu Elo Series [1339elo]: [https://www.bilibili.com/video/av1152702334](https://www.bilibili.com/video/av1152702334)
+
+Lizishu vs Eloies: [https://www.bilibili.com/video/av1050974501](https://www.bilibili.com/video/av1050974501)
+
+
 
 DefeatBoy in NA:
 -
@@ -994,6 +1009,6 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 
 
-
+---
 ## Part 4. Outra
 待填坑……
