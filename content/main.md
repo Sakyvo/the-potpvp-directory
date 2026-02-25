@@ -1,4 +1,5 @@
 ## 序
+
 ***“道在迩而求诸远，事在易而求之难***”
 
 
@@ -12,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1771998601911_kppa.png)
+![image](/images/img_1772009654922_w6up.png)
 
 
 
@@ -52,7 +53,9 @@ Part 4. Outra
 
 ---
 ## Part 1. Intro
+
 ### 1.1. Clients
+
 不同颜色文字之意: <span style="background-color:rgb(249, 237, 166)">重要</span> <span style="color:rgb(163, 224, 67)">优势 </span><span style="color:rgb(255, 0, 0)">挑刺</span> <span style="color:rgb(150, 111, 231)">锐评</span>
 
 <span style="background-color:rgb(249, 237, 166)">缺点＞优点。即使你很喜欢某个端的优势部分，但如果其缺点无法接受，还是建议换成最“不痛”的那个。至少目前没有一款能使所有人都满意的Client</span>
@@ -69,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1771998606391_wuip.png)
+![image](/images/img_1772009658593_3w4t.png)
 
 
 Q: 后门?
@@ -78,6 +81,7 @@ Q: 后门?
 
 
 ##### 1.1.1. 维护中
+
 这一分组保持着更新，但无一例外存在“对笔者而言极其恶劣的bug”，虽然将来有被修复之可能¿
 <span style="background-color:rgb(249, 237, 166)">此分组均包含patcher</span>
 
@@ -102,6 +106,7 @@ CheatBreaker Net: [https://cheatbreaker.net](https://cheatbreaker.net/download)
 
 
 ##### 1.1.2. 无维护
+
 这一分组没有Developer维护，意味着不会更新，且存在无法弥补的缺点。但之所以放在这里，是由于其优点相比第一组里的各种史山，太耀眼，，，
 
 
@@ -155,9 +160,11 @@ Lunar Client - Offline: 献给配得上的人
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
 <span style="color:rgb(255, 0, 0)">拆东墙补西墙&难找</span>
 LCQT: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
+(1.7.10 & 1.8.9 v2.17.7-2447)
 
 
 ##### 1.1.3. 收藏品
+
 上古老端，收藏价值＞使用价值，只建议录特定视频时使用得到特定观感
 <span style="background-color:rgb(249, 237, 166)">以下所有客户端均无patcher</span>
 
@@ -213,11 +220,13 @@ Lunar Client Lite [Launcher]: [https://sakyvo.lanzouj.com/iyYVX01qrwkh](https://
 
 ---
 ### 1.2. Packs
+
 pack，和它周边的东西
 在此再次提醒@我和akane问材质之前请先翻kpf
 
 
 ##### 1.2.1. 一步登天
+
 Jewdah: [https://www.bilibili.com/video/BV1tN411d7C9/](https://www.bilibili.com/video/BV1tN411d7C9/)
 aio: [http://www.mediafire.com/file/3mynzut9trw3mwl/pack_folder.zip/file](http://www.mediafire.com/file/3mynzut9trw3mwl/pack_folder.zip/file)
 重装系统懒得下？三拜犹大直接开砍
@@ -241,7 +250,9 @@ ind: [https://pastebin.com/Y1TqE13q](https://pastebin.com/Y1TqE13q)
 
 
 ##### 1.2.2. FAME
+
 ###### I. AD
+
 “允许我打点广告”
 
 Sakyvo 2024 (我还不FAME吗?): [https://www.123684.com/s/uCWJjv-wL6N3](https://www.123684.com/s/uCWJjv-wL6N3)
@@ -278,6 +289,7 @@ or: [https://emt.lanzouq.com/b0mc2gqti](https://emt.lanzouq.com/b0mc2gqti)
 
 
 ###### II. Basic
+
 “众将化身为一”
 
 PuffedUP: [https://www.bilibili.com/video/av974484330](https://www.bilibili.com/video/av974484330)
@@ -394,6 +406,7 @@ ind: [https://jack-laogewen.lanzouv.com/b01a1boeh](https://jack-laogewen.lanzouv
 
 
 ###### III. HCF
+
 “Nightmare”
 
 iil v1: [https://www.bilibili.com/video/av445206902](https://www.bilibili.com/video/av445206902)
@@ -424,6 +437,7 @@ ind ol: [https://www.mediafire.com/folder/137t4et2hvulm/overlays](https://www.me
 
 
 ###### IV. og
+
 “一将化身为众”
 
 Elleptical: [https://www.bilibili.com/video/av926578255](https://www.bilibili.com/video/av926578255)
@@ -438,6 +452,7 @@ aio: [http://www.mediafire.com/file/wchv9c1zio20zx1/Updated_Pack_Folder.rar/file
 
 
 ###### V. 荣誉提名
+
 “The park of pack”
 
 [Timon] Ayear
@@ -476,10 +491,13 @@ jxwxn8 all color ski: [https://www.bilibili.com/video/av115994366381098](https:/
 ind: [https://wwbbs.lanzouq.com/b00odnzmcb](https://wwbbs.lanzouq.com/b00odnzmcb) 密码: abu5
 aio: [https://www.123865.com/s/A4Nojv-4dg5d](https://www.123865.com/s/A4Nojv-4dg5d)
 or: [https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file](https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file)
+-
+致敬冲二打不过汗神冲一の疯狗Deproved
 
 
 
 ###### VI: DEAD
+
 视频似了或者链接似了
 
 YakumoRC - 八云红猫:  [VID DEAD]
@@ -497,6 +515,7 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 
 ###### VII. More
+
 <span style="color:inherit">[Happychon] Eum3杂谈: </span>[https://www.bilibili.com/video/av114484450434305](https://www.bilibili.com/video/av114484450434305)
 <span style="color:inherit">爱来自3y_</span>
 
@@ -510,6 +529,7 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 
 ##### 1.2.3. CHAN
+
 Timon Wong: [https://space.bilibili.com/15505075](https://space.bilibili.com/15505075/)
 国内顶尖原创材质作者
 
@@ -520,7 +540,7 @@ BlatantCheater (AngelBeat): [https://space.bilibili.com/630656685](https://space
 解决策の宝库
 
 节哀 (900elo): [https://space.bilibili.com/412514398](https://space.bilibili.com/412514398)
-搬运
+搬搬搬
 
 
 
@@ -541,6 +561,7 @@ Zefew: [https://www.youtube.com/@RVLZefew](https://www.youtube.com/@RVLZefew)
 
 
 ##### 1.2.4. extra???
+
 Bilibili Playlist: [https://space.bilibili.com/1049515077/favlist?fid=1266851177​](https://space.bilibili.com/1049515077/favlist?fid=1266851177)
 Youtube Playlist: [https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI](https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI)
 Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
@@ -558,15 +579,17 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1771998608901_6hhg.jpg)
+![image](/images/img_1772009660826_miue.jpg)
 
 
 ---
 ### 1.3. Servers
+
 “当今恐是前所未有的服务器荒漠期”
 
 
 ##### 1.3.1. INTL
+
 Minemen
 [as.minemen.club](https://minemen.club) (SG)
 [eu.minemen.club](https://eu.minemen.club) (DE)
@@ -593,6 +616,7 @@ dc: [https://discord.gg/dBZZbrADEU](https://discord.gg/dBZZbrADEU)
 
 
 ##### 1.3.2. CN
+
 Wihar
 [wihar.top](https://wihar.top) (浙江)
 尿壶修成鱼形
@@ -619,6 +643,7 @@ Iceland
 
 
 ##### 1.3.3. AS
+
 Syuu
 [syuu.net](https://syuu.net) (JP)
 dc: [https://discord.gg/syuunet](https://discord.gg/syuunet)
@@ -633,6 +658,7 @@ ArkaMC
 
 
 ##### 1.3.4. EU
+
 PvPlounge
 [beta.pvplounge.eu](https://beta.pvplounge.eu) (UK) [WL]
 dc: [https://discord.com/invite/J4KFkuZkcw](https://discord.com/invite/J4KFkuZkcw)
@@ -654,6 +680,7 @@ dc: [https://discord.gg/pvprivals](https://discord.gg/pvprivals)
 
 
 ##### 1.3.5. NA
+
 Nostalgia
 [nostalgia.earth](https://nostalgia.earth) (CA) [WL] {pre HVBC}
 dc: [https://discord.gg/jKpU7hfjXt](https://discord.gg/jKpU7hfjXt)
@@ -693,10 +720,12 @@ dc: [https://discord.gg/h5ywm25gKu](https://discord.gg/h5ywm25gKu)
 
 ---
 ### 1.4. Tools
+
 “非我所有，为我所用”
 
 
 ##### 1.4.1. Social
+
 discord: [https://discordapp.com/channels/@me](https://discordapp.com/channels/@me)
 
 
@@ -705,6 +734,7 @@ twitter: [https://x.com/home](https://x.com/home)
 
 
 ##### 1.4.2. Website
+
 Namemc: [https://namemc.com/](https://namemc.com/)
 id & 皮肤 & 服务器 查询
 
@@ -764,6 +794,7 @@ Comment Appeal: [https://www.bilibili.com/blackboard/cmmnty-appeal.html](https:/
 
 
 ##### 1.4.3. Productivity
+
 everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 本地搜索工具
 
@@ -800,8 +831,11 @@ Recuva: [https://filecr.com/windows/recuva/](https://filecr.com/windows/recuva/)
 
 ---
 ## Part 2. In-Game
+
 ### 2.1. Tutorial
+
 ##### Semi-Intro
+
 To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告知你一些game sense，要想消化它们，没个三年两载的Practicing是不现实的，不要妄想一步登天。
 
 自古以来所谓PvP教程乃是炒作重灾区，什么牛鬼蛇神都想来掺一脚博取小红点，社区流通的教学质量更是参差不齐。笔者经缜密考究后终得以下之清单，可供参考。
@@ -809,6 +843,8 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 ##### <span style="color:rgb(51, 51, 51)">2.1.1. Haiku</span>
+
+
 <span style="color:rgb(51, 51, 51)">[Qzark] Gui排布: </span>[https://www.bilibili.com/video/BV1JL4y177WZ/](https://www.bilibili.com/video/BV1JL4y177WZ/)
 <span style="color:rgb(255, 0, 0)">再拿牛鬼蛇神gui录视频的拖出去枪毙</span>
 
@@ -840,6 +876,8 @@ Jump那段没啥用，重点在ad的节奏上
 
 
 ##### <span style="color:rgb(51, 51, 51)">2.1.2. Sonnet</span>
+
+
 [PuffedUp] 喷药: [https://www.bilibili.com/video/av1300822255](https://www.bilibili.com/video/av1300822255)
 更现代的喷药教学，侧重凹血省药
 
@@ -866,6 +904,8 @@ Lewelll原教旨，改键了
 
 
 ##### 2.1.3. Opus
+
+
 [Raucous] Hit Select: [https://www.bilibili.com/video/av974289805](https://www.bilibili.com/video/av974289805)
 目前没几个驾驭得了
 
@@ -874,8 +914,14 @@ Lewelll原教旨，改键了
 超现代sense，推荐加dc
 
 
+[唐妍熙] Knockback: [https://www.bilibili.com/video/av114782548006153](https://www.bilibili.com/video/av114782548006153)
+很长
+
+
 
 ##### 2.1.4. OSS
+
+
 [Kirxo] BCZ jump: [https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
 combo加伤的，只有大优势局有用，表演价值高一点
 
@@ -901,13 +947,44 @@ another dead mode，给感兴趣的人
 
 
 ##### 2.1.5. Tweak
-JVM Arguments: [https://exa.y2k.diy/garden/jvm-args/](https://exa.y2k.diy/garden/jvm-args/)
 
+
+[Nilch 抗火药儿] In-Game Settings: [https://www.bilibili.com/video/av447677394](https://www.bilibili.com/video/av447677394)
+本视频讲述了一位玩家的游戏优化经验，包括游戏设置和一些软件的使用。他强调不需要使用外部软件来优化游戏，只需要调整一些设置和清理内存即可。他还分享了一些其他的小技巧，如调整聊天栏大小和关闭一些动画等。--以上内容由AI视频小助理生成，关注解锁AI助理，由[@水肺药水](https://space.bilibili.com/280396990) 召唤发送
+
+Nvidia控制面板: [https://www.bilibili.com/video/av113961890484183](https://www.bilibili.com/video/av113961890484183)
+用A卡的埋了吧
+
+
+--
+!  以下内容观看前请确保自己有足够动手能力。优化有风险，重装需谨慎；一时boost一时爽，无脑maxium火葬场
+
+
+[YoxOnqQAQ] tweak p1: [https://www.bilibili.com/video/av115368492272304](https://www.bilibili.com/video/av115368492272304
+https://www.bilibili.com/video/av115481403001924)
+p2: [https://www.bilibili.com/video/av115481403001924](https://www.bilibili.com/video/av115368492272304
+https://www.bilibili.com/video/av115481403001924)
+
+CS2调机器(方块人思路同理): [https://www.bilibili.com/video/av113754054460421](https://www.bilibili.com/video/av113754054460421)
+
+ZyperWinHub: [https://www.bilibili.com/video/av114843717733352](https://www.bilibili.com/video/av114843717733352)
+
+Dism++: [https://www.bilibili.com/video/av113040737436391](https://www.bilibili.com/video/av113040737436391)
+
+
+--
+JVM Arguments: [https://exa.y2k.diy/garden/jvm-args/](https://exa.y2k.diy/garden/jvm-args/)
+这好似是高版本的
+
+
+Windows 10 LTSC: [https://www.bilibili.com/video/av578920941](https://www.bilibili.com/video/av578920941)
+下载时请用镜像
 
 
 
 
 ### 2.2. Whenever Whatever Whoever
+
 那些无论何时何地任何人都值得观看的
 
 Lunar Champs:
@@ -996,12 +1073,14 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 
 ### 2.3. Appreciation!
+
 「Mythological Artascope of PotPvP Dynasty」
 
 <span style="color:rgb(123, 127, 131)">*这是个脑子一热开了坑最终弃掉的，灵感来源于</span>[这个](https://tieba.baidu.com/p/6593286560)<span style="color:rgb(123, 127, 131)">和</span>[那个](https://tieba.baidu.com/p/5272254427)<span style="color:rgb(123, 127, 131)">的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了</span>
 
 
 ##### 2.3.1. Classic
+
 [Jewdah] 8 blocking on lunar client: [https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
 神
 
@@ -1010,6 +1089,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 
 ##### 2.3.2. Gang
+
 [Kyeick] Best in the Game: [https://www.bilibili.com/video/av373343351](https://www.bilibili.com/video/av373343351)
 5:52 part II看看看看看看看
 
@@ -1021,6 +1101,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 
 ##### 2.3.3. Chill
+
 [yungsaphars] i use reach lol (best eu): [https://www.bilibili.com/video/av1550313132](https://www.bilibili.com/video/av1550313132)
 爹
 
@@ -1041,6 +1122,7 @@ BCZ抄袭酥桃吧·。。。。
 
 
 ##### 2.3.4. Drill
+
 [qVarious] Best of qVarious ~ Farewell 👋: [https://www.youtube.com/watch?v=kpBnzq_HldM](https://www.youtube.com/watch?v=kpBnzq_HldM)
 谁懂b站视频又没了，暂停施工
 
@@ -1050,10 +1132,16 @@ BCZ抄袭酥桃吧·。。。。
 
 ---
 ## Part 3. Video
+
 待填坑……
 
 
 
 ---
 ## Part 4. Outra
+
 待填坑……
+
+
+
+---
