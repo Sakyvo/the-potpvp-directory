@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772073526983_h4bg.png)
+![image](/images/img_1772073681416_ijqf.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772073533260_7wak.png)
+![image](/images/img_1772073684875_5r15.png)
 
 
 Q: 后门?
@@ -600,7 +600,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772073535707_3uzn.jpg)
+![image](/images/img_1772073686963_kh2p.jpg)
 
 
 ---
@@ -1021,10 +1021,8 @@ Nvidia控制面板: [https://www.bilibili.com/video/av113961890484183](https://w
 !  以下内容观看前请确保自己有足够动手能力。优化有风险，重装需谨慎；BoosterX一时爽，无脑最大火葬场。
 
 
-[YoxOnqQAQ] tweak p1: [https://www.bilibili.com/video/av115368492272304](https://www.bilibili.com/video/av115368492272304
-https://www.bilibili.com/video/av115481403001924)
-p2: [https://www.bilibili.com/video/av115481403001924](https://www.bilibili.com/video/av115368492272304
-https://www.bilibili.com/video/av115481403001924)
+[YoxOnqQAQ] tweak p1: [https://www.bilibili.com/video/av115368492272304](https://www.bilibili.com/video/av115368492272304)
+p2: [https://www.bilibili.com/video/av115481403001924](https://www.bilibili.com/video/av115481403001924)
 
 CS2调机器(方块人思路同理): [https://www.bilibili.com/video/av113754054460421](https://www.bilibili.com/video/av113754054460421)
 
