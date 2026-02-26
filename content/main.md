@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772073887779_7tqk.png)
+![image](/images/img_1772089192294_40lb.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772073891985_tk1o.png)
+![image](/images/img_1772089196296_4mnq.png)
 
 
 Q: 后门?
@@ -101,7 +101,7 @@ or 798082966 qq group
 
 CheatBreaker Net: [https://cheatbreaker.net](https://cheatbreaker.net/download)
 <span style="color:rgb(163, 224, 67)">优化好，免费饰品，交互丝滑，menu blur舒适</span>
-<span style="color:rgb(255, 0, 0)">下载慢，身份验证bug: 启动/关闭游戏加速器后session会掉 </span><span style="color:rgb(255, 0, 0)">(有的人可能没有? 没有的话基本是最佳选择了)</span>
+<span style="color:rgb(255, 0, 0)">下载慢，身份验证bug: 启动/关闭游戏加速器后session会掉 </span><span style="color:rgb(255, 0, 0);background-color:rgb(249, 237, 166)">(有的人可能没有? 没有的话基本是最佳选择了)</span>
 
 
 
@@ -115,7 +115,7 @@ Tellinq CheatBreaker-2_f87fb83/master [1.7.10]: [https://sakyvo.lanzouu.com/igU9
 <span style="color:rgb(163, 224, 67)">合并前最新的cb2。有patcher，优化好，极速启动</span>
 <span style="color:rgb(255, 0, 0)">材质包bug : 无pack.png的材质包，客户端启动时不会第一时间显示，需等待约10min；游戏运行时向resourcepack文件夹中热添加pack时，也需等待10min刷新</span>
 <span style="color:rgb(255, 0, 0)">无中文输入，中文输入法下按键盘会直接崩端</span>
-<span style="color:rgb(255, 0, 0)">所有cb2都无饰品</span>
+<span style="color:rgb(255, 0, 0);background-color:rgb(249, 237, 166)">所有cb2都无饰品</span>
 
 
 Tellinq CheatBreaker-2_9594402/master [1.7.10]: [https://www.mediafire.com/file/5ihdp395pf8h85z/CheatBreaker-1.7.10-Hyperpop.7z/file](https://www.mediafire.com/file/5ihdp395pf8h85z/CheatBreaker-1.7.10-Hyperpop.7z/file)
@@ -125,7 +125,7 @@ Tellinq CheatBreaker-2_9594402/master [1.7.10]: [https://www.mediafire.com/file/
 
 
 Tellinq CheatBreaker-2 [1.8.9]: [https://sakyvo.lanzouu.com/iul8S21bzq5g](https://sakyvo.lanzouu.com/iul8S21bzq5g)
-<span style="color:rgb(163, 224, 67)">有patcher，优化好，简约(对1.8而言)；自带Freelook, </span><span style="color:rgb(163, 224, 67)">NoClickDelay</span>
+<span style="color:rgb(163, 224, 67)">有patcher，优化好，简约(对1.8而言)；自带Freelook, </span><span style="color:rgb(163, 224, 67);background-color:rgb(249, 237, 166)">NoClickDelay</span>
 <span style="color:rgb(255, 0, 0)">材质包bug: 同1.7</span>
 <span style="color:rgb(255, 0, 0)">无中文输入，但切中文不会崩端</span>
 
@@ -164,6 +164,9 @@ LCQT v1.x: [https://github.com/Youded-byte/lunar-client-qt](https://github.com/Y
 v2.17.7-2447: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
 Lunar 2025暑期版本，Rewind更新前，没有材质包bug
 -
+c888646/master:
+Lunar 2022:
+-
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
 <span style="color:rgb(255, 0, 0)">拆东墙补西墙&折腾麻烦</span>
 <span style="color:rgb(150, 111, 231)">约2021年12月以后的版本都有patcher</span>
@@ -195,7 +198,7 @@ Arcane Client [1.7.10]: [https://www.mediafire.com/file/zr47umejg38y6w9/](https:
 
 
 RookieGod CheatBreaker [1.7.10]: [https://www.mediafire.com/file/efzv4jdsixkslrf/](https://www.mediafire.com/file/efzv4jdsixkslrf/)
-<span style="color:rgb(163, 224, 67)">国人魔改cb2017，有</span><span style="color:rgb(163, 224, 67)">Xray</span>，<span style="color:rgb(255, 0, 0)">但存在各种渲染bug材质错乱</span>
+<span style="color:rgb(163, 224, 67)">国人魔改cb2017，有</span><span style="color:rgb(163, 224, 67);background-color:rgb(249, 237, 166)">Xray</span>，<span style="color:rgb(255, 0, 0)">但存在各种渲染bug材质错乱</span>
 
 
 OCMC-Green [1.7.10]: [https://sakyvo.lanzouu.com/inoJN0if4wlg](https://sakyvo.lanzouu.com/inoJN0if4wlg)
@@ -246,14 +249,14 @@ aio: [http://www.mediafire.com/file/3mynzut9trw3mwl/pack_folder.zip/file](http:/
 Stimpy 2020: [https://www.youtube.com/watch?v=WuXTSvVmHDk](https://www.youtube.com/watch?v=WuXTSvVmHDk)
 aio: [http://www.mediafire.com/file/z22rpa2yo4b0rmr/2020_pack_folder_1-27-2020.zip/file](http://www.mediafire.com/file/z22rpa2yo4b0rmr/2020_pack_folder_1-27-2020.zip/file)
 ind: [https://pastebin.com/L2cvw90s](https://pastebin.com/L2cvw90s)
-<span style="color:inherit">传世经典，下材质❎ - 趁弹幕没有小学生发表睿智言论爽看Stimpy Combo ✅</span>
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">传世经典，下材质❎ - 趁弹幕没有小学生发表睿智言论爽看Stimpy Combo ✅</span>
 
-<span style="color:inherit">Stimpy 2022: </span>[https://www.bilibili.com/video/av115920865336722](https://www.bilibili.com/video/av115920865336722)
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">Stimpy 2022: </span>[https://www.bilibili.com/video/av115920865336722](https://www.bilibili.com/video/av115920865336722)
 aio: [https://www.mediafire.com/file/ajebwyv4yoj3q2d/stimp+PACK+FOLDER+2022.zip/file](https://www.mediafire.com/file/ajebwyv4yoj3q2d/stimp+PACK+FOLDER+2022.zip/file)
 旧活新整
 
 
-<span style="color:inherit">Kyeick: </span>[https://www.bilibili.com/video/av248107143](https://www.bilibili.com/video/av248107143)
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">Kyeick: </span>[https://www.bilibili.com/video/av248107143](https://www.bilibili.com/video/av248107143)
 aio: [DEAD, 在此批一个眼红的]
 ind: [https://pastebin.com/Y1TqE13q](https://pastebin.com/Y1TqE13q)
 重量级，鸡选天天读，功力日日深
@@ -273,7 +276,7 @@ Q群2022遗留pack: [https://www.mediafire.com/folder/u4rnsxc8hwbdv/](https://ww
 Q群2022遗留overlay: [https://www.mediafire.com/folder/q88yrv5x6hdz5/](https://www.mediafire.com/folder/q88yrv5x6hdz5/)
 
 
-yungsaphars: [https://www.bilibili.com/video/av96756008](https://www.bilibili.com/video/av96756008)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">yungsaphars: </span>[https://www.bilibili.com/video/av96756008](https://www.bilibili.com/video/av96756008)
 ind:[https://pastebin.com/ZkkaiXgk](https://pastebin.com/ZkkaiXgk)
 aio: [http://www.mediafire.com/file/wx6xh7vu70hobrt/yung_pack_folder.zip/file](http://www.mediafire.com/file/wx6xh7vu70hobrt/yung_pack_folder.zip/file)
 爹
@@ -376,17 +379,17 @@ ind: [https://l22333.lanzouw.com/b02oq4zda](https://l22333.lanzouw.com/b02oq4zda
 经典pack合集
 
 
-Lastro
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Lastro</span>
 -
-2k: [https://www.youtube.com/watch?v=hGtxLac2mzI](https://www.youtube.com/watch?v=hGtxLac2mzI)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">2k: </span>[https://www.youtube.com/watch?v=hGtxLac2mzI](https://www.youtube.com/watch?v=hGtxLac2mzI)
 ind: [https://pastebin.com/w1rMEAq6](https://pastebin.com/w1rMEAq6)
--
-2024: [https://www.bilibili.com/video/av1355891991](https://www.bilibili.com/video/av1355891991)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">-</span>
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">2024: </span>[https://www.bilibili.com/video/av1355891991](https://www.bilibili.com/video/av1355891991)
 ind: [https://pastebin.com/N9ehhEML](https://pastebin.com/N9ehhEML)
-<span style="color:inherit">-</span>
-Pack Bundle ft. Voice: [https://www.bilibili.com/video/av113644012572315](https://www.bilibili.com/video/av113644012572315)
-ind: [https://emt.lanzouq.com/b0mb4ppgj](https://emt.lanzouq.com/b0mb4ppgj)
-密码: d1ez
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">-</span>
+<span style="background-color:rgb(255, 255, 255)">Pack Bundle ft. Voice: </span>[https://www.bilibili.com/video/av113644012572315](https://www.bilibili.com/video/av113644012572315)
+<span style="background-color:rgb(255, 255, 255)">ind: </span>[https://emt.lanzouq.com/b0mb4ppgj](https://emt.lanzouq.com/b0mb4ppgj)
+<span style="background-color:rgb(255, 255, 255)">密码: d1ez</span>
 -
 个
 
@@ -516,13 +519,13 @@ or: [https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file](https:
 
 视频似了或者链接似了
 
-YakumoRC - 八云红猫:  [VID DEAD]
-ind: [https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">YakumoRC - 八云红猫:  [VID DEAD]</span>
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">ind: </span>[https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
 
-Stimpy Edits: [VID LOST]
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Stimpy Edits: [VID LOST]</span>
 [https://www.mediafire.com/?sn3otzq9728ztoy&dkey=534x45mmskp](https://www.mediafire.com/?sn3otzq9728ztoy&dkey=534x45mmskp)
 
-Mansdusty (Proxy): [NO VID]
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Mansdusty (Proxy): [NO VID]</span>
 [https://mega.nz/file/RD0G1Y4A#I7V6N1FQ5vg1VNXFxsuSEdQOmaDpoIg3qjRf19ydgdY](https://mega.nz/file/RD0G1Y4A#I7V6N1FQ5vg1VNXFxsuSEdQOmaDpoIg3qjRf19ydgdY)
 
 QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/video/av983817082)
@@ -532,12 +535,12 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 ###### VII. More
 
-<span style="color:inherit">[Happychon] Eum3杂谈: </span>[https://www.bilibili.com/video/av114484450434305](https://www.bilibili.com/video/av114484450434305)
-<span style="color:inherit">爱来自3y_</span>
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">[Happychon] Eum3杂谈: </span>[https://www.bilibili.com/video/av114484450434305](https://www.bilibili.com/video/av114484450434305)
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">爱来自3y_</span>
 
-<span style="color:inherit">[Nlich/上海沧桑] 原来有这么多经典POTPVP材质包你不知道？: </span>[https://www.bilibili.com/video/av451272715](https://www.bilibili.com/video/av451272715)
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">[Nlich/上海沧桑] 原来有这么多经典POTPVP材质包你不知道？: </span>[https://www.bilibili.com/video/av451272715](https://www.bilibili.com/video/av451272715)
 -
-<span style="color:inherit">[Nlich/上海沧桑] 这么多材质包 你都用过吗？？？？？: </span>[https://www.bilibili.com/video/av1700124160](https://www.bilibili.com/video/av1700124160)
+<span style="color:inherit;background-color:rgb(255, 255, 255);font-size:11pt">[Nlich/上海沧桑] 这么多材质包 你都用过吗？？？？？: </span>[https://www.bilibili.com/video/av1700124160](https://www.bilibili.com/video/av1700124160)
 子增没活了
 
 
@@ -578,9 +581,9 @@ Zefew: [https://www.youtube.com/@RVLZefew](https://www.youtube.com/@RVLZefew)
 
 ##### 1.2.4. extra???
 
-Bilibili Playlist: [https://space.bilibili.com/1049515077/favlist?fid=1266851177​](https://space.bilibili.com/1049515077/favlist?fid=1266851177)
-Youtube Playlist: [https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI](https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI)
-Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Bilibili Playlist: </span>[https://space.bilibili.com/1049515077/favlist?fid=1266851177​](https://space.bilibili.com/1049515077/favlist?fid=1266851177)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Youtube Playlist: </span>[https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI](https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI)
+<span style="background-color:rgb(255, 255, 255);font-size:11pt">Ranked Bedwars (Proxy): </span>[https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
 
 
 
@@ -600,7 +603,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772073894027_9s61.jpg)
+![image](/images/img_1772089198139_ubv1.jpg)
 
 
 ---
@@ -645,7 +648,7 @@ Wihar
 
 Kazer
 [kazer.cc](https://kazer.cc) (~~北京~~ → 上海)
-“<span style="color:rgb(68, 68, 68)">你心中的CN Lunar，在那个盛夏就已经死了。你现在看到的，不过是它腐烂的过程</span>”
+“<span style="color:rgb(68, 68, 68);background-color:rgb(255, 255, 255)">你心中的CN Lunar，在那个盛夏就已经死了。你现在看到的，不过是它腐烂的过程</span>”
 
 
 Jealousy
@@ -902,31 +905,31 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### <span style="color:rgb(51, 51, 51)">2.1.1. Haiku</span>
+##### <span style="color:rgb(51, 51, 51);background-color:rgb(255, 255, 255)">2.1.1. Haiku</span>
 
 
-<span style="color:rgb(51, 51, 51)">[Qzark] Gui排布: </span>[https://www.bilibili.com/video/BV1JL4y177WZ/](https://www.bilibili.com/video/BV1JL4y177WZ/)
-<span style="color:rgb(255, 0, 0)">再拿牛鬼蛇神gui录视频的拖出去枪毙</span>
+<span style="color:rgb(51, 51, 51);background-color:rgb(255, 255, 255);font-size:11pt">[Qzark] Gui排布: </span>[https://www.bilibili.com/video/BV1JL4y177WZ/](https://www.bilibili.com/video/BV1JL4y177WZ/)
+<span style="color:rgb(255, 0, 0);font-size:11pt">再拿牛鬼蛇神gui录视频的拖出去枪毙</span>
 
 
-[<span style="color:rgb(96, 96, 96)">iiLuna</span>] Combo: [https://www.bilibili.com/video/BV12m4y1i7MV](https://www.bilibili.com/video/BV12m4y1i7MV)
-经典老番，初学者最佳入门视频
+<span style="font-size:11pt">[</span><span style="color:rgb(96, 96, 96);background-color:rgb(255, 255, 255);font-size:11pt">iiLuna</span><span style="font-size:11pt">] Combo: </span>[https://www.bilibili.com/video/BV12m4y1i7MV](https://www.bilibili.com/video/BV12m4y1i7MV)
+<span style="font-size:11pt">经典老番，初学者最佳入门视频</span>
 
 
-[DiversityPvP] 重置疾跑: [https://www.bilibili.com/video/BV1R34y1H7fM](https://www.bilibili.com/video/BV1R34y1H7fM)
-对砍老兵Kaylr认证，侧重trade
+<span style="font-size:11pt">[DiversityPvP] 重置疾跑: </span>[https://www.bilibili.com/video/BV1R34y1H7fM](https://www.bilibili.com/video/BV1R34y1H7fM)
+<span style="font-size:11pt">对砍老兵Kaylr认证，侧重trade</span>
 
 
-[Intel Edits] Combo: [https://www.bilibili.com/video/BV1tT4y1P7mk](https://www.bilibili.com/video/BV1tT4y1P7mk)
-Jump那段没啥用，重点在ad的节奏上
+<span style="font-size:11pt">[Intel Edits] Combo: </span>[https://www.bilibili.com/video/BV1tT4y1P7mk](https://www.bilibili.com/video/BV1tT4y1P7mk)
+<span style="font-size:11pt">Jump那段没啥用，重点在ad的节奏上</span>
 
 
-[Zefew] tips: [https://www.bilibili.com/video/BV12Z4y1M7rc](https://www.bilibili.com/video/BV12Z4y1M7rc)
+<span style="font-size:11pt">[Zefew] tips: </span>[https://www.bilibili.com/video/BV12Z4y1M7rc](https://www.bilibili.com/video/BV12Z4y1M7rc)
 必看，相当超前的tips
 
 
-[Stimpy] 喷药: [https://www.bilibili.com/video/av754452930](https://www.bilibili.com/video/av754452930)
-要说的字幕里都说了，总结就是喷慢点喷稳点
+<span style="font-size:11pt">[Stimpy] 喷药: </span>[https://www.bilibili.com/video/av754452930](https://www.bilibili.com/video/av754452930)
+<span style="font-size:11pt">要说的字幕里都说了，总结就是喷慢点喷稳点</span>
 
 
 [Eloies]Run-eat 跑吃: [https://www.bilibili.com/video/BV12A411u7qX](https://www.bilibili.com/video/BV12A411u7qX)
@@ -935,31 +938,31 @@ Jump那段没啥用，重点在ad的节奏上
 
 
 
-##### <span style="color:rgb(51, 51, 51)">2.1.2. Sonnet</span>
+##### <span style="color:rgb(51, 51, 51);background-color:rgb(255, 255, 255)">2.1.2. Sonnet</span>
 
 
-[PuffedUp] 喷药: [https://www.bilibili.com/video/av1300822255](https://www.bilibili.com/video/av1300822255)
-更现代的喷药教学，侧重凹血省药
+<span style="font-size:11pt">[PuffedUp] 喷药:</span> [https://www.bilibili.com/video/av1300822255](https://www.bilibili.com/video/av1300822255)
+<span style="font-size:11pt">更现代的喷药教学，侧重凹血省药</span>
 
 
-Sag Blockhit
+<span style="font-size:11pt">Sag Blockhit</span>
 -
-尽可能地让格挡「填满」两次攻击之间的「间隔」时间，以让对手的hit打在自己的block上减少伤害
+<span style="font-size:11pt">尽可能地让格挡「填满」两次攻击之间的「间隔」时间，以让对手的hit打在自己的block上减少伤害</span>
 
-[Lewelll] 效果展示: [https://www.bilibili.com/video/BV1oy4y1n7NF](https://www.bilibili.com/video/BV1oy4y1n7NF)
-also精品elo series，建议多看
+<span style="font-size:11pt">[Lewelll] 效果展示: </span>[https://www.bilibili.com/video/BV1oy4y1n7NF](https://www.bilibili.com/video/BV1oy4y1n7NF)
+<span style="font-size:11pt">also精品elo series，建议多看</span>
 
-[LoveRenge 如果] Mid Sag (中文解说): [https://www.bilibili.com/video/BV1mR4y1t77Q/](https://www.bilibili.com/video/BV1mR4y1t77Q/)
-视频同款，减kb挡伤两不误
+<span style="font-size:11pt">[LoveRenge 如果] Mid Sag (中文解说): </span>[https://www.bilibili.com/video/BV1mR4y1t77Q/](https://www.bilibili.com/video/BV1mR4y1t77Q/)
+<span style="font-size:11pt">视频同款，减kb挡伤两不误</span>
 
-[2665xg] Long Sag: [https://www.bilibili.com/video/BV1q3411T7f4](https://www.bilibili.com/video/BV1q3411T7f4)
-新手推荐，挡率更高但是kb sucks
+<span style="font-size:11pt">[2665xg] Long Sag: </span>[https://www.bilibili.com/video/BV1q3411T7f4](https://www.bilibili.com/video/BV1q3411T7f4)
+<span style="font-size:11pt">新手推荐，挡率更高但是kb sucks</span>
 
-[Lewelll] Mid Sag: [https://www.bilibili.com/video/BV1dr4y1K7WD/](https://www.bilibili.com/video/BV1dr4y1K7WD/)
-Lewelll原教旨，改键了
+<span style="font-size:11pt">[Lewelll] Mid Sag: </span>[https://www.bilibili.com/video/BV1dr4y1K7WD/](https://www.bilibili.com/video/BV1dr4y1K7WD/)
+<span style="font-size:11pt">Lewelll原教旨，改键了</span>
 
-[Staind] “完美Sag节奏”: [https://www.bilibili.com/video/av802438732/?t=15](https://www.bilibili.com/video/av802438732/?t=15)
-“0 kb full ab”
+<span style="font-size:11pt">[Staind] “完美Sag节奏”: </span>[https://www.bilibili.com/video/av802438732/?t=15](https://www.bilibili.com/video/av802438732/?t=15)
+<span style="font-size:11pt">“0 kb full ab”</span>
 
 
 
@@ -970,11 +973,11 @@ Lewelll原教旨，改键了
 目前没几个驾驭得了
 
 
-[VoidRegion] RBW Experience: [https://www.bilibili.com/video/BV1jN411s78u](https://www.bilibili.com/video/BV1jN411s78u)
-超现代sense，推荐加dc
+<span style="font-size:11pt">[</span>VoidRegion<span style="font-size:11pt">] RBW Experience: </span>[https://www.bilibili.com/video/BV1jN411s78u](https://www.bilibili.com/video/BV1jN411s78u)
+<span style="font-size:11pt">超现代sense，推荐加dc</span>
 
 
-[唐妍熙] Knockback: [https://www.bilibili.com/video/av114782548006153](https://www.bilibili.com/video/av114782548006153)
+<span style="font-size:11pt">[唐妍熙] Knockback: </span>[https://www.bilibili.com/video/av114782548006153](https://www.bilibili.com/video/av114782548006153)
 很长
 
 
@@ -982,27 +985,27 @@ Lewelll原教旨，改键了
 ##### 2.1.4. OSS
 
 
-[Kirxo] BCZ jump: [https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
-combo加伤的，只有大优势局有用，表演价值高一点
+<span style="font-size:11pt">[Kirxo] BCZ jump: </span>[https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
+<span style="font-size:11pt">combo加伤的，只有大优势局有用，表演价值高一点</span>
 
 
 [Nakoso] 蹭药: [https://www.bilibili.com/video/av336848237](https://www.bilibili.com/video/av336848237)
 图一乐
 
 
-[minemanner] Jump Reset: [https://www.bilibili.com/video/BV1sP4y1M7Lw](https://www.bilibili.com/video/BV1sP4y1M7Lw)
+<span style="font-size:11pt">[</span>minemanner<span style="font-size:11pt">] Jump Reset: </span>[https://www.bilibili.com/video/BV1sP4y1M7Lw](https://www.bilibili.com/video/BV1sP4y1M7Lw)
 我不觉得jr有用
 
 
-[DJThread] Debuff Tutorial: [https://www.bilibili.com/video/BV17P411R7i8](https://www.bilibili.com/video/BV17P411R7i8)
+<span style="font-size:11pt">[DJThread] Debuff Tutorial: </span>[https://www.bilibili.com/video/BV17P411R7i8](https://www.bilibili.com/video/BV17P411R7i8)
 也只有同好会看咯，RIP Debuff & Vanilla ~
 
 
-[nffn] How 2 HCF: [https://www.bilibili.com/video/BV1s642137xw](https://www.bilibili.com/video/BV1s642137xw)
-another dead mode，给感兴趣的人
+<span style="font-size:11pt">[nffn] How 2 HCF: </span>[https://www.bilibili.com/video/BV1s642137xw](https://www.bilibili.com/video/BV1s642137xw)
+<span style="font-size:11pt">another dead mode，给感兴趣的人</span>
 
 
-(DEAD) [Intel Edits] pvp sense: [https://www.bilibili.com/video/BV12e4y1p7Ty](https://www.bilibili.com/video/BV12e4y1p7Ty)
+<span style="font-size:11pt">(DEAD) [Intel Edits] pvp sense: </span>[https://www.bilibili.com/video/BV12e4y1p7Ty](https://www.bilibili.com/video/BV12e4y1p7Ty)
 
 
 
@@ -1057,6 +1060,9 @@ Lunar Champs:
 [https://www.bilibili.com/video/BV1ve4y1t7aT/](https://www.bilibili.com/video/BV1ve4y1t7aT/)
 
 
+时代地产搬的19h 100集 full matches: [https://www.bilibili.com/video/av691951025](https://www.bilibili.com/video/av691951025)
+
+
 Lastro elo series p1:
 [https://www.bilibili.com/video/BV1tA41137Jp/](https://www.bilibili.com/video/BV1tA41137Jp/)
 [https://www.bilibili.com/video/BV1EQ4y1a7y7/](https://www.bilibili.com/video/BV1EQ4y1a7y7/)
@@ -1101,7 +1107,7 @@ isla elo series 2023: [https://www.bilibili.com/video/BV13c411J76V/](https://www
 Staind vs Nakoso: [https://www.bilibili.com/video/av778003465](https://www.bilibili.com/video/av778003465)
 
 
-Eloeis vs Kyeick: [https://www.bilibili.com/video/av629086454](https://www.bilibili.com/video/av629086454)
+Eloies vs Kyeick: [https://www.bilibili.com/video/av629086454](https://www.bilibili.com/video/av629086454)
 
 
 Lizishu Elo Series [1339elo]: [https://www.bilibili.com/video/av1152702334](https://www.bilibili.com/video/av1152702334)
@@ -1135,12 +1141,12 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 「Mythological Artascope of PotPvP Dynasty」
 
-<span style="color:rgb(123, 127, 131)">*这是个脑子一热开了坑最终弃掉的，灵感来源于</span>[这个](https://tieba.baidu.com/p/6593286560)<span style="color:rgb(123, 127, 131)">和</span>[那个](https://tieba.baidu.com/p/5272254427)<span style="color:rgb(123, 127, 131)">的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了</span>
+<span style="color:rgb(123, 127, 131);font-size:9pt">*这是个脑子一热开了坑最终弃掉的，灵感来源于</span>[这个](https://tieba.baidu.com/p/6593286560)<span style="color:rgb(123, 127, 131);font-size:9pt">和</span>[那个](https://tieba.baidu.com/p/5272254427)<span style="color:rgb(123, 127, 131);font-size:9pt">的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了</span>
 
 
 ##### 2.3.1. Classic
 
-[Jewdah] 8 blocking on lunar client: [https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
+<span style="font-size:11pt">[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
 神
 
 [Jewdah] smacking kids on the craft: [https://www.bilibili.com/video/BV1Eb4y1i7sc](https://www.bilibili.com/video/BV1Eb4y1i7sc)
