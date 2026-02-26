@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772073681416_ijqf.png)
+![image](/images/img_1772073887779_7tqk.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772073684875_5r15.png)
+![image](/images/img_1772073891985_tk1o.png)
 
 
 Q: 后门?
@@ -162,7 +162,7 @@ LCQT v1.x: [https://github.com/Youded-byte/lunar-client-qt](https://github.com/Y
 前置启动器
 -
 v2.17.7-2447: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
-Lunar 2025暑期版本，Rewind更新前，没有材质包big
+Lunar 2025暑期版本，Rewind更新前，没有材质包bug
 -
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
 <span style="color:rgb(255, 0, 0)">拆东墙补西墙&折腾麻烦</span>
@@ -600,7 +600,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772073686963_kh2p.jpg)
+![image](/images/img_1772073894027_9s61.jpg)
 
 
 ---
