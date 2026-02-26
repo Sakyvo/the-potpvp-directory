@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772009654922_w6up.png)
+![image](/images/img_1772073526983_h4bg.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772009658593_3w4t.png)
+![image](/images/img_1772073533260_7wak.png)
 
 
 Q: 后门?
@@ -157,10 +157,21 @@ Protocol CheatBreaker-1.6.25 [1.7.10]: [https://www.mediafire.com/file/40uzwkfez
 
 
 Lunar Client - Offline: 献给配得上的人
+-
+LCQT v1.x: [https://github.com/Youded-byte/lunar-client-qt](https://github.com/Youded-byte/lunar-client-qt)
+前置启动器
+-
+v2.17.7-2447: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
+Lunar 2025暑期版本，Rewind更新前，没有材质包big
+-
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
-<span style="color:rgb(255, 0, 0)">拆东墙补西墙&难找</span>
-LCQT: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
-(1.7.10 & 1.8.9 v2.17.7-2447)
+<span style="color:rgb(255, 0, 0)">拆东墙补西墙&折腾麻烦</span>
+<span style="color:rgb(150, 111, 231)">约2021年12月以后的版本都有patcher</span>
+
+
+LCQT v2.5.0: [https://codeberg.org/Candicey/2TQCL](https://codeberg.org/Candicey/2TQCL)
+<span style="color:rgb(150, 111, 231)">被DMCA砸似了，有无人能给它复活的</span>
+
 
 
 ##### 1.1.3. 收藏品
@@ -352,6 +363,11 @@ v5: [https://www.bilibili.com/video/BV1jf4y1b7dp/](https://www.bilibili.com/vide
 v6: [https://www.bilibili.com/video/BV1aA411P7Gr/](https://www.bilibili.com/video/BV1aA411P7Gr/)
 v7: [https://www.bilibili.com/video/BV1CS4y1f7Fe/](https://www.bilibili.com/video/BV1CS4y1f7Fe/)
 “黄金时代的梦”
+
+
+Elleptical FPS Pack Folder: [https://www.youtube.com/watch?v=rET6Fu2cDjw](https://www.youtube.com/watch?v=rET6Fu2cDjw)
+ind: [https://www.mediafire.com/folder/wij0jonzv51x3/](https://www.mediafire.com/folder/wij0jonzv51x3/)
+犹大赞助商
 
 
 Ssel: [https://www.bilibili.com/video/av678139558](https://www.bilibili.com/video/av678139558)
@@ -568,6 +584,10 @@ Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCn
 
 
 
+
+
+
+
 and
 
 I1ZBTEUgUFJPSkVDVA==
@@ -577,9 +597,10 @@ I1ZBTEUgUFJPSkVDVA==
 
 
 
+
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772009660826_miue.jpg)
+![image](/images/img_1772073535707_3uzn.jpg)
 
 
 ---
@@ -659,7 +680,7 @@ ArkaMC
 
 ##### 1.3.4. EU
 
-PvPlounge
+PvPLounge
 [beta.pvplounge.eu](https://beta.pvplounge.eu) (UK) [WL]
 dc: [https://discord.com/invite/J4KFkuZkcw](https://discord.com/invite/J4KFkuZkcw)
 高仿的lounge
@@ -726,10 +747,20 @@ dc: [https://discord.gg/h5ywm25gKu](https://discord.gg/h5ywm25gKu)
 
 ##### 1.4.1. Social
 
-discord: [https://discordapp.com/channels/@me](https://discordapp.com/channels/@me)
+这个我本该裁掉的奈何某些人太，，，
+
+国内b站qq最多加个kook；国际yt dc最多加个x和tg
+
+什么你上不了外网？那我问你你玩网几年了，小于2年你反思一下为什么会看到这个文档，大于2年？你更该反思了
 
 
-twitter: [https://x.com/home](https://x.com/home)
+Discord: [https://discordapp.com/channels/@me](https://discordapp.com/channels/@me)
+
+Twitter: [https://x.com/home](https://x.com/home)
+
+Telegram A: [https://web.telegram.org/a](https://web.telegram.org/a)
+
+Telegram K: [https://web.telegram.org/k](https://web.telegram.org/k)
 
 
 
@@ -740,7 +771,7 @@ id & 皮肤 & 服务器 查询
 
 
 蓝奏云: [https://up.woozooo.com/mydisk.php](https://up.woozooo.com/mydisk.php)
-国内盘，分享小型文件 (材质包再敢传百度夸克的试试?)
+国内盘，分享小型文件 (材质包再敢传百度夸克的试一个看看啊?)
 
 Mediafire: [https://app.mediafire.com/folder/myfiles](https://app.mediafire.com/folder/myfiles)
 国际盘，分享大型文件 (用临时邮箱注册可以无限薅)
@@ -752,11 +783,11 @@ Wormhole: [https://wormhole.app/](https://wormhole.app/)
 workupload: [https://workupload.com/](https://workupload.com/)
 欧公子版奶牛快传，dmca去死吧。支持阅后即焚
 
-TmpLink: [https://www.tmp.link/](https://www.tmp.link/?tmpui_page=/vx&module=filelist&view=list)
-不限速不限文件大小，7d内无人下载文件会被删除
-
 dlgg: [https://download.gg/](https://download.gg/)
 端到端加密，25gb limit
+
+TmpLink: [https://www.tmp.link/](https://www.tmp.link/?tmpui_page=/vx&module=filelist&view=list)
+不限速不限文件大小，7d内无人下载文件自动删除
 
 
 Pastebin: [https://pastebin.com/](https://pastebin.com/)
@@ -767,6 +798,10 @@ pastefy: [https://pastefy.app/](https://pastefy.app/)
 
 PWpush: [https://eu.pwpush.com/](https://eu.pwpush.com/)
 限时限量&阅后即焚文本分享
+
+
+图床: [https://img.remit.ee/](https://img.remit.ee/)
+more: [https://sspai.com/post/98911](https://sspai.com/post/98911)
 
 
 Wayback Machine: [https://archive.org/](https://archive.org/)
@@ -791,10 +826,27 @@ Comment Appeal: [https://www.bilibili.com/blackboard/cmmnty-appeal.html](https:/
 如题
 
 
+FileCR: [https://filecr.com/us-en/](https://filecr.com/us-en/)
+ez crk
+
+rutor: [http://rutor.info/](http://rutor.info/)
+丰矿的俄人网站
+
+GnDown: [https://www.gndown.com/](https://www.gndown.com/)
+423Down: [https://www.423down.com/](https://www.423down.com/)
+YXSSP: [https://www.yxssp.com/](https://www.yxssp.com/)
+GHXI: [https://www.ghxi.com/](https://www.ghxi.com/)
+-
+FirePX: [https://www.firepx.com/app/](https://www.firepx.com/app/)
+MODSAPK: [https://getmodsapk.com/](https://getmodsapk.com/)
+-
+不解释
+
+
 
 
 ##### 1.4.3. Productivity
-
+###### 
 everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 本地搜索工具
 
@@ -803,24 +855,32 @@ idm crk: [https://www.mimods.com/99.html](https://www.mimods.com/99.html)
 下载器插件&搬视频
 
 
+qBittorrent: [https://www.qbittorrent.org/](https://www.qbittorrent.org/)
+种子下载器
+
+
 Bandizip 7.06: [https://www.lanzn.com/iUP8Hv0taej](https://www.lanzn.com/iUP8Hv0taej)
 压缩文件查看器，选这个是因为可以快速preview 图片方便看材质包；7.06有暴力破解压缩包密码功能
 
 
+Revo Uninstaller: [https://www.423down.com/8544.html](https://www.423down.com/8544.html)
+清洁式软件卸载工具
+
+
 NVCleanInstall: [https://www.techpowerup.com/download/techpowerup-nvcleanstall/](https://www.techpowerup.com/download/techpowerup-nvcleanstall/)
-轮椅版装N卡驱动工具
+轮椅版N卡驱动安装器
 
 
 paint.net: [https://www.dotpdn.com/downloads/pdn.html](https://www.dotpdn.com/downloads/pdn.html)
-画材质包用的，有多少人找不到下载链接的说
+画材质包用的，半天找不到下载链接的出列
+
+
+PhotoShop 2026: [https://filecr.com/windows/adobe-photoshop-download-0056/](https://filecr.com/windows/adobe-photoshop-download-0056/)
+本该放在Video那边
 
 
 Notepad3: [https://www.gndown.com/2011.html](https://www.gndown.com/2011.html)
 最佳文本编辑器
-
-
-qBittorrent: [https://www.qbittorrent.org/](https://www.qbittorrent.org/)
-种子下载器，俄人网站要用
 
 
 Recuva: [https://filecr.com/windows/recuva/](https://filecr.com/windows/recuva/)
@@ -952,12 +1012,13 @@ another dead mode，给感兴趣的人
 [Nilch 抗火药儿] In-Game Settings: [https://www.bilibili.com/video/av447677394](https://www.bilibili.com/video/av447677394)
 本视频讲述了一位玩家的游戏优化经验，包括游戏设置和一些软件的使用。他强调不需要使用外部软件来优化游戏，只需要调整一些设置和清理内存即可。他还分享了一些其他的小技巧，如调整聊天栏大小和关闭一些动画等。--以上内容由AI视频小助理生成，关注解锁AI助理，由[@水肺药水](https://space.bilibili.com/280396990) 召唤发送
 
+
 Nvidia控制面板: [https://www.bilibili.com/video/av113961890484183](https://www.bilibili.com/video/av113961890484183)
 用A卡的埋了吧
 
 
 --
-!  以下内容观看前请确保自己有足够动手能力。优化有风险，重装需谨慎；一时boost一时爽，无脑maxium火葬场
+!  以下内容观看前请确保自己有足够动手能力。优化有风险，重装需谨慎；BoosterX一时爽，无脑最大火葬场。
 
 
 [YoxOnqQAQ] tweak p1: [https://www.bilibili.com/video/av115368492272304](https://www.bilibili.com/video/av115368492272304
