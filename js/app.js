@@ -319,6 +319,9 @@
       }
       if (!currentSub) return;
       currentSub.classList.add('active-sub');
+      // Update URL hash to sub-heading
+      const subTarget = currentSub.dataset.target;
+      if (subTarget) history.replaceState(null, '', '#' + subTarget);
       const level = currentSub.classList.contains('toc-h5') ? 5 :
                     currentSub.classList.contains('toc-h4') ? 4 : 3;
       if (level > 3) {
@@ -337,7 +340,8 @@
 
     // Initial hash scroll
     if (location.hash) {
-      const target = document.getElementById('floor-' + location.hash.slice(1));
+      const h = location.hash.slice(1);
+      const target = document.getElementById('floor-' + h) || document.getElementById(h);
       if (target) setTimeout(() => target.scrollIntoView({ block: 'start' }), 100);
     }
   }

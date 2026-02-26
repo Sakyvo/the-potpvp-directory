@@ -576,24 +576,31 @@
         const style = el.getAttribute('style') || '';
         const colorMatch = style.match(/color:\s*([^;]+)/i);
         const bgMatch = style.match(/background-color:\s*([^;]+)/i);
+        const fsMatch = style.match(/font-size:\s*([^;]+)/i);
 
+        const parts = [];
         if (colorMatch) {
           const color = colorMatch[1].trim();
-          // Skip white colors
           if (/^(rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|#fff(?:fff)?|white)$/i.test(color)) {
-            return inner;
-          }
-          // Skip black/default colors
-          if (!/^(rgb\(0,?\s*0,?\s*0\)|#000|black)$/i.test(color)) {
-            return `<span style="color:${color}">${inner}</span>`;
+            // skip white
+          } else if (!/^(rgb\(0,?\s*0,?\s*0\)|#000|black)$/i.test(color)) {
+            parts.push(`color:${color}`);
           }
         }
         if (bgMatch) {
           const bg = bgMatch[1].trim();
           if (!/^(transparent|rgba?\(0,?\s*0,?\s*0,?\s*0\))$/i.test(bg)) {
-            return `<span style="background-color:${bg}">${inner}</span>`;
+            parts.push(`background-color:${bg}`);
           }
         }
+        if (fsMatch) {
+          const fs = fsMatch[1].trim();
+          // Keep non-default sizes (skip ~14px/1em/medium/inherit)
+          if (!/^(14px|1em|medium|inherit|initial)$/i.test(fs)) {
+            parts.push(`font-size:${fs}`);
+          }
+        }
+        if (parts.length) return `<span style="${parts.join(';')}">${inner}</span>`;
         return inner;
       }
 
