@@ -191,7 +191,7 @@
 
       floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
-        const hId = `${id}-h${j}`;
+        const hId = slugify(h.textContent) || `${id}-h${j}`;
         h.id = hId;
         tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}">${h.textContent}</a></li>`;
       });
