@@ -287,7 +287,7 @@
         }
       }
       if (topId) {
-        history.replaceState(null, '', '#' + topId);
+        if (location.hash !== '#' + topId) history.replaceState(null, '', '#' + topId);
         tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
         const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
         if (active) active.classList.add('active');
@@ -321,7 +321,7 @@
       currentSub.classList.add('active-sub');
       // Update URL hash to sub-heading
       const subTarget = currentSub.dataset.target;
-      if (subTarget) history.replaceState(null, '', '#' + subTarget);
+      if (subTarget && location.hash !== '#' + subTarget) history.replaceState(null, '', '#' + subTarget);
       const level = currentSub.classList.contains('toc-h5') ? 5 :
                     currentSub.classList.contains('toc-h4') ? 4 : 3;
       if (level > 3) {
