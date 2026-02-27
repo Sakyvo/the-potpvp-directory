@@ -97,6 +97,11 @@
     return text.replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').substring(0, 40) || 'floor';
   }
 
+  // ── Slugify for URL hash (preserves dots) ──
+  function slugifyUrl(text) {
+    return text.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').substring(0, 80) || 'section';
+  }
+
   // ── Split markdown by h2 headings ──
   function splitByH2(md) {
     const lines = md.split('\n');
@@ -167,7 +172,7 @@
       const title = floor.title || '序';
 
       html += `
-        <div class="floor" id="floor-${id}" data-section-id="${id}">
+        <div class="floor" id="floor-${id}" data-section-id="${id}" data-url-slug="${slugifyUrl(title)}">
           <div class="floor-header">${floorNum} &nbsp; ${title}</div>
           <div class="floor-body">${renderMd(floor.md)}</div>
         </div>`;
@@ -187,13 +192,14 @@
       let title = headerEl ? headerEl.textContent.trim() : '';
       title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
 
-      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}">${floorNum} ${title}</a></li>`;
+      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}" data-url-slug="${slugifyUrl(title)}">${floorNum} ${title}</a></li>`;
 
-      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5').forEach((h, j) => {
+      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
         const hId = slugify(h.textContent) || `${id}-h${j}`;
         h.id = hId;
-        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}">${h.textContent}</a></li>`;
+        h.dataset.urlSlug = slugifyUrl(h.textContent);
+        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}" data-url-slug="${h.dataset.urlSlug}">${h.textContent}</a></li>`;
       });
     });
     tocEl.innerHTML = tocHtml;
@@ -287,17 +293,20 @@
         }
       }
       if (topId) {
-        if (location.hash !== '#' + topId) history.replaceState(null, '', '#' + topId);
         tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
         const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
-        if (active) active.classList.add('active');
+        if (active) {
+          active.classList.add('active');
+          const floorUrlSlug = active.dataset.urlSlug;
+          if (floorUrlSlug && location.hash !== '#' + floorUrlSlug) history.replaceState(null, '', '#' + floorUrlSlug);
+        }
         updateTocSub();
       }
     }, { rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')} 0px -60% 0px`, threshold: [0, 0.25, 0.5] });
 
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
 
-    // Sub-heading ancestry highlight
+    // Sub-heading ancestry highlight + path-based URL hash
     function updateTocSub() {
       tocEl.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
       const activeH2 = tocEl.querySelector('.toc-item.active');
@@ -319,29 +328,41 @@
       }
       if (!currentSub) return;
       currentSub.classList.add('active-sub');
-      // Update URL hash to sub-heading
-      const subTarget = currentSub.dataset.target;
-      if (subTarget && location.hash !== '#' + subTarget) history.replaceState(null, '', '#' + subTarget);
-      const level = currentSub.classList.contains('toc-h5') ? 5 :
+      const level = currentSub.classList.contains('toc-h6') ? 6 :
+                    currentSub.classList.contains('toc-h5') ? 5 :
                     currentSub.classList.contains('toc-h4') ? 4 : 3;
+      // Collect ancestors, build URL path
+      const ancestors = [];
       if (level > 3) {
         let prev = currentSub.closest('li')?.previousElementSibling;
-        let needH4 = level === 5, needH3 = true;
-        while (prev && (needH3 || needH4)) {
+        let needH5 = level >= 6, needH4 = level >= 5, needH3 = true;
+        while (prev && (needH3 || needH4 || needH5)) {
           const a = prev.querySelector('.toc-item');
           if (!a || a.classList.contains('toc-h2')) break;
-          if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); needH4 = false; }
-          if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); needH3 = false; }
+          if (needH5 && a.classList.contains('toc-h5')) { a.classList.add('active-sub'); ancestors.unshift(a); needH5 = false; }
+          if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); ancestors.unshift(a); needH4 = false; }
+          if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); ancestors.unshift(a); needH3 = false; }
           prev = prev.previousElementSibling;
         }
       }
+      // Build and set path hash
+      const floorSlug = activeH2.dataset.urlSlug || '';
+      const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''];
+      const pathHash = pathParts.filter(Boolean).join('_');
+      if (pathHash && location.hash !== '#' + pathHash) history.replaceState(null, '', '#' + pathHash);
     }
     window.addEventListener('scroll', updateTocSub);
 
     // Initial hash scroll
     if (location.hash) {
       const h = location.hash.slice(1);
-      const target = document.getElementById('floor-' + h) || document.getElementById(h);
+      // Try old element ID format first
+      let target = document.getElementById('floor-' + h) || document.getElementById(h);
+      // Try new path format: last segment matches data-url-slug
+      if (!target) {
+        const lastSeg = h.split('_').pop();
+        target = document.querySelector(`[data-url-slug="${lastSeg}"]`);
+      }
       if (target) setTimeout(() => target.scrollIntoView({ block: 'start' }), 100);
     }
   }

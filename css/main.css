@@ -98,9 +98,11 @@ body {
 .toc-item.active-sub.toc-h3 { color: var(--text-primary); background: #e8e8e8; }
 .toc-item.active-sub.toc-h4 { color: var(--text-primary); background: #f0f0f0; }
 .toc-item.active-sub.toc-h5 { color: var(--text-primary); background: #f5f5f5; }
+.toc-item.active-sub.toc-h6 { color: var(--text-primary); background: #f8f8f8; }
 .toc-item.toc-h3 { padding-left: 40px; font-weight: 400; font-size: 13px; }
 .toc-item.toc-h4 { padding-left: 56px; font-weight: 400; font-size: 13px; }
 .toc-item.toc-h5 { padding-left: 72px; font-weight: 400; font-size: 12px; }
+.toc-item.toc-h6 { padding-left: 88px; font-weight: 400; font-size: 11px; }
 
 /* ── Content ── */
 .content {

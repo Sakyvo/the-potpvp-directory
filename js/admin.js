@@ -920,7 +920,7 @@
       let title = headerEl ? headerEl.textContent.trim() : '';
       title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
       html += `<li><a class="toc-item toc-h2" data-target="admin-floor-${i}">#${i}F ${title}</a></li>`;
-      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5').forEach((h, j) => {
+      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
         const hId = `admin-${i}-h${j}`;
         h.id = hId;
@@ -967,7 +967,8 @@
             // Sub-heading: find by text + level prefix
             const text = item.textContent.trim();
             const prefix = item.classList.contains('toc-h3') ? '### ' :
-                           item.classList.contains('toc-h4') ? '#### ' : '##### ';
+                           item.classList.contains('toc-h4') ? '#### ' :
+                           item.classList.contains('toc-h5') ? '##### ' : '###### ';
             const lines = sourceBuffer.split('\n');
             for (let i = 0; i < lines.length; i++) {
               if (lines[i].startsWith(prefix) && lines[i].includes(text)) {
@@ -1022,14 +1023,16 @@
             }
             if (currentSub) {
               currentSub.classList.add('active-sub');
-              const level = currentSub.classList.contains('toc-h5') ? 5 :
+              const level = currentSub.classList.contains('toc-h6') ? 6 :
+                            currentSub.classList.contains('toc-h5') ? 5 :
                             currentSub.classList.contains('toc-h4') ? 4 : 3;
               if (level > 3) {
                 let prev = currentSub.closest('li')?.previousElementSibling;
-                let needH4 = level === 5, needH3 = true;
-                while (prev && (needH3 || needH4)) {
+                let needH5 = level >= 6, needH4 = level >= 5, needH3 = true;
+                while (prev && (needH3 || needH4 || needH5)) {
                   const a = prev.querySelector('.toc-item');
                   if (!a || a.classList.contains('toc-h2')) break;
+                  if (needH5 && a.classList.contains('toc-h5')) { a.classList.add('active-sub'); needH5 = false; }
                   if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); needH4 = false; }
                   if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); needH3 = false; }
                   prev = prev.previousElementSibling;
