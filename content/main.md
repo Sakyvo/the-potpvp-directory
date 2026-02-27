@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772089192294_40lb.png)
+![image](/images/img_1772168260653_74iz.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772089196296_4mnq.png)
+![image](/images/img_1772168263414_idc6.png)
 
 
 Q: 后门?
@@ -603,7 +603,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772089198139_ubv1.jpg)
+![image](/images/img_1772168265055_w5z8.jpg)
 
 
 ---
@@ -857,6 +857,8 @@ everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 idm crk: [https://www.mimods.com/99.html](https://www.mimods.com/99.html)
 下载器插件&搬视频
 
+Jdownloader: [https://jdownloader.org/](https://jdownloader.org/)
+批量下载mediafire
 
 qBittorrent: [https://www.qbittorrent.org/](https://www.qbittorrent.org/)
 种子下载器
@@ -952,7 +954,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 <span style="font-size:11pt">[Lewelll] 效果展示: </span>[https://www.bilibili.com/video/BV1oy4y1n7NF](https://www.bilibili.com/video/BV1oy4y1n7NF)
 <span style="font-size:11pt">also精品elo series，建议多看</span>
 
-<span style="font-size:11pt">[LoveRenge 如果] Mid Sag (中文解说): </span>[https://www.bilibili.com/video/BV1mR4y1t77Q/](https://www.bilibili.com/video/BV1mR4y1t77Q/)
+<span style="font-size:11pt">[LoveRenge/如果] Mid Sag (中文解说): </span>[https://www.bilibili.com/video/BV1mR4y1t77Q/](https://www.bilibili.com/video/BV1mR4y1t77Q/)
 <span style="font-size:11pt">视频同款，减kb挡伤两不误</span>
 
 <span style="font-size:11pt">[2665xg] Long Sag: </span>[https://www.bilibili.com/video/BV1q3411T7f4](https://www.bilibili.com/video/BV1q3411T7f4)
@@ -1144,6 +1146,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 <span style="color:rgb(123, 127, 131);font-size:9pt">*这是个脑子一热开了坑最终弃掉的，灵感来源于</span>[这个](https://tieba.baidu.com/p/6593286560)<span style="color:rgb(123, 127, 131);font-size:9pt">和</span>[那个](https://tieba.baidu.com/p/5272254427)<span style="color:rgb(123, 127, 131);font-size:9pt">的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了</span>
 
 
+
 ##### 2.3.1. Classic
 
 <span style="font-size:11pt">[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
@@ -1152,17 +1155,45 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 [Jewdah] smacking kids on the craft: [https://www.bilibili.com/video/BV1Eb4y1i7sc](https://www.bilibili.com/video/BV1Eb4y1i7sc)
 坟
 
+Jewdah的所有视频都应该看😡
+
+
+[iPlayForChange/嫦娥] 砍你爷: [https://www.bilibili.com/video/av545841891](https://www.bilibili.com/video/av545841891)
+听说720p能让渲染变好看
+
+
 
 ##### 2.3.2. Gang
 
 [Kyeick] Best in the Game: [https://www.bilibili.com/video/av373343351](https://www.bilibili.com/video/av373343351)
 5:52 part II看看看看看看看
 
+[Kyeick] Just Better: [https://www.bilibili.com/video/av891333293](https://www.bilibili.com/video/av891333293)
+ByRez qwq
+
+[Kyeick] the best of all time 🌏💯: [https://www.bilibili.com/video/av338361406](https://www.bilibili.com/video/av338361406)
+ByRez pwp
+
+[Kyeick] NONE: [https://www.bilibili.com/video/av810889813](https://www.bilibili.com/video/av810889813)
+[标题来源](https://www.emojiall.com/zh-hans/emoji/‍)
+
+筱燃鸡的所有视频都应该看😡
+
+
 [Staind] Best in the Game: [https://www.bilibili.com/video/av1556497493](https://www.bilibili.com/video/av1556497493)
 掉药了谁的药啊
 
+
+[ByRez] 2000 Elo on PvPGym with Antic Client: [https://www.bilibili.com/video/av376731552](https://www.bilibili.com/video/av376731552)
+好喜欢这个端的gui谁懂
+
+[ByRez] Italian Players #4: [https://www.bilibili.com/video/av843604879](https://www.bilibili.com/video/av843604879)
+dislike = losers
+
+
 [BCZ] I'm the best at this game: [https://www.bilibili.com/video/av18460181](https://www.bilibili.com/video/av18460181)
 飞起来
+
 
 
 ##### 2.3.3. Chill
@@ -1170,20 +1201,30 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 [yungsaphars] i use reach lol (best eu): [https://www.bilibili.com/video/av1550313132](https://www.bilibili.com/video/av1550313132)
 爹
 
+
 [Zefew] Im the best (Pack Bundle) [Frozen]: [https://www.bilibili.com/video/av23480664](https://www.bilibili.com/video/av23480664)
 妈
+
 
 [Raucous] noob game: [https://www.bilibili.com/video/av208514606](https://www.bilibili.com/video/av208514606)
 大胖狼你别删视频啊😭😭😭
 
+
 [BCZ] old but gold: [https://www.bilibili.com/video/av221123445](https://www.bilibili.com/video/av221123445)
 BCZ抄袭酥桃吧·。。。。
+
 
 [d0wza] young but gold: [https://www.bilibili.com/video/av999775339](https://www.bilibili.com/video/av999775339)
 酥桃抄袭BCZ吧·。。。。
 
+
 [Staind] 1700Elo in a Day: [https://www.bilibili.com/video/av373847777](https://www.bilibili.com/video/av373847777)
 聊天框看见了我的仇人errxr
+
+
+[ByRez] #1 NoDeBuff on Syuu.net with 200ms: [https://www.bilibili.com/video/av544243967](https://www.bilibili.com/video/av544243967)
+我的世界白瑞子只会做Gang? 300ms chill combo同样很秀thanks
+
 
 
 ##### 2.3.4. Drill
