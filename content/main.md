@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772374093353_c06h.png)
+![image](/images/img_1772377988662_yj5s.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772374097235_pjjs.png)
+![image](/images/img_1772377994133_tx2v.png)
 
 
 Q: 后门?
@@ -603,7 +603,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772374099510_y9e1.jpg)
+![image](/images/img_1772377996703_pxfx.jpg)
 
 
 ---
@@ -984,7 +984,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 [Revethere] Blog: [https://revethere.github.io/](https://revethere.github.io/)
-我还没想好怎么介绍
+中国顶尖sumo&理论玩家独家力作，顶级智斗超越Usegun假死
 
 
 
@@ -994,7 +994,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 <span style="font-size:11pt">[Kirxo] BCZ jump: </span>[https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
 <span style="font-size:11pt">combo加伤的，只有大优势局有用，表演价值高一点</span>
 
-
+。
 [Nakoso] 蹭药: [https://www.bilibili.com/video/av336848237](https://www.bilibili.com/video/av336848237)
 图一乐
 
