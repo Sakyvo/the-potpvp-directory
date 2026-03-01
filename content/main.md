@@ -13,7 +13,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772168260653_74iz.png)
+![image](/images/img_1772374093353_c06h.png)
 
 
 
@@ -72,7 +72,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772168263414_idc6.png)
+![image](/images/img_1772374097235_pjjs.png)
 
 
 Q: 后门?
@@ -603,7 +603,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772168265055_w5z8.jpg)
+![image](/images/img_1772374099510_y9e1.jpg)
 
 
 ---
@@ -981,6 +981,10 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 <span style="font-size:11pt">[唐妍熙] Knockback: </span>[https://www.bilibili.com/video/av114782548006153](https://www.bilibili.com/video/av114782548006153)
 很长
+
+
+[Revethere] Blog: [https://revethere.github.io/](https://revethere.github.io/)
+我还没想好怎么介绍
 
 
 
