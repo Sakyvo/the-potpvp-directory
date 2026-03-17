@@ -9,6 +9,8 @@
   let fileShas = {};
   let sourceBuffer = '';
   let currentView = 'rendered';
+  let maintSha = null;
+  let maintActive = false;
 
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
@@ -86,6 +88,7 @@
     initViewToggle();
     initPasteHandler();
     initAdminSidebar();
+    await loadMaintenance();
   }
 
   async function loadIndex() {
@@ -908,6 +911,47 @@
       publishFooter.style.display = '';
     }
   }
+
+  // ═══ Maintenance Mode ═══
+
+  async function loadMaintenance() {
+    try {
+      const data = await CodebergAPI.getFile('maintenance.json');
+      maintSha = data.sha;
+      const parsed = JSON.parse(decodeBase64Utf8(data.content));
+      maintActive = !!parsed.active;
+    } catch {
+      maintActive = false;
+    }
+    updateMaintBtn();
+  }
+
+  function updateMaintBtn() {
+    const btn = $('#maint-toggle');
+    if (!btn) return;
+    btn.classList.toggle('active', maintActive);
+    btn.textContent = maintActive ? '维护中' : '维护';
+    btn.title = maintActive ? '关闭维护模式' : '开启维护模式';
+  }
+
+  $('#maint-toggle').addEventListener('click', async () => {
+    const btn = $('#maint-toggle');
+    btn.disabled = true;
+    try {
+      maintActive = !maintActive;
+      const content = JSON.stringify({ active: maintActive });
+      const result = await CodebergAPI.putFile('maintenance.json', content, maintActive ? 'Enable maintenance' : 'Disable maintenance', maintSha);
+      maintSha = result.content.sha;
+      updateMaintBtn();
+      setStatus(maintActive ? '已开启维护模式' : '已关闭维护模式');
+    } catch (e) {
+      maintActive = !maintActive;
+      console.error('Toggle maintenance failed:', e);
+      setStatus('维护模式切换失败: ' + e.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   // ═══ Admin Sidebar & TOC ═══
 

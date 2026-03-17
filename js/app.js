@@ -63,6 +63,18 @@
     return html.replace(/\uFFFC/g, '-');
   }
 
+  // ── Maintenance check ──
+  try {
+    const maintResp = await fetch('maintenance.json');
+    if (maintResp.ok) {
+      const maintData = await maintResp.json();
+      if (maintData.active) {
+        document.getElementById('maint-overlay').style.display = '';
+        return;
+      }
+    }
+  } catch {}
+
   // ── DOM refs ──
   const $ = s => document.querySelector(s);
   const contentEl = $('#content');

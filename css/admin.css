@@ -124,7 +124,6 @@ body {
   .rendered-preview { max-width: none; }
 }
 
-/* ── Mobile ── */
 /* ── Undo/Redo buttons ── */
 .undo-redo-btn {
   width: 28px; height: 28px; border: 1px solid var(--border);
@@ -133,6 +132,17 @@ body {
   color: var(--text); flex-shrink: 0;
 }
 .undo-redo-btn:hover { background: var(--bg-alt); }
+
+/* ── Maintenance Toggle ── */
+.maint-toggle {
+  height: 32px; padding: 0 12px;
+  border: 1px solid var(--border); background: var(--bg);
+  font-size: 12px; cursor: pointer; color: var(--text);
+  font-weight: 500; transition: background .15s, color .15s;
+}
+.maint-toggle:hover { background: var(--bg-alt); }
+.maint-toggle.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.maint-toggle:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ── Publish Progress Modal ── */
 .publish-modal {

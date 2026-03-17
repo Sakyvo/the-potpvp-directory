@@ -162,6 +162,19 @@ body {
 mark.search-hl { background: #fff3a8; padding: 0; }
 mark.search-hl.current { background: #ff9632; }
 
+/* ── Maintenance Overlay ── */
+.maint-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.maint-card { text-align: center; }
+.maint-title {
+  font-size: 28px; font-weight: 700; letter-spacing: 2px;
+  color: #1a1a1a; margin-bottom: 12px;
+}
+.maint-sub { font-size: 14px; color: #999; letter-spacing: 1px; }
+
 /* ── Responsive ── */
 @media (min-width: 769px) {
   #menu-btn { display: none; }
