@@ -3,9 +3,11 @@
 ***“道在迩而求诸远，事在易而求之难***”
 
 
-慨锅打架圈子蒸了十年还没死，又叹圈子之松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从b翻到yt烧干了流量与时间，指望everything本地搜索则更为野蛮，文明世界知识库你在哪。每回首22年植吧考察之往事，见“技术圈”之文档罗列，秩序井然，不觉深深之自卑......
+慨锅打架圈子蒸了十年还没死，又叹圈子之松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从你b翻到yt既烧流量又烧时间，指望everything本地搜索毕竟沉重不堪，因此搭建一互联网知识库已是[迫!在!眉!睫！](http://i0.hdslb.com/bfs/new_dyn/3acc58d357dea2dcc4afc90f945f06ff3494365771074381.jpg)每回首22年植吧考察之往事，见「技术圈」之文档罗列，秩序井然，不觉深深之自卑自责。我等pvper自古折腾为魂铸字为剑，而今岂可如此再消沉下去了？
 
-故今整前人之述，统各界资料于一文，作个导航站一样的玩意把拂晓神键ctrl+f唤回来，望小资历少走弯路，老资历少摔键盘。
+故今整前人之述，统各界资料于一文，作个导航站一样的玩意把拂晓神键**ctrl+f**唤回来，望小资历少走弯路，老资历少摔键盘。
+
+
 
 
 
@@ -13,7 +15,7 @@
 
 
 ~~懒逼Sakyvo我操你妈，你几把填坑天经地义的还找上补了是吧（~~
-![image](/images/img_1772377988662_yj5s.png)
+![Image_1](/images/1.png)
 
 
 
@@ -72,7 +74,7 @@ Part 4. Outra
 
 Q: 太长不看，怎么选
 A:
-![image](/images/img_1772377994133_tx2v.png)
+![Image_2](/images/2.png)
 
 
 Q: 后门?
@@ -158,14 +160,16 @@ Protocol CheatBreaker-1.6.25 [1.7.10]: [https://www.mediafire.com/file/40uzwkfez
 
 Lunar Client - Offline: 献给配得上的人
 -
-LCQT v1.x: [https://github.com/Youded-byte/lunar-client-qt](https://github.com/Youded-byte/lunar-client-qt)
+LCQT v1: [https://github.com/Youded-byte/lunar-client-qt](https://github.com/Youded-byte/lunar-client-qt)
 前置启动器
 -
 v2.17.7-2447: [https://pastefy.app/s4ePMPN0](https://pastefy.app/s4ePMPN0)
 Lunar 2025暑期版本，Rewind更新前，没有材质包bug
--
-c888646/master:
-Lunar 2022:
+<span style="color:rgb(150, 111, 231)">multiver，使用LCQT 1.5.7启动</span>
+<span style="color:rgb(150, 111, 231)">-</span>
+c888646/master: [https://www.mediafire.com/file/djeuh13n3jyzao6/](https://www.mediafire.com/file/djeuh13n3jyzao6/)
+Lunar 2022年5月版本，mapping更新后，较为精简
+<span style="color:rgb(150, 111, 231)">versions，使用LCQT 1.2.5启动</span>
 -
 <span style="color:rgb(163, 224, 67)">相比现代LC史山更少</span>
 <span style="color:rgb(255, 0, 0)">拆东墙补西墙&折腾麻烦</span>
@@ -591,7 +595,8 @@ Zefew: [https://www.youtube.com/@RVLZefew](https://www.youtube.com/@RVLZefew)
 
 
 
-and
+
+
 
 I1ZBTEUgUFJPSkVDVA==
 
@@ -603,7 +608,7 @@ I1ZBTEUgUFJPSkVDVA==
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![image](/images/img_1772377996703_pxfx.jpg)
+![Image_3](/images/3.jpg)
 
 
 ---
@@ -783,7 +788,7 @@ Mediafire: [https://app.mediafire.com/folder/myfiles](https://app.mediafire.com/
 Wormhole: [https://wormhole.app/](https://wormhole.app/)
 端到端加密&限时限量大文件分享
 
-workupload: [https://workupload.com/](https://workupload.com/)
+workUpload: [https://workupload.com/](https://workupload.com/)
 欧公子版奶牛快传，dmca去死吧。支持阅后即焚
 
 dlgg: [https://download.gg/](https://download.gg/)
@@ -812,7 +817,7 @@ Wayback Machine: [https://archive.org/](https://archive.org/)
 
 
 ReURL: [https://reurl.cc/main/cn](https://reurl.cc/main/cn)
-纯净短链生成器
+短链接生成器
 
 BypassVIP: [https://bypass.vip/](https://bypass.vip/)
 绕过广告短链
@@ -830,7 +835,7 @@ Comment Appeal: [https://www.bilibili.com/blackboard/cmmnty-appeal.html](https:/
 
 
 FileCR: [https://filecr.com/us-en/](https://filecr.com/us-en/)
-ez crk
+安人必备
 
 rutor: [http://rutor.info/](http://rutor.info/)
 丰矿的俄人网站
@@ -849,7 +854,7 @@ MODSAPK: [https://getmodsapk.com/](https://getmodsapk.com/)
 
 
 ##### 1.4.3. Productivity
-###### 
+
 everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 本地搜索工具
 
@@ -865,7 +870,7 @@ qBittorrent: [https://www.qbittorrent.org/](https://www.qbittorrent.org/)
 
 
 Bandizip 7.06: [https://www.lanzn.com/iUP8Hv0taej](https://www.lanzn.com/iUP8Hv0taej)
-压缩文件查看器，选这个是因为可以快速preview 图片方便看材质包；7.06有暴力破解压缩包密码功能
+压缩文件查看器，选这个是因为可以快速preview图片方便看材质包；7.06有暴力破解压缩包密码功能
 
 
 Revo Uninstaller: [https://www.423down.com/8544.html](https://www.423down.com/8544.html)
@@ -899,7 +904,7 @@ Recuva: [https://filecr.com/windows/recuva/](https://filecr.com/windows/recuva/)
 
 ### 2.1. Tutorial
 
-##### Semi-Intro
+##### Intro
 
 To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告知你一些game sense，要想消化它们，没个三年两载的Practicing是不现实的，不要妄想一步登天。
 
@@ -934,7 +939,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 <span style="font-size:11pt">要说的字幕里都说了，总结就是喷慢点喷稳点</span>
 
 
-[Eloies]Run-eat 跑吃: [https://www.bilibili.com/video/BV12A411u7qX](https://www.bilibili.com/video/BV12A411u7qX)
+[Eloies] Run-eat 跑吃: [https://www.bilibili.com/video/BV12A411u7qX](https://www.bilibili.com/video/BV12A411u7qX)
 全网最佳跑吃教学，吊打Ziblacking Nakoso。注意完美跑吃无法在现在的minemen生效
 补充: 140+ms的情况下，喝完药/吃完食物 立刻切换到 食物/药水 可以强行卡完美跑吃/喝
 
@@ -994,7 +999,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 <span style="font-size:11pt">[Kirxo] BCZ jump: </span>[https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
 <span style="font-size:11pt">combo加伤的，只有大优势局有用，表演价值高一点</span>
 
-。
+
 [Nakoso] 蹭药: [https://www.bilibili.com/video/av336848237](https://www.bilibili.com/video/av336848237)
 图一乐
 
@@ -1046,7 +1051,7 @@ JVM Arguments: [https://exa.y2k.diy/garden/jvm-args/](https://exa.y2k.diy/garden
 
 
 Windows 10 LTSC: [https://www.bilibili.com/video/av578920941](https://www.bilibili.com/video/av578920941)
-下载时请用镜像
+老版本失效了，下载时请用镜像
 
 
 
@@ -1117,7 +1122,7 @@ Eloies vs Kyeick: [https://www.bilibili.com/video/av629086454](https://www.bilib
 
 
 Lizishu Elo Series [1339elo]: [https://www.bilibili.com/video/av1152702334](https://www.bilibili.com/video/av1152702334)
-
+-
 Lizishu vs Eloies: [https://www.bilibili.com/video/av1050974501](https://www.bilibili.com/video/av1050974501)
 
 
@@ -1153,12 +1158,12 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 ##### 2.3.1. Classic
 
-<span style="font-size:11pt">[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
+[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
 神
-
+-
 [Jewdah] smacking kids on the craft: [https://www.bilibili.com/video/BV1Eb4y1i7sc](https://www.bilibili.com/video/BV1Eb4y1i7sc)
 坟
-
+-
 Jewdah的所有视频都应该看😡
 
 
@@ -1171,16 +1176,16 @@ Jewdah的所有视频都应该看😡
 
 [Kyeick] Best in the Game: [https://www.bilibili.com/video/av373343351](https://www.bilibili.com/video/av373343351)
 5:52 part II看看看看看看看
-
+-
 [Kyeick] Just Better: [https://www.bilibili.com/video/av891333293](https://www.bilibili.com/video/av891333293)
 ByRez qwq
-
+-
 [Kyeick] the best of all time 🌏💯: [https://www.bilibili.com/video/av338361406](https://www.bilibili.com/video/av338361406)
 ByRez pwp
-
+-
 [Kyeick] NONE: [https://www.bilibili.com/video/av810889813](https://www.bilibili.com/video/av810889813)
 [标题来源](https://www.emojiall.com/zh-hans/emoji/‍)
-
+-
 筱燃鸡的所有视频都应该看😡
 
 
@@ -1190,7 +1195,7 @@ ByRez pwp
 
 [ByRez] 2000 Elo on PvPGym with Antic Client: [https://www.bilibili.com/video/av376731552](https://www.bilibili.com/video/av376731552)
 好喜欢这个端的gui谁懂
-
+-
 [ByRez] Italian Players #4: [https://www.bilibili.com/video/av843604879](https://www.bilibili.com/video/av843604879)
 dislike = losers
 
@@ -1211,7 +1216,7 @@ dislike = losers
 
 
 [Raucous] noob game: [https://www.bilibili.com/video/av208514606](https://www.bilibili.com/video/av208514606)
-大胖狼你别删视频啊😭😭😭
+大胖狼可能会删
 
 
 [BCZ] old but gold: [https://www.bilibili.com/video/av221123445](https://www.bilibili.com/video/av221123445)
