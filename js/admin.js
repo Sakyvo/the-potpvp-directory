@@ -11,6 +11,8 @@
   let currentView = 'rendered';
   let maintSha = null;
   let maintActive = false;
+  let imageMap = {};
+  let imageCounter = 0;
 
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
@@ -283,7 +285,7 @@
 
   function renderPreview() {
     const container = $('#rendered-preview');
-    const md = sourceBuffer.trim();
+    const md = expandImages(sourceBuffer.trim());
 
     if (!md) {
       container.innerHTML = '<div class="paste-hint">从石墨文档粘贴内容到此处 (Ctrl+V)</div>';
@@ -369,7 +371,7 @@
         saveDraft();
         downloadShimoImages(sourceBuffer).then(updated => {
           if (updated !== sourceBuffer) {
-            sourceBuffer = updated;
+            sourceBuffer = collapseImages(updated);
             sourceEl.value = sourceBuffer;
             saveDraft();
           }
@@ -405,7 +407,7 @@
         saveDraft();
         downloadShimoImages(sourceBuffer).then(updated => {
           if (updated !== sourceBuffer) {
-            sourceBuffer = updated;
+            sourceBuffer = collapseImages(updated);
             renderPreview();
             saveDraft();
           }
@@ -434,8 +436,10 @@
       if (!file.type.startsWith('image/')) continue;
       const reader = new FileReader();
       reader.onload = () => {
-        const md = `![${file.name || 'image'}](${reader.result})`;
-        insertAtCursor(textarea, md);
+        imageCounter++;
+        const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+        imageMap[imageCounter] = { data: reader.result, ext };
+        insertAtCursor(textarea, `![Image_${imageCounter}](img://${imageCounter})`);
         sourceBuffer = textarea.value;
         saveDraft();
       };
@@ -448,13 +452,30 @@
       if (!file.type.startsWith('image/')) continue;
       const reader = new FileReader();
       reader.onload = () => {
-        const md = `![${file.name || 'image'}](${reader.result})`;
-        sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
+        imageCounter++;
+        const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+        imageMap[imageCounter] = { data: reader.result, ext };
+        sourceBuffer += (sourceBuffer ? '\n\n' : '') + `![Image_${imageCounter}](img://${imageCounter})`;
         renderPreview();
         saveDraft();
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  function collapseImages(md) {
+    return md.replace(/!\[([^\]]*)\]\((data:image\/([^;]+);base64,[^)]+)\)/g, (m, alt, dataUrl, ext) => {
+      imageCounter++;
+      imageMap[imageCounter] = { data: dataUrl, ext: ext === 'jpeg' ? 'jpg' : ext };
+      return `![Image_${imageCounter}](img://${imageCounter})`;
+    });
+  }
+
+  function expandImages(md) {
+    return md.replace(/!\[Image_(\d+)\]\(img:\/\/(\d+)\)/g, (m, _, id) => {
+      const img = imageMap[+id];
+      return img ? `![Image_${id}](${img.data})` : m;
+    });
   }
 
   // ═══ HTML to Markdown Converter ═══
@@ -527,9 +548,15 @@
 
       case 'img': {
         const src = el.getAttribute('src');
+        if (!src) return '';
+        if (/^data:image\/([^;]+);base64,/.test(src)) {
+          imageCounter++;
+          const ext = RegExp.$1 === 'jpeg' ? 'jpg' : RegExp.$1;
+          imageMap[imageCounter] = { data: src, ext };
+          return `![Image_${imageCounter}](img://${imageCounter})`;
+        }
         const alt = el.getAttribute('alt') || 'image';
-        if (src) return `![${alt}](${src})`;
-        return '';
+        return `![${alt}](${src})`;
       }
 
       case 'ul': {
@@ -794,7 +821,7 @@
     btn.disabled = true;
 
     // Build step list
-    let md = sourceBuffer;
+    let md = expandImages(sourceBuffer);
     const imgRe = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
     let im;
     const imgs = [];
@@ -821,9 +848,10 @@
 
     try {
       // Upload base64 images
-      for (const img of imgs) {
+      for (let imgIdx = 0; imgIdx < imgs.length; imgIdx++) {
+        const img = imgs[imgIdx];
         setStep(si, 'running');
-        const fname = `img_${Date.now()}_${Math.random().toString(36).slice(2, 6)}.${img.ext}`;
+        const fname = `${imgIdx + 1}.${img.ext}`;
         try {
           await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
           md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
@@ -834,11 +862,13 @@
       if (imgs.length) sourceBuffer = md;
 
       // Download & upload external images
+      let extNum = imgs.length;
       for (const img of extImgs) {
+        extNum++;
         setStep(si, 'running');
         const extM = img.url.match(/\.(png|jpe?g|gif|webp|svg|bmp)/i);
         const ext = extM ? (extM[1] === 'jpeg' ? 'jpg' : extM[1]) : 'png';
-        const fname = `img_${Date.now()}_${Math.random().toString(36).slice(2, 6)}.${ext}`;
+        const fname = `${extNum}.${ext}`;
         try {
           const dataUrl = await fetchAsDataUrl(img.url);
           if (dataUrl) {
@@ -899,6 +929,8 @@
       }
 
       localStorage.removeItem(DRAFT_KEY);
+      imageMap = {};
+      imageCounter = 0;
       $('#publish-modal .publish-modal-title').textContent = '发布成功';
       setStatus(`发布成功 | ${new Date().toLocaleTimeString()}`);
       $('#status-text').textContent = '已发布';
@@ -935,6 +967,11 @@
   }
 
   $('#maint-toggle').addEventListener('click', async () => {
+    const newState = !maintActive;
+    const msg = newState
+      ? '确定开启维护模式？\n开启后用户将无法访问文档主页。'
+      : '确定关闭维护模式？\n关闭后文档主页将恢复正常访问。';
+    if (!confirm(msg)) return;
     const btn = $('#maint-toggle');
     btn.disabled = true;
     try {
