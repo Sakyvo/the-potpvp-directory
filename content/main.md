@@ -3,7 +3,7 @@
 ***“道在迩而求诸远，事在易而求之难***”
 
 
-慨锅打架圈子蒸了十年还没死，又叹圈子之松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从你b翻到yt既烧流量又烧时间，指望everything本地搜索毕竟沉重不堪，因此搭建一互联网知识库已是[迫!在!眉!睫！](https://www.bilibili.com/video/BV1Gh411F7pK)每回首22年植吧考察之往事，见「技术圈」之文档罗列，秩序井然，不觉深深之自卑自责。我等pvper自古折腾为魂铸字为剑，而今岂可如此再消沉下去了？
+慨锅打架蒸了十年还没死，又叹圈子松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从你b翻到yt流量时间双双竹篮打水，若指望everything本地搜索已然退回千禧之遗产，因此搭建一互联网知识库已是[迫!在!眉!睫!](https://www.bilibili.com/video/av228872009)  每每回首22年植吧考察之往事，见「技术圈」之文档罗列，秩序井然，不觉深深之自卑自责。念灵药决斗长燃不息之绵长积蕴，思历代先辈工艺为躯折腾为魂之遗存，观*新生血液*之迷茫无向前途未卜——决意已然——岂可再如此消沉下去了？
 
 故今整前人之述，统各界资料于一文，作个导航站一样的玩意把拂晓神键**ctrl+f**唤回来，望小资历少走弯路，老资历少摔键盘。
 
@@ -188,7 +188,7 @@ LCQT v2.5.0: [https://codeberg.org/Candicey/2TQCL](https://codeberg.org/Candicey
 
 
 MineHQ CheatBreaker-2017 [1.7.10]: [https://sakyvo.lanzouu.com/iPAid16gm7sb](https://sakyvo.lanzouu.com/iPAid16gm7sb)
-密码:9bue
+密码: 9bue
 <span style="color:rgb(163, 224, 67)">FPS很高</span>，<span style="color:rgb(255, 0, 0)">无动态模糊，中文会乱码</span>
 
 
@@ -677,7 +677,7 @@ Syuu
 [syuu.net](https://syuu.net) (JP)
 dc: [https://discord.gg/syuunet](https://discord.gg/syuunet)
 约架圣地今已门可罗雀
-*cn proxy已失效
+*[浴火](https://t.bilibili.com/1180335915842666505)......重生?
 
 
 ArkaMC
@@ -755,7 +755,7 @@ dc: [https://discord.gg/h5ywm25gKu](https://discord.gg/h5ywm25gKu)
 
 ##### 1.4.1. Social
 
-这个我本该裁掉的奈何某些人太，，，
+这个我本该裁掉的奈何**愿无一人被遗忘**发力了
 
 国内b站qq最多加个kook；国际yt dc最多加个x和tg
 
@@ -854,7 +854,7 @@ MODSAPK: [https://getmodsapk.com/](https://getmodsapk.com/)
 
 
 ##### 1.4.3. Productivity
-
+###### 
 everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 本地搜索工具
 
@@ -1158,7 +1158,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 ##### 2.3.1. Classic
 
-[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
+<span style="font-size:11pt">[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
 神
 -
 [Jewdah] smacking kids on the craft: [https://www.bilibili.com/video/BV1Eb4y1i7sc](https://www.bilibili.com/video/BV1Eb4y1i7sc)
@@ -1216,7 +1216,7 @@ dislike = losers
 
 
 [Raucous] noob game: [https://www.bilibili.com/video/av208514606](https://www.bilibili.com/video/av208514606)
-大胖狼可能会删
+大胖狼要是删了提醒我补档
 
 
 [BCZ] old but gold: [https://www.bilibili.com/video/av221123445](https://www.bilibili.com/video/av221123445)
@@ -1228,7 +1228,8 @@ BCZ抄袭酥桃吧·。。。。
 
 
 [Staind] 1700Elo in a Day: [https://www.bilibili.com/video/av373847777](https://www.bilibili.com/video/av373847777)
-聊天框看见了我的仇人errxr
+是的Staind也会做chill
+聊天框有我的仇人errxr
 
 
 [ByRez] #1 NoDeBuff on Syuu.net with 200ms: [https://www.bilibili.com/video/av544243967](https://www.bilibili.com/video/av544243967)
