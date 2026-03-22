@@ -161,6 +161,163 @@
     return parts.length ? `<span style="${parts.join(';')}">${inner}</span>` : inner;
   }
 
+  function wrapDelimited(inner, token) {
+    const value = inner || '';
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    const leading = value.match(/^\s*/)?.[0] || '';
+    const trailing = value.match(/\s*$/)?.[0] || '';
+    return `${leading}${token}${trimmed}${token}${trailing}`;
+  }
+
+  function wrapHtmlTag(inner, tag) {
+    const value = inner || '';
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    const leading = value.match(/^\s*/)?.[0] || '';
+    const trailing = value.match(/\s*$/)?.[0] || '';
+    return `${leading}<${tag}>${trimmed}</${tag}>${trailing}`;
+  }
+
+  function normalizeComparableText(text) {
+    return (text || '')
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/<\/?[^>]+>/g, '')
+      .replace(/[`*_~]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function parsePlainListLine(line, prevDepth) {
+    const raw = (line || '').replace(/\u00a0/g, ' ');
+    const leading = raw.match(/^\s*/)?.[0].length || 0;
+    const trimmed = raw.trimStart();
+    let match = trimmed.match(/^([•●◦○·▪▫\-*+])\s+(.+)$/);
+    if (match) {
+      let depth = Math.floor(leading / 2);
+      if (/[◦○·▪▫]/.test(match[1]) && depth === 0) depth = prevDepth > 0 ? prevDepth : 1;
+      return { depth, marker: '- ', text: match[2].trim() };
+    }
+    match = trimmed.match(/^(\d+)[.)]\s+(.+)$/);
+    if (match) {
+      return { depth: Math.floor(leading / 2), marker: `${match[1]}. `, text: match[2].trim() };
+    }
+    return null;
+  }
+
+  function extractPlainTextListBlocks(text) {
+    const lines = (text || '').replace(/\r\n/g, '\n').split('\n');
+    const blocks = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      let prevDepth = 0;
+      const first = parsePlainListLine(lines[i], prevDepth);
+      if (!first) {
+        i++;
+        continue;
+      }
+
+      const blockLines = [];
+      while (i < lines.length) {
+        const parsed = parsePlainListLine(lines[i], prevDepth);
+        if (parsed) {
+          prevDepth = parsed.depth;
+          blockLines.push(`${'  '.repeat(parsed.depth)}${parsed.marker}${parsed.text}`);
+          i++;
+          continue;
+        }
+
+        const raw = lines[i] || '';
+        const trimmed = raw.trim();
+        const leading = raw.match(/^\s*/)?.[0].length || 0;
+        if (!trimmed) break;
+        if (!blockLines.length) break;
+        if (leading === 0) break;
+
+        blockLines[blockLines.length - 1] += `\n${'  '.repeat(prevDepth)}  ${trimmed}`;
+        i++;
+      }
+
+      if (blockLines.length) {
+        blocks.push({
+          lines: blockLines,
+          topTexts: blockLines
+            .filter(line => /^(?:- |\d+\. )/.test(line))
+            .map(line => normalizeComparableText(line.replace(/^(?:- |\d+\. )/, ''))),
+          hasNested: blockLines.some(line => /^\s{2,}(?:- |\d+\. )/.test(line))
+        });
+      }
+    }
+
+    return blocks;
+  }
+
+  function extractMarkdownListBlocks(md) {
+    const lines = md.replace(/\r\n/g, '\n').split('\n');
+    const blocks = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      if (!/^\s*(?:- |\d+\. )/.test(lines[i])) {
+        i++;
+        continue;
+      }
+      const start = i;
+      i++;
+      while (i < lines.length) {
+        const line = lines[i];
+        if (/^\s*(?:- |\d+\. )/.test(line) || /^\s{2,}\S/.test(line)) {
+          i++;
+          continue;
+        }
+        if (!line.trim() && i + 1 < lines.length && /^\s*(?:- |\d+\. )/.test(lines[i + 1])) {
+          i++;
+          continue;
+        }
+        break;
+      }
+
+      const end = i - 1;
+      const blockLines = lines.slice(start, end + 1);
+      blocks.push({
+        start,
+        end,
+        topTexts: blockLines
+          .filter(line => /^(?:- |\d+\. )/.test(line))
+          .map(line => normalizeComparableText(line.replace(/^(?:- |\d+\. )/, '')))
+      });
+    }
+
+    return blocks;
+  }
+
+  function recoverListBlocksFromPlainText(md, plainText) {
+    const plainBlocks = extractPlainTextListBlocks(plainText).filter(block => block.hasNested && block.topTexts.length);
+    if (!plainBlocks.length) return md;
+
+    const lines = md.replace(/\r\n/g, '\n').split('\n');
+    const mdBlocks = extractMarkdownListBlocks(md);
+    const replacements = [];
+
+    for (const plainBlock of plainBlocks) {
+      const target = mdBlocks.find(block => {
+        if (block.used || block.topTexts.length !== plainBlock.topTexts.length) return false;
+        return block.topTexts.every((text, idx) => text === plainBlock.topTexts[idx]);
+      });
+      if (!target) continue;
+      target.used = true;
+      replacements.push({ start: target.start, end: target.end, lines: plainBlock.lines });
+    }
+
+    replacements.sort((a, b) => b.start - a.start).forEach(replacement => {
+      lines.splice(replacement.start, replacement.end - replacement.start + 1, ...replacement.lines);
+    });
+
+    return lines.join('\n');
+  }
+
   // ═══ Marked config ═══
 
   marked.setOptions({
@@ -489,6 +646,7 @@
     // Paste in source textarea
     sourceEl.addEventListener('paste', e => {
       const html = e.clipboardData.getData('text/html');
+      const text = e.clipboardData.getData('text/plain');
       const files = e.clipboardData.files;
 
       // Handle pasted images
@@ -500,7 +658,7 @@
 
       if (html && html.trim()) {
         e.preventDefault();
-        const md = htmlToMarkdown(html);
+        const md = htmlToMarkdown(html, text);
         insertAtCursor(sourceEl, md);
         sourceBuffer = sourceEl.value;
         saveDraft();
@@ -530,7 +688,7 @@
 
       let md = '';
       if (html && html.trim()) {
-        md = htmlToMarkdown(html);
+        md = htmlToMarkdown(html, text);
       } else if (text) {
         md = text;
       }
@@ -615,12 +773,12 @@
 
   // ═══ HTML to Markdown Converter ═══
 
-  function htmlToMarkdown(html) {
+  function htmlToMarkdown(html, plainText = '') {
     const div = document.createElement('div');
     div.innerHTML = html;
     // Clean up Shimo/Google Docs wrapper elements
     removeEmptySpans(div);
-    let result = processNode(div);
+    let result = recoverListBlocksFromPlainText(processNode(div), plainText);
     // Clean up excessive blank lines (max 2 consecutive)
     return normalizeWhiteTextStyles(result.trim());
   }
@@ -711,13 +869,13 @@
       case 'hr': return '\n---\n\n';
 
       case 'strong': case 'b':
-        return inner.trim() ? `**${inner}**` : '';
+        return wrapDelimited(inner, '**');
       case 'em': case 'i':
-        return inner.trim() ? `*${inner}*` : '';
+        return wrapDelimited(inner, '*');
       case 'u':
-        return inner.trim() ? `<u>${inner}</u>` : '';
+        return wrapHtmlTag(inner, 'u');
       case 's': case 'del': case 'strike':
-        return inner.trim() ? `~~${inner}~~` : '';
+        return wrapDelimited(inner, '~~');
 
       case 'a': {
         const href = el.getAttribute('href');

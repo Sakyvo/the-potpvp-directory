@@ -176,11 +176,32 @@ body {
   .admin-title { display: none; }
   .view-toggle { font-size: 11px; }
   .toggle-btn { padding: 4px 10px; }
+  .status-text { display: none; }
   .admin-topbar {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 10;
+    padding: 0 8px;
   }
+  .admin-actions {
+    flex: 1;
+    min-width: 0;
+    gap: 4px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+  #admin-menu-btn { width: 30px; height: 30px; }
+  .view-toggle { flex-shrink: 0; }
+  .toggle-btn,
+  .maint-toggle,
+  .btn-publish {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .toggle-btn,
+  .maint-toggle { padding-left: 8px; padding-right: 8px; }
+  .btn-publish { padding: 0 10px; }
+  .undo-redo-btn { width: 26px; height: 26px; }
   .editor-main {
     position: fixed;
     top: var(--topbar-h); left: 0; right: 0; bottom: var(--footer-h);
