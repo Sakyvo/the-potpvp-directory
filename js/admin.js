@@ -13,6 +13,8 @@
   let maintActive = false;
   let imageMap = {};
   let imageCounter = 0;
+  let publishedBuffer = '';
+  const publishedImageCache = new Map();
 
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
@@ -24,6 +26,139 @@
     const bytes = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function normalizeBase64Content(b64) {
+    return (b64 || '').replace(/\s/g, '');
+  }
+
+  function isWhiteColor(value) {
+    return /^(?:white|#fff(?:fff)?|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*(?:1|1\.0+)\s*\)|hsl\(\s*0\s*,\s*0%\s*,\s*100%\s*\))$/i.test((value || '').trim());
+  }
+
+  function isBlackColor(value) {
+    return /^(?:black|#000(?:000)?|rgb\(\s*0\s*,\s*0\s*,\s*0\s*\)|rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*(?:1|1\.0+)\s*\))$/i.test((value || '').trim());
+  }
+
+  function normalizeStyleAttr(style) {
+    if (!style) return '';
+    const normalized = [];
+    for (const part of style.split(';')) {
+      const idx = part.indexOf(':');
+      if (idx === -1) continue;
+      const name = part.slice(0, idx).trim().toLowerCase();
+      let value = part.slice(idx + 1).trim();
+      if (!name || !value) continue;
+      if (name === 'color' && isWhiteColor(value)) value = 'inherit';
+      normalized.push(`${name}:${value}`);
+    }
+    return normalized.join(';');
+  }
+
+  function normalizeWhiteTextStyles(md) {
+    return md.replace(/style="([^"]*)"/gi, (_, style) => {
+      const normalized = normalizeStyleAttr(style);
+      return normalized ? `style="${normalized}"` : '';
+    });
+  }
+
+  function repoImagePathFromSrc(src) {
+    const match = (src || '').trim().match(/^(?:\.\.\/|\/)?(images\/[^)\s?#]+)$/i);
+    return match ? match[1] : '';
+  }
+
+  function extractMarkdownImages(md) {
+    const re = /!\[([^\]]*)\]\(([^)\r\n]+)\)/g;
+    const images = [];
+    let match;
+    let order = 0;
+    while ((match = re.exec(md))) {
+      const src = match[2].trim();
+      let kind = 'other';
+      if (/^data:image\/([^;]+);base64,/i.test(src)) {
+        kind = 'data';
+      } else if (/^https?:\/\//i.test(src)) {
+        kind = 'external';
+      } else if (repoImagePathFromSrc(src)) {
+        kind = 'repo';
+      }
+      images.push({
+        order: order++,
+        full: match[0],
+        alt: match[1],
+        src,
+        start: match.index,
+        end: match.index + match[0].length,
+        kind
+      });
+    }
+    return images;
+  }
+
+  function dataUrlToImageData(src) {
+    const match = (src || '').match(/^data:image\/([^;]+);base64,(.+)$/i);
+    if (!match) return null;
+    return {
+      ext: match[1].toLowerCase() === 'jpeg' ? 'jpg' : match[1].toLowerCase(),
+      b64: normalizeBase64Content(match[2])
+    };
+  }
+
+  async function getPublishedImageBase64(src) {
+    const path = repoImagePathFromSrc(src);
+    if (!path) return null;
+    if (publishedImageCache.has(path)) return publishedImageCache.get(path);
+    try {
+      const file = await CodebergAPI.getFile(path);
+      const content = normalizeBase64Content(file.content);
+      publishedImageCache.set(path, content);
+      return content;
+    } catch {
+      publishedImageCache.set(path, null);
+      return null;
+    }
+  }
+
+  function rebuildMarkdownWithImageReplacements(md, images) {
+    let cursor = 0;
+    let result = '';
+    for (const image of images) {
+      result += md.slice(cursor, image.start);
+      result += image.replacement || image.full;
+      cursor = image.end;
+    }
+    return result + md.slice(cursor);
+  }
+
+  function renderStyledInline(inner, style, extraColor) {
+    const parts = [];
+    const styleText = [style || '', extraColor ? `color:${extraColor}` : ''].filter(Boolean).join(';');
+    const colorMatch = styleText.match(/(?:^|;)\s*color\s*:\s*([^;]+)/i);
+    const bgMatch = styleText.match(/(?:^|;)\s*background-color\s*:\s*([^;]+)/i);
+    const fsMatch = styleText.match(/(?:^|;)\s*font-size\s*:\s*([^;]+)/i);
+
+    if (colorMatch) {
+      const color = colorMatch[1].trim();
+      if (isWhiteColor(color)) {
+        parts.push('color:inherit');
+      } else if (!isBlackColor(color)) {
+        parts.push(`color:${color}`);
+      }
+    }
+    if (bgMatch) {
+      const bg = bgMatch[1].trim();
+      if (!/^(transparent|rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0(?:\.0+)?\s*\)|inherit|initial)$/i.test(bg) && !isWhiteColor(bg)) {
+        parts.push(`background-color:${bg}`);
+      }
+    }
+    if (fsMatch) {
+      const fs = fsMatch[1].trim();
+      if (!/^(14px|1em|medium|inherit|initial)$/i.test(fs)) {
+        parts.push(`font-size:${fs}`);
+      }
+    }
+
+    return parts.length ? `<span style="${parts.join(';')}">${inner}</span>` : inner;
   }
 
   // ═══ Marked config ═══
@@ -75,6 +210,8 @@
     setStatus('加载内容...');
     await loadIndex();
     sourceBuffer = await loadAllContent();
+    publishedBuffer = sourceBuffer;
+    publishedImageCache.clear();
 
     // Draft saving disabled for now
     // const draft = localStorage.getItem(DRAFT_KEY);
@@ -263,9 +400,7 @@
     md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
-
-    // White text → inherit
-    md = md.replace(/color:\s*rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)/gi, 'color:inherit');
+    md = normalizeWhiteTextStyles(md);
 
     const parts = md.split(/(\n{2,})/);
     let html = '';
@@ -487,7 +622,7 @@
     removeEmptySpans(div);
     let result = processNode(div);
     // Clean up excessive blank lines (max 2 consecutive)
-    return result.trim();
+    return normalizeWhiteTextStyles(result.trim());
   }
 
   function removeEmptySpans(el) {
@@ -508,6 +643,50 @@
       }
     }
     return result;
+  }
+
+  function processList(el, depth = 0, ordered = false) {
+    const items = [];
+    Array.from(el.children).forEach((child, index) => {
+      if (!child.tagName || child.tagName.toLowerCase() !== 'li') return;
+      const item = processListItem(child, depth, ordered, index);
+      if (item) items.push(item);
+    });
+    return items.join('\n') + (items.length ? '\n\n' : '');
+  }
+
+  function processListItem(li, depth, ordered, index) {
+    const indent = '  '.repeat(depth);
+    const marker = ordered ? `${index + 1}. ` : '- ';
+    let inline = '';
+    const nestedBlocks = [];
+
+    for (const child of li.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        inline += child.textContent;
+        continue;
+      }
+      if (child.nodeType !== Node.ELEMENT_NODE) continue;
+      const tag = child.tagName.toLowerCase();
+      if (tag === 'ul' || tag === 'ol') {
+        const nested = processList(child, depth + 1, tag === 'ol').trimEnd();
+        if (nested) nestedBlocks.push(nested);
+      } else {
+        inline += processElement(child);
+      }
+    }
+
+    const text = inline.replace(/\n{3,}/g, '\n\n').trim();
+    let line = `${indent}${marker}`.trimEnd();
+    if (text) {
+      const lines = text.split('\n').map(part => part.trim());
+      line = `${indent}${marker}${lines[0]}`;
+      for (let i = 1; i < lines.length; i++) {
+        line += `\n${indent}  ${lines[i]}`;
+      }
+    }
+    if (nestedBlocks.length) line += `\n${nestedBlocks.join('\n')}`;
+    return line;
   }
 
   function processElement(el) {
@@ -559,26 +738,11 @@
         return `![${alt}](${src})`;
       }
 
-      case 'ul': {
-        let items = '';
-        for (const li of el.children) {
-          if (li.tagName && li.tagName.toLowerCase() === 'li') {
-            items += `- ${processNode(li).trim()}\n`;
-          }
-        }
-        return items + '\n';
-      }
+      case 'ul':
+        return processList(el, 0, false);
 
-      case 'ol': {
-        let items = '';
-        let idx = 1;
-        for (const li of el.children) {
-          if (li.tagName && li.tagName.toLowerCase() === 'li') {
-            items += `${idx++}. ${processNode(li).trim()}\n`;
-          }
-        }
-        return items + '\n';
-      }
+      case 'ol':
+        return processList(el, 0, true);
 
       case 'li':
         return inner;
@@ -602,37 +766,11 @@
         return `\`\`\`${lang}\n${content}\n\`\`\`\n\n`;
       }
 
-      case 'span': {
-        const style = el.getAttribute('style') || '';
-        const colorMatch = style.match(/color:\s*([^;]+)/i);
-        const bgMatch = style.match(/background-color:\s*([^;]+)/i);
-        const fsMatch = style.match(/font-size:\s*([^;]+)/i);
+      case 'span':
+        return renderStyledInline(inner, el.getAttribute('style') || '');
 
-        const parts = [];
-        if (colorMatch) {
-          const color = colorMatch[1].trim();
-          if (/^(rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|#fff(?:fff)?|white)$/i.test(color)) {
-            // skip white
-          } else if (!/^(rgb\(0,?\s*0,?\s*0\)|#000|black)$/i.test(color)) {
-            parts.push(`color:${color}`);
-          }
-        }
-        if (bgMatch) {
-          const bg = bgMatch[1].trim();
-          if (!/^(transparent|rgba?\(0,?\s*0,?\s*0,?\s*0\))$/i.test(bg)) {
-            parts.push(`background-color:${bg}`);
-          }
-        }
-        if (fsMatch) {
-          const fs = fsMatch[1].trim();
-          // Keep non-default sizes (skip ~14px/1em/medium/inherit)
-          if (!/^(14px|1em|medium|inherit|initial)$/i.test(fs)) {
-            parts.push(`font-size:${fs}`);
-          }
-        }
-        if (parts.length) return `<span style="${parts.join(';')}">${inner}</span>`;
-        return inner;
-      }
+      case 'font':
+        return renderStyledInline(inner, el.getAttribute('style') || '', el.getAttribute('color') || '');
 
       case 'div': {
         const trimmed = inner.trim();
@@ -820,24 +958,13 @@
     const btn = $('#publish-btn');
     btn.disabled = true;
 
-    // Build step list
     let md = expandImages(sourceBuffer);
-    const imgRe = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
-    let im;
-    const imgs = [];
-    while ((im = imgRe.exec(md))) {
-      imgs.push({ full: im[0], alt: im[1], ext: im[2] === 'jpeg' ? 'jpg' : im[2], b64: im[3] });
-    }
-    const extRe = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
-    let extMatch;
-    const extImgs = [];
-    while ((extMatch = extRe.exec(md))) {
-      extImgs.push({ full: extMatch[0], alt: extMatch[1], url: extMatch[2] });
-    }
+    const images = extractMarkdownImages(md);
+    const publishedImages = extractMarkdownImages(publishedBuffer);
+    const pendingImages = images.filter(img => img.kind === 'data' || img.kind === 'external');
 
     const stepNames = [];
-    imgs.forEach((_, i) => stepNames.push(`上传图片 ${i + 1}/${imgs.length}`));
-    extImgs.forEach((_, i) => stepNames.push(`下载外部图片 ${i + 1}/${extImgs.length}`));
+    pendingImages.forEach((_, i) => stepNames.push(`处理图片 ${i + 1}/${pendingImages.length}`));
     stepNames.push('上传内容');
     stepNames.push('更新索引');
 
@@ -847,40 +974,40 @@
     let si = 0;
 
     try {
-      // Upload base64 images
-      for (let imgIdx = 0; imgIdx < imgs.length; imgIdx++) {
-        const img = imgs[imgIdx];
+      for (const img of images) {
+        if (img.kind !== 'data' && img.kind !== 'external') continue;
         setStep(si, 'running');
-        const fname = `${imgIdx + 1}.${img.ext}`;
         try {
-          await CodebergAPI.uploadImage(fname, img.b64, `Upload ${fname}`);
-          md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
-          setStep(si, 'done');
-        } catch(e) { console.error('Image upload failed:', e); setStep(si, 'error'); }
-        si++;
-      }
-      if (imgs.length) sourceBuffer = md;
+          let payload = null;
+          if (img.kind === 'data') {
+            payload = dataUrlToImageData(img.src);
+          } else {
+            const dataUrl = await fetchAsDataUrl(img.src);
+            payload = dataUrl ? dataUrlToImageData(dataUrl) : null;
+          }
+          if (!payload) throw new Error('图片读取失败');
 
-      // Download & upload external images
-      let extNum = imgs.length;
-      for (const img of extImgs) {
-        extNum++;
-        setStep(si, 'running');
-        const extM = img.url.match(/\.(png|jpe?g|gif|webp|svg|bmp)/i);
-        const ext = extM ? (extM[1] === 'jpeg' ? 'jpg' : extM[1]) : 'png';
-        const fname = `${extNum}.${ext}`;
-        try {
-          const dataUrl = await fetchAsDataUrl(img.url);
-          if (dataUrl) {
-            const b64 = dataUrl.split(',')[1];
-            await CodebergAPI.uploadImage(fname, b64, `Upload ${fname}`);
-            md = md.replace(img.full, `![${img.alt}](/images/${fname})`);
+          const original = publishedImages[img.order];
+          const originalPath = original ? repoImagePathFromSrc(original.src) : '';
+          const originalB64 = originalPath ? await getPublishedImageBase64(original.src) : null;
+          if (originalB64 && originalB64 === payload.b64) {
+            img.replacement = `![${img.alt}](/${originalPath})`;
+          } else {
+            const fname = `${img.order + 1}.${payload.ext}`;
+            await CodebergAPI.uploadImage(fname, payload.b64, `Upload ${fname}`);
+            img.replacement = `![${img.alt}](/images/${fname})`;
           }
           setStep(si, 'done');
-        } catch(e) { console.error('External image failed:', e); setStep(si, 'error'); }
+        } catch(e) {
+          console.error('Image processing failed:', e);
+          setStep(si, 'error');
+        }
         si++;
       }
-      if (extImgs.length) sourceBuffer = md;
+      if (pendingImages.length) {
+        md = rebuildMarkdownWithImageReplacements(md, images);
+        sourceBuffer = md;
+      }
 
       // Save content
       setStep(si, 'running');
@@ -929,6 +1056,8 @@
       }
 
       localStorage.removeItem(DRAFT_KEY);
+      publishedBuffer = md;
+      publishedImageCache.clear();
       imageMap = {};
       imageCounter = 0;
       $('#publish-modal .publish-modal-title').textContent = '发布成功';

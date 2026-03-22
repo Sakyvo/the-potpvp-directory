@@ -41,6 +41,18 @@ body {
   display: flex; align-items: center; justify-content: center;
   color: var(--text-primary); flex-shrink: 0;
 }
+.topbar-right {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.maint-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 28px; padding: 0 10px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 12px; font-weight: 600; letter-spacing: .5px;
+  white-space: nowrap;
+}
 .topbar-btn:hover { background: var(--bg-card); }
 
 /* ── Search Panel ── */
@@ -185,7 +197,7 @@ mark.search-hl.current { background: #ff9632; }
     z-index: 1;
   }
   .topbar { justify-content: center; }
-  #search-btn { margin-left: auto; }
+  .topbar-right { margin-left: auto; }
   .content {
     margin-left: var(--sidebar-w);
     max-width: none;
@@ -195,4 +207,5 @@ mark.search-hl.current { background: #ff9632; }
   .content { padding-left: 4px; padding-right: 4px; }
   .floor-body { padding: 16px; }
   .topbar-title { font-size: 13px; }
+  .maint-badge { padding: 0 8px; font-size: 11px; }
 }

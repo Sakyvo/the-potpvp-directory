@@ -1,6 +1,32 @@
 (async function() {
   'use strict';
 
+  function isWhiteColor(value) {
+    return /^(?:white|#fff(?:fff)?|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*(?:1|1\.0+)\s*\)|hsl\(\s*0\s*,\s*0%\s*,\s*100%\s*\))$/i.test((value || '').trim());
+  }
+
+  function normalizeStyleAttr(style) {
+    if (!style) return '';
+    const normalized = [];
+    for (const part of style.split(';')) {
+      const idx = part.indexOf(':');
+      if (idx === -1) continue;
+      const name = part.slice(0, idx).trim().toLowerCase();
+      let value = part.slice(idx + 1).trim();
+      if (!name || !value) continue;
+      if (name === 'color' && isWhiteColor(value)) value = 'inherit';
+      normalized.push(`${name}:${value}`);
+    }
+    return normalized.join(';');
+  }
+
+  function normalizeWhiteTextStyles(md) {
+    return md.replace(/style="([^"]*)"/gi, (_, style) => {
+      const normalized = normalizeStyleAttr(style);
+      return normalized ? `style="${normalized}"` : '';
+    });
+  }
+
   // ── marked config ──
   marked.setOptions({
     highlight: function(code, lang) {
@@ -42,9 +68,7 @@
     md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
-
-    // White text → inherit
-    md = md.replace(/color:\s*rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)/gi, 'color:inherit');
+    md = normalizeWhiteTextStyles(md);
 
     // Split by blank lines, keeping separators to count them
     const parts = md.split(/(\n{2,})/);
@@ -64,13 +88,18 @@
   }
 
   // ── Maintenance check ──
+  const adminToken = localStorage.getItem('codeberg_token') || '';
+  let showMaintBadge = false;
   try {
     const maintResp = await fetch('maintenance.json');
     if (maintResp.ok) {
       const maintData = await maintResp.json();
       if (maintData.active) {
-        document.getElementById('maint-overlay').style.display = '';
-        return;
+        if (!adminToken) {
+          document.getElementById('maint-overlay').style.display = '';
+          return;
+        }
+        showMaintBadge = true;
       }
     }
   } catch {}
@@ -84,6 +113,10 @@
   const searchPanel = $('#search-panel');
   const searchInput = $('#search-input');
   const searchCount = $('#search-count');
+  if (showMaintBadge) {
+    const badge = $('#maint-badge');
+    if (badge) badge.hidden = false;
+  }
 
   // ── Load index ──
   let indexData;
