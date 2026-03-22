@@ -179,6 +179,18 @@
     return `${leading}<${tag}>${trimmed}</${tag}>${trailing}`;
   }
 
+  function needsDelimiterGap(prev, next) {
+    if (!prev || !next) return false;
+    if (/\s$/.test(prev) || /^\s/.test(next)) return false;
+    return /(?:\*{1,3}|_{1,3}|~~)$/.test(prev) && /^(?:\*{1,3}|_{1,3}|~~)/.test(next);
+  }
+
+  function appendChunk(result, chunk) {
+    if (!chunk) return result;
+    if (!result) return chunk;
+    return needsDelimiterGap(result, chunk) ? `${result} ${chunk}` : result + chunk;
+  }
+
   function normalizeComparableText(text) {
     return (text || '')
       .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
@@ -795,9 +807,9 @@
     let result = '';
     for (const child of node.childNodes) {
       if (child.nodeType === Node.TEXT_NODE) {
-        result += child.textContent;
+        result = appendChunk(result, child.textContent);
       } else if (child.nodeType === Node.ELEMENT_NODE) {
-        result += processElement(child);
+        result = appendChunk(result, processElement(child));
       }
     }
     return result;
@@ -821,7 +833,7 @@
 
     for (const child of li.childNodes) {
       if (child.nodeType === Node.TEXT_NODE) {
-        inline += child.textContent;
+        inline = appendChunk(inline, child.textContent);
         continue;
       }
       if (child.nodeType !== Node.ELEMENT_NODE) continue;
@@ -830,7 +842,7 @@
         const nested = processList(child, depth + 1, tag === 'ol').trimEnd();
         if (nested) nestedBlocks.push(nested);
       } else {
-        inline += processElement(child);
+        inline = appendChunk(inline, processElement(child));
       }
     }
 
