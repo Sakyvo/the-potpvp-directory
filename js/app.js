@@ -109,9 +109,9 @@
     return text.replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').substring(0, 40) || 'floor';
   }
 
-  // ── Slugify for URL hash (preserves dots) ──
+  // ── Slugify for URL hash (preserves dots, removes trailing dot before hyphen) ──
   function slugifyUrl(text) {
-    return text.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').substring(0, 80) || 'section';
+    return text.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').replace(/\.-/g, '-').replace(/\.+$/, '').substring(0, 80) || 'section';
   }
 
   // ── Split markdown by h2 headings ──
@@ -360,20 +360,24 @@
       // Build and set path hash
       const floorSlug = activeH2.dataset.urlSlug || '';
       const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''];
-      const pathHash = pathParts.filter(Boolean).join('_');
+      const pathHash = pathParts.filter(Boolean).join('/');
       if (pathHash && location.hash !== '#' + pathHash) history.replaceState(null, '', '#' + pathHash);
     }
     window.addEventListener('scroll', updateTocSub);
 
-    // Initial hash scroll
+    // Initial hash scroll (with fallback for invalid paths)
     if (location.hash) {
       const h = location.hash.slice(1);
-      // Try old element ID format first
       let target = document.getElementById('floor-' + h) || document.getElementById(h);
-      // Try new path format: last segment matches data-url-slug
       if (!target) {
-        const lastSeg = h.split('_').pop();
-        target = document.querySelector(`[data-url-slug="${lastSeg}"]`);
+        const segments = h.split('/');
+        for (let i = segments.length; i > 0; i--) {
+          target = document.querySelector(`[data-url-slug="${segments[i - 1]}"]`);
+          if (target) {
+            if (i < segments.length) history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
+            break;
+          }
+        }
       }
       if (target) setTimeout(() => target.scrollIntoView({ block: 'start' }), 100);
     }
