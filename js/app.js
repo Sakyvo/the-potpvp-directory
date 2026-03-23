@@ -40,6 +40,23 @@
 
   // ── Markdown renderer (preserves all blank lines) ──
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
+  const WORD_JOINER = '\u2060';
+
+  function normalizeCjkStrong(md) {
+    return md.replace(/\*\*([^\n]*?)\*\*/gu, (match, inner, offset, source) => {
+      if (!inner) return match;
+      const prev = offset > 0 ? source[offset - 1] : '\n';
+      const next = source[offset + match.length] || '\n';
+      const startsWithPunct = /^\p{P}/u.test(inner);
+      const endsWithPunct = /\p{P}$/u.test(inner);
+      const prevNeedsSplit = prev && !/[\s\p{P}]/u.test(prev);
+      const nextNeedsSplit = next && !/[\s\p{P}]/u.test(next);
+      let normalized = inner;
+      if (startsWithPunct && prevNeedsSplit) normalized = WORD_JOINER + normalized;
+      if (endsWithPunct && nextNeedsSplit) normalized += WORD_JOINER;
+      return normalized === inner ? match : `**${normalized}**`;
+    });
+  }
 
   function renderMd(md) {
     md = md.replace(/\r\n/g, '\n');
@@ -69,6 +86,7 @@
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
     md = normalizeWhiteTextStyles(md);
+    md = normalizeCjkStrong(md);
 
     // Split by blank lines, keeping separators to count them
     const parts = md.split(/(\n{2,})/);
@@ -84,7 +102,7 @@
         html += marked.parse(block);
       }
     }
-    return html.replace(/\uFFFC/g, '-');
+    return html.replace(/\uFFFC/g, '-').replace(/\u2060/g, '');
   }
 
   // ── Maintenance check ──
