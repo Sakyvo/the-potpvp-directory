@@ -149,16 +149,39 @@ body {
   position: fixed; inset: 0; z-index: 300;
   background: rgba(0,0,0,.4);
   display: flex; align-items: center; justify-content: center;
+  padding: 20px 12px;
 }
 .publish-modal-card {
   background: var(--bg); border: 1px solid var(--border);
-  width: 360px; max-width: 90vw; padding: 24px;
+  width: 420px; max-width: 100%;
+  max-height: min(84vh, 720px);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 16px;
 }
 .publish-modal-title {
-  font-size: 15px; font-weight: 600; margin-bottom: 16px;
+  font-size: 15px; font-weight: 600;
+}
+.publish-modal-progress {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.publish-progress-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text-sec);
+}
+.publish-progress-track {
+  height: 8px; border-radius: 999px;
+  background: var(--bg-alt); overflow: hidden;
+}
+.publish-progress-bar {
+  width: 0; height: 100%;
+  background: var(--accent);
+  transition: width .2s ease;
 }
 .publish-modal-steps {
+  flex: 1; min-height: 0;
   font-size: 13px; line-height: 2;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 .publish-step { display: flex; align-items: center; gap: 8px; }
 .publish-step .step-icon { width: 18px; text-align: center; flex-shrink: 0; }
@@ -169,7 +192,7 @@ body {
 .publish-step.error .step-icon { color: var(--danger); }
 .publish-step.error .step-icon::after { content: '\2717'; }
 .publish-step.running .step-label { font-weight: 600; }
-.publish-modal-footer { margin-top: 16px; text-align: right; }
+.publish-modal-footer { text-align: right; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 768px) {
@@ -202,6 +225,11 @@ body {
   .maint-toggle { padding-left: 8px; padding-right: 8px; }
   .btn-publish { padding: 0 10px; }
   .undo-redo-btn { width: 26px; height: 26px; }
+  .publish-modal-card {
+    width: 100%;
+    max-height: 88vh;
+    padding: 20px;
+  }
   .editor-main {
     position: fixed;
     top: var(--topbar-h); left: 0; right: 0; bottom: var(--footer-h);

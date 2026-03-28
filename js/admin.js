@@ -1097,12 +1097,24 @@
   // ═══ Publish ═══
 
   const publishModal = $('#publish-modal');
+  const publishTitle = $('#publish-modal .publish-modal-title');
   const publishSteps = $('#publish-steps');
+  const publishProgressTrack = $('#publish-progress-track');
+  const publishProgressBar = $('#publish-progress-bar');
+  const publishProgressText = $('#publish-progress-text');
   const publishFooter = $('#publish-modal-footer');
   const publishCloseBtn = $('#publish-close-btn');
   if (publishCloseBtn) publishCloseBtn.addEventListener('click', () => { publishModal.style.display = 'none'; });
 
   let stepEls = [];
+  function updatePublishProgress() {
+    const total = stepEls.length;
+    const completed = stepEls.filter(el => el.classList.contains('done') || el.classList.contains('error')).length;
+    const percent = total ? Math.round(completed / total * 100) : 0;
+    if (publishProgressTrack) publishProgressTrack.setAttribute('aria-valuenow', String(percent));
+    if (publishProgressBar) publishProgressBar.style.width = `${percent}%`;
+    if (publishProgressText) publishProgressText.textContent = `${completed} / ${total}`;
+  }
   function initSteps(names) {
     stepEls = [];
     publishSteps.innerHTML = '';
@@ -1113,9 +1125,12 @@
       publishSteps.appendChild(div);
       stepEls.push(div);
     });
+    publishSteps.scrollTop = 0;
+    updatePublishProgress();
   }
   function setStep(idx, state) {
     if (stepEls[idx]) stepEls[idx].className = `publish-step ${state}`;
+    updatePublishProgress();
   }
 
   $('#publish-btn').addEventListener('click', publish);
@@ -1138,6 +1153,7 @@
     stepNames.push('上传内容');
     stepNames.push('更新索引');
 
+    if (publishTitle) publishTitle.textContent = '发布中';
     initSteps(stepNames);
     publishFooter.style.display = 'none';
     publishModal.style.display = '';
@@ -1230,12 +1246,12 @@
       publishedImageCache.clear();
       imageMap = {};
       imageCounter = 0;
-      $('#publish-modal .publish-modal-title').textContent = '发布成功';
+      if (publishTitle) publishTitle.textContent = '发布成功';
       setStatus(`发布成功 | ${new Date().toLocaleTimeString()}`);
       $('#status-text').textContent = '已发布';
     } catch(e) {
       console.error('Publish failed:', e);
-      $('#publish-modal .publish-modal-title').textContent = '发布失败';
+      if (publishTitle) publishTitle.textContent = '发布失败';
       setStatus(`发布失败: ${e.message}`);
     } finally {
       btn.disabled = false;

@@ -6,7 +6,7 @@
 <title>Admin - The PotPvP Directory</title>
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="stylesheet" href="../css/main.css?v=14">
-<link rel="stylesheet" href="../css/admin.css?v=12">
+<link rel="stylesheet" href="../css/admin.css?v=13">
 </head>
 <body>
 
@@ -63,6 +63,15 @@
 <div class="publish-modal" id="publish-modal" style="display:none;">
   <div class="publish-modal-card">
     <div class="publish-modal-title">发布中</div>
+    <div class="publish-modal-progress">
+      <div class="publish-progress-meta">
+        <span>总进度</span>
+        <span class="publish-progress-text" id="publish-progress-text">0 / 0</span>
+      </div>
+      <div class="publish-progress-track" id="publish-progress-track" role="progressbar" aria-label="发布总进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="publish-progress-bar" id="publish-progress-bar"></div>
+      </div>
+    </div>
     <div class="publish-modal-steps" id="publish-steps"></div>
     <div class="publish-modal-footer" id="publish-modal-footer" style="display:none;">
       <button class="btn-publish" id="publish-close-btn">关闭</button>
@@ -75,6 +84,6 @@
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/json.min.js"></script>
 <script src="../js/codeberg-api.js?v=10"></script>
-<script src="../js/admin.js?v=17"></script>
+<script src="../js/admin.js?v=18"></script>
 </body>
 </html>
