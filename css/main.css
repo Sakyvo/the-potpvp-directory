@@ -53,6 +53,7 @@ body {
   font-size: 12px; font-weight: 600; letter-spacing: .5px;
   white-space: nowrap;
 }
+.maint-badge[hidden] { display: none; }
 .topbar-btn:hover { background: var(--bg-card); }
 
 /* ── Search Panel ── */
