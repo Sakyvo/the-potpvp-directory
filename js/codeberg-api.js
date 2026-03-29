@@ -31,6 +31,14 @@ const CodebergAPI = (function() {
     return res.json();
   }
 
+  async function verifySavedToken() {
+    const token = getToken();
+    if (!token) return null;
+    const verified = await verifyToken(token);
+    if (!verified) clearToken();
+    return verified;
+  }
+
   async function getFile(path) {
     return request(`/repos/${OWNER}/${REPO}/contents/${path}`);
   }
@@ -85,5 +93,5 @@ const CodebergAPI = (function() {
     });
   }
 
-  return { getToken, setToken, clearToken, verifyToken, getFile, putFile, deleteFile, uploadImage, OWNER, REPO };
+  return { getToken, setToken, clearToken, verifyToken, verifySavedToken, getFile, putFile, deleteFile, uploadImage, OWNER, REPO };
 })();

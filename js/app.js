@@ -105,22 +105,30 @@
     return html.replace(/\uFFFC/g, '-').replace(/\u2060/g, '');
   }
 
-  // ── Maintenance check ──
-  const adminToken = localStorage.getItem('codeberg_token') || '';
-  let showMaintBadge = false;
-  try {
-    const maintResp = await fetch('maintenance.json');
-    if (maintResp.ok) {
+  async function loadMaintenanceState() {
+    try {
+      const url = new URL('maintenance.json', location.href);
+      url.searchParams.set('_', Date.now().toString());
+      const maintResp = await fetch(url.toString(), { cache: 'no-store' });
+      if (!maintResp.ok) return { active: false };
       const maintData = await maintResp.json();
-      if (maintData.active) {
-        if (!adminToken) {
-          document.getElementById('maint-overlay').style.display = '';
-          return;
-        }
-        showMaintBadge = true;
-      }
+      return { active: !!maintData.active };
+    } catch {
+      return { active: false };
     }
-  } catch {}
+  }
+
+  // ── Maintenance check ──
+  let showMaintBadge = false;
+  const maintenanceState = await loadMaintenanceState();
+  if (maintenanceState.active) {
+    const isAdmin = !!(await CodebergAPI.verifySavedToken());
+    if (!isAdmin) {
+      location.replace('maintenance.html');
+      return;
+    }
+    showMaintBadge = true;
+  }
 
   // ── DOM refs ──
   const $ = s => document.querySelector(s);

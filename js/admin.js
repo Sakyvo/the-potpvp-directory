@@ -345,6 +345,7 @@
   // ═══ Login ═══
 
   async function tryLogin(token) {
+    const storedToken = CodebergAPI.getToken();
     $('#login-error').textContent = '';
     $('#login-btn').disabled = true;
     $('#login-btn').textContent = '验证中...';
@@ -356,6 +357,7 @@
       $('#editor-screen').style.display = '';
       initEditor();
     } catch(e) {
+      if (token && token === storedToken) CodebergAPI.clearToken();
       $('#login-screen').style.display = '';
       $('#login-error').textContent = e.message || '验证失败';
     } finally {
@@ -368,10 +370,7 @@
   $('#token-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin($('#token-input').value.trim()); });
 
   const saved = CodebergAPI.getToken();
-  if (saved) {
-    $('#login-screen').style.display = 'none';
-    tryLogin(saved);
-  }
+  if (saved) tryLogin(saved);
 
   // ═══ Init Editor ═══
 
@@ -1279,6 +1278,8 @@
     btn.classList.toggle('active', maintActive);
     btn.textContent = maintActive ? '维护中' : '维护';
     btn.title = maintActive ? '关闭维护模式' : '开启维护模式';
+    const badge = $('#admin-maint-badge');
+    if (badge) badge.hidden = !maintActive;
   }
 
   $('#maint-toggle').addEventListener('click', async () => {
