@@ -80,15 +80,15 @@ body {
 /* ── Source Editor ── */
 .source-editor {
   flex: 1; min-height: 0; width: 100%; border: none; resize: none; outline: none;
-  padding: 24px; font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  padding: 16px 8px 80px; font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 14px; line-height: 1.7; background: var(--bg); color: var(--text);
   tab-size: 2; -webkit-overflow-scrolling: touch;
 }
 
 /* ── Rendered Preview ── */
 .rendered-preview {
-  flex: 1; min-height: 0; overflow-y: auto; padding: 24px;
-  max-width: 840px; margin: 0 auto; width: 100%;
+  flex: 1; min-height: 0; overflow-y: auto; padding: 16px 8px 80px;
+  max-width: none; margin: 0; width: 100%;
   outline: none; cursor: text; -webkit-overflow-scrolling: touch;
 }
 .rendered-preview .floor {
@@ -106,7 +106,7 @@ body {
   color: var(--text-sec); font-size: 15px;
   display: flex; align-items: center; justify-content: center;
   min-height: 200px; border: 2px dashed var(--border);
-  margin: 40px 20px;
+  margin: 40px 0;
 }
 
 /* ── Footer ── */
@@ -121,7 +121,6 @@ body {
   #admin-menu-btn { display: none; }
   .sidebar { bottom: var(--footer-h); }
   .editor-main { margin-left: var(--sidebar-w); }
-  .rendered-preview { max-width: none; }
 }
 
 /* ── Undo/Redo buttons ── */
@@ -235,8 +234,8 @@ body {
     top: var(--topbar-h); left: 0; right: 0; bottom: var(--footer-h);
     height: auto;
   }
-  .rendered-preview { max-width: none; padding: 16px 8px; overflow-y: scroll; }
-  .source-editor { overflow-y: scroll; }
+  .rendered-preview { padding: 16px 4px 80px; overflow-y: scroll; }
+  .source-editor { padding: 16px 4px 80px; overflow-y: scroll; }
   .admin-footer {
     position: fixed;
     bottom: 0; left: 0; right: 0;
