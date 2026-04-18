@@ -348,7 +348,7 @@ ind: [https://pastebin.com/tpwe18yz](https://pastebin.com/tpwe18yz)
 
 ByRez pf: [https://www.bilibili.com/video/av668719976](https://www.bilibili.com/video/av668719976)
 ind: [https://www.mediafire.com/folder/0cokcllic1yzs/ByRez%27s_Pack_Folder](https://www.mediafire.com/folder/0cokcllic1yzs/ByRez%27s_Pack_Folder)
-alio: [http://www.mediafire.com/file/16sycguizhdwh0g/ByRez%2527s_Pack_Folder.rar/file](http://www.mediafire.com/file/16sycguizhdwh0g/ByRez%2527s_Pack_Folder.rar/file)
+aio: [http://www.mediafire.com/file/16sycguizhdwh0g/ByRez%2527s_Pack_Folder.rar/file](http://www.mediafire.com/file/16sycguizhdwh0g/ByRez%2527s_Pack_Folder.rar/file)
 -
 ByRez pb#3: [https://www.bilibili.com/video/av981948918](https://www.bilibili.com/video/av981948918)
 aio: [https://www.mediafire.com/file/roqfjwbij5506bl/PotPvP_Pack_Folder_Release_%255B31_packs%255D.rar/file](https://www.mediafire.com/file/roqfjwbij5506bl/PotPvP_Pack_Folder_Release_%255B31_packs%255D.rar/file)
