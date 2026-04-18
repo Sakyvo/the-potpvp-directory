@@ -18,15 +18,14 @@
 ![Image_1](/images/1.png)
 
 ---
-2026-03-28 Edited
-Current Version: **1.2.1**
+2026-04-18 Edited
+Current Version: **1.3.5**
 
 Update Log:
-1. obs填完了
-2. vegas在做了
-3. **LCQT!**
-4. 简简单单做个美化
-5. drill不好看，不看了
+1. 修正。
+2. 降低人机率
+3. vegas render部分完成
+4. 接下来可能先做补帧相关
 
 ---
 
