@@ -2,7 +2,7 @@
 
 ***“道在迩而求诸远，事在易而求之难***”
 
-慨锅打架蒸了十年还没死，又叹圈子松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从你b翻到yt流量时间双双竹篮打水，指望everything本地搜索亦不可取，因此搭建一互联网知识库已是[迫!在!眉!睫!](https://www.bilibili.com/video/av228872009)  每每回首22年植吧考察之往事，见「技术圈」之文档罗列，秩序井然，不觉深深之自卑自责。念灵药决斗长燃不息之绵长积蕴，思历代先辈工艺为躯折腾为魂之遗存，观*新生血液*之迷茫无向前途未卜——决意已然——
+慨锅打架蒸了十年还没死，又叹圈子松散分立之洼地原罪。最绷的无疑是灵光一闪想找个东西结果便是从你b翻到yt流量时间双双粉碎，指望everything本地搜索亦不可取，因此搭建一互联网知识库已是[迫!在!眉!睫!](https://www.bilibili.com/video/av228872009)  每回首22年植吧考察之往事，见「技术圈」之文档罗列，秩序井然，不觉深深之自卑自责。念灵药决斗长燃不息之绵长积蕴，思历代先辈工艺为躯折腾为魂之遗存，观*新生血液*之迷茫无向前途未卜——决意已然——
 
 我当工有所偿，学有所用，愿无一人无依傍。今整前人之述，统各界资料于一文，作个导航站一样的玩意把拂晓神键**ctrl+f**唤回来，望小资历少走弯路，老资历少摔键盘。
 
@@ -84,7 +84,7 @@ Update Log:
 Q: 太长不看，怎么选
 A:
 ![Image_2](/images/2.png)
-**建议去用lcqt，这个图我忘记在哪画的了不改了**
+**建议去用lcqt，这个图我忘记在哪画的了，不改了**
 
 
 Q: 后门?
@@ -92,7 +92,7 @@ Q: 后门?
 
 
 
-##### 1.1.1. 维护中
+#### 1.1.1. 维护中
 
 这一分组保持着更新，但无一例外存在“对笔者而言极其恶劣的bug”，虽然将来有被修复之可能¿
 <span style="background-color:rgb(249, 237, 166)">此分组均包含patcher</span>
@@ -106,7 +106,7 @@ Lunar Client: [https://www.lunarclient.com](https://www.lunarclient.com/)
 
 Celestial (3rd party LC launcher): [https://codeberg.org/earthsworth/celestial/releases/latest](https://codeberg.org/earthsworth/celestial/releases/latest)
 [https://t.me/qbychannel](https://t.me/qbychannel)
-or 798082966 qq group
+or **798082966** qq group
 <span style="color:rgb(163, 224, 67)">LC上位，相比LC启动更快 (慢于cb)，免费饰品 & Freelook & NoClickDelay etc.</span>
 <span style="color:rgb(255, 0, 0)">折腾起来麻烦，LC客户端内的bug它也有。另外开发者做的是启动器而非客户端，别指望他们修LC客户端bug</span>
 
@@ -117,7 +117,7 @@ CheatBreaker Net: [https://cheatbreaker.net](https://cheatbreaker.net/download)
 
 
 
-##### 1.1.2. 无维护
+#### 1.1.2. 无维护
 
 这一分组没有Developer维护，意味着不会更新，且存在无法弥补的缺点。但之所以放在这里，是由于其优点相比第一组里的各种史山，太耀眼，，，
 
@@ -191,7 +191,7 @@ LCQT v2.5.0: [https://codeberg.org/Candicey/2TQCL](https://codeberg.org/Candicey
 
 
 
-##### 1.1.3. 收藏品
+#### 1.1.3. 收藏品
 
 上古老端，收藏价值＞使用价值，只建议录特定视频时使用得到特定观感
 <span style="background-color:rgb(249, 237, 166)">以下所有客户端均无patcher</span>
@@ -253,7 +253,7 @@ pack，和它周边的东西
 在此再次提醒@我和akane问材质之前请先翻kpf
 
 
-##### 1.2.1. 一步登天
+#### 1.2.1. 一步登天
 
 Jewdah: [https://www.bilibili.com/video/BV1tN411d7C9/](https://www.bilibili.com/video/BV1tN411d7C9/)
 aio: [http://www.mediafire.com/file/3mynzut9trw3mwl/pack_folder.zip/file](http://www.mediafire.com/file/3mynzut9trw3mwl/pack_folder.zip/file)
@@ -277,9 +277,9 @@ ind: [https://pastebin.com/Y1TqE13q](https://pastebin.com/Y1TqE13q)
 
 
 
-##### 1.2.2. FAME
+#### 1.2.2. FAME
 
-###### I. AD
+##### I. AD
 
 “允许我打点广告”
 
@@ -316,7 +316,7 @@ or: [https://emt.lanzouq.com/b0mc2gqti](https://emt.lanzouq.com/b0mc2gqti)
 
 
 
-###### II. Basic
+##### II. Basic
 
 “众将化身为一”
 
@@ -438,7 +438,7 @@ ind: [https://jack-laogewen.lanzouv.com/b01a1boeh](https://jack-laogewen.lanzouv
 
 
 
-###### III. HCF
+##### III. HCF
 
 “Nightmare”
 
@@ -469,7 +469,7 @@ ind ol: [https://www.mediafire.com/folder/137t4et2hvulm/overlays](https://www.me
 
 
 
-###### IV. og
+##### IV. og
 
 “一将化身为众”
 
@@ -484,7 +484,7 @@ aio: [http://www.mediafire.com/file/wchv9c1zio20zx1/Updated_Pack_Folder.rar/file
 
 
 
-###### V. 荣誉提名
+##### V. 荣誉提名
 
 “The park of pack”
 
@@ -529,7 +529,7 @@ or: [https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file](https:
 
 
 
-###### VI: DEAD
+##### VI: DEAD
 
 视频似了或者链接似了
 
@@ -547,7 +547,7 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 
 
-###### VII. More
+##### VII. More
 
 <span style="color:inherit;font-size:11pt">[Happychon] Eum3杂谈: </span>[https://www.bilibili.com/video/av114484450434305](https://www.bilibili.com/video/av114484450434305)
 <span style="color:inherit;font-size:11pt">爱来自3y_</span>
@@ -561,7 +561,7 @@ QwQTsuki: [https://www.bilibili.com/video/av983817082](https://www.bilibili.com/
 
 
 
-##### 1.2.3. CHAN
+#### 1.2.3. CHAN
 
 Timon Wong: [https://space.bilibili.com/15505075](https://space.bilibili.com/15505075/)
 国内顶尖原创材质作者
@@ -593,7 +593,7 @@ Zefew: [https://www.youtube.com/@RVLZefew](https://www.youtube.com/@RVLZefew)
 
 
 
-##### 1.2.4. extra???
+#### 1.2.4. extra???
 
 <span style="font-size:11pt">Bilibili Playlist: </span>[https://space.bilibili.com/1049515077/favlist?fid=1266851177​](https://space.bilibili.com/1049515077/favlist?fid=1266851177)
 <span style="font-size:11pt">Youtube Playlist: </span>[https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI](https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI)
@@ -627,7 +627,7 @@ A:
 “当今恐是前所未有的服务器荒漠期”
 
 
-##### 1.3.1. INTL
+#### 1.3.1. INTL
 
 Minemen
 [as.minemen.club](https://minemen.club) (SG)
@@ -654,7 +654,7 @@ dc: [https://discord.gg/dBZZbrADEU](https://discord.gg/dBZZbrADEU)
 
 
 
-##### 1.3.2. CN
+#### 1.3.2. CN
 
 Wihar
 [wihar.top](https://wihar.top) (浙江)
@@ -681,7 +681,7 @@ Iceland
 
 
 
-##### 1.3.3. AS
+#### 1.3.3. AS
 
 Syuu
 [syuu.net](https://syuu.net) (JP)
@@ -696,7 +696,7 @@ ArkaMC
 
 
 
-##### 1.3.4. EU
+#### 1.3.4. EU
 
 PvPLounge
 [beta.pvplounge.eu](https://beta.pvplounge.eu) (UK) [WL]
@@ -718,7 +718,7 @@ dc: [https://discord.gg/pvprivals](https://discord.gg/pvprivals)
 
 
 
-##### 1.3.5. NA
+#### 1.3.5. NA
 
 Nostalgia
 [nostalgia.earth](https://nostalgia.earth) (CA) [WL] {pre HVBC}
@@ -763,7 +763,7 @@ dc: [https://discord.gg/h5ywm25gKu](https://discord.gg/h5ywm25gKu)
 “非我所有，为我所用”
 
 
-##### 1.4.1. Social
+#### 1.4.1. Social
 
 这个我本该裁掉的奈何**愿无一人被遗忘**发力了
 
@@ -782,7 +782,7 @@ Telegram K: [https://web.telegram.org/k](https://web.telegram.org/k)
 
 
 
-##### 1.4.2. Website
+#### 1.4.2. Website
 
 Namemc: [https://namemc.com/](https://namemc.com/)
 id & 皮肤 & 服务器 查询
@@ -863,7 +863,7 @@ MODSAPK: [https://getmodsapk.com/](https://getmodsapk.com/)
 
 
 
-##### 1.4.3. Productivity
+#### 1.4.3. Productivity
 ###### 
 everything: [https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
 本地搜索工具
@@ -914,7 +914,7 @@ Recuva: [https://filecr.com/windows/recuva/](https://filecr.com/windows/recuva/)
 
 ### 2.1. Tutorial
 
-##### Intro
+#### Intro
 
 To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告知你一些game sense，要想消化它们，没个三年两载的Practicing是不现实的，不要妄想一步登天。
 
@@ -922,7 +922,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### <span style="color:rgb(51, 51, 51)">2.1.1. Haiku</span>
+#### <span style="color:rgb(51, 51, 51)">2.1.1. Haiku</span>
 
 
 <span style="color:rgb(51, 51, 51);font-size:11pt">[Qzark] Gui排布: </span>[https://www.bilibili.com/video/BV1JL4y177WZ/](https://www.bilibili.com/video/BV1JL4y177WZ/)
@@ -955,7 +955,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### <span style="color:rgb(51, 51, 51)">2.1.2. Sonnet</span>
+#### <span style="color:rgb(51, 51, 51)">2.1.2. Sonnet</span>
 
 
 <span style="font-size:11pt">[PuffedUp] 喷药:</span> [https://www.bilibili.com/video/av1300822255](https://www.bilibili.com/video/av1300822255)
@@ -983,7 +983,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### 2.1.3. Opus
+#### 2.1.3. Opus
 
 
 [Raucous] Hit Select: [https://www.bilibili.com/video/av974289805](https://www.bilibili.com/video/av974289805)
@@ -1003,7 +1003,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### 2.1.4. OSS
+#### 2.1.4. OSS
 
 
 <span style="font-size:11pt">[Kirxo] BCZ jump: </span>[https://www.bilibili.com/video/BV1Wx41177GY](https://www.bilibili.com/video/BV1Wx41177GY/)
@@ -1030,7 +1030,7 @@ To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告
 
 
 
-##### 2.1.5. Tweak
+#### 2.1.5. Tweak
 
 
 [Nilch 抗火药儿] In-Game Settings: [https://www.bilibili.com/video/av447677394](https://www.bilibili.com/video/av447677394)
@@ -1166,7 +1166,7 @@ Lunar Tournament: [https://www.bilibili.com/video/BV1JL4y1e71p/](https://www.bil
 
 
 
-##### 2.3.1. Classic
+#### 2.3.1. Classic
 
 <span style="font-size:11pt">[Jewdah] 8 blocking on lunar client: </span>[https://www.bilibili.com/video/BV1Wm4y1R7kp](https://www.bilibili.com/video/BV1Wm4y1R7kp)
 神
@@ -1182,7 +1182,7 @@ Jewdah的所有视频都应该看😡
 
 
 
-##### 2.3.2. Gang
+#### 2.3.2. Gang
 
 [Kyeick] Best in the Game: [https://www.bilibili.com/video/av373343351](https://www.bilibili.com/video/av373343351)
 5:52 part II看看看看看看看
@@ -1215,7 +1215,7 @@ dislike = losers
 
 
 
-##### 2.3.3. Chill
+#### 2.3.3. Chill
 
 [yungsaphars] i use reach lol (best eu): [https://www.bilibili.com/video/av1550313132](https://www.bilibili.com/video/av1550313132)
 爹
@@ -1247,7 +1247,7 @@ BCZ抄袭酥桃吧·。。。。
 
 
 
-##### 2.3.4. Drill
+#### 2.3.4. Drill
 
 [qVarious] Best of qVarious ~ Farewell 👋: [https://www.youtube.com/watch?v=kpBnzq_HldM](https://www.youtube.com/watch?v=kpBnzq_HldM)
 drill不好看，不看了
@@ -1264,9 +1264,9 @@ drill不好看，不看了
 
 
 ---
-##### 3.1. OBS
+#### 3.1. OBS
 
-###### Semi-Intro
+##### Semi-Intro
 
 **ctt**: [https://ctt.cx/video/obs/](https://ctt.cx/video/obs/)
 **offical doc**: [https://obsproject.com/kb](https://obsproject.com/kb)
@@ -1284,7 +1284,7 @@ github下载加速: [https://ghfast.top/](https://ghfast.top/)
 
 
 ---
-###### 3.1.1. Add
+##### 3.1.1. Add
 ~~防呆不防傻，在考虑是否还要保留这些弱智内容~~
 [![Image_5](/images/5.png)](https://linux.do/t/topic/1906273)
 [![Image_6](/images/6.png)](https://linux.do/t/topic/1906273)
@@ -1309,7 +1309,7 @@ github下载加速: [https://ghfast.top/](https://ghfast.top/)
 
 
 ---
-###### 3.1.2. General
+##### 3.1.2. General
 [![Image_10](/images/10.png)](https://linux.do/t/topic/1906273)
 
 没啥好说的，基本都是个人习惯问题，最好始终将OBS作为管理员运行提高性能和兼容性:
@@ -1318,34 +1318,31 @@ github下载加速: [https://ghfast.top/](https://ghfast.top/)
 
 
 ---
-###### 3.1.3. Output
+##### 3.1.3. Output
 **ctt**: [https://ctt.cx/video/obs/output/#recording](https://ctt.cx/video/obs/output/#recording)
 
 最重要的部分，编码过载，十之八九是输出没调好
 输出模式调整为“**高级**”解锁更多设置
-[![Image_13](/images/13.png)](https://linux.do/t/topic/1906273)
+![Image_13](/images/13.png)
 **(没提的就不要动，除非你懂它是干嘛的，我是懒得再码了)**
 
 
-
-**录像格式**
-[![Image_14](/images/14.png)](https://linux.do/t/topic/1906273)
+###### **录像格式**
+![Image_14](/images/14.png)
 mp4/mkv均可，别的算了
 mp4兼容性更佳，但系统崩溃/磁盘满了会导致录像损坏
 mkv自带崩溃保护，但兼容性较差(来源请求¿)
 extra: 你可以在 高级 中启用 自动封装至MP4格式 ，让录制的mkv视频在录制完成后自动转为mp4，只不过需要一定额外开销(不会影响录制效果只是导出慢一点)
 
 
-
-**编码器**
-[![Image_15](/images/15.png)](https://linux.do/t/topic/1906273)
+###### **编码器**
+![Image_15](/images/15.png)
 速度: NVENC (NVIDIA) ＞ AMF (AMD) ＞ QuickSync (Intel iGPU) ＞ x264/5 (CPU)
 无脑显卡编码即可，即使你是核显也不例外。CPU编码对质量的提高并不大且**极其**消耗性能
 CPU带核显的可以考虑核显专门录制，独显跑游戏
 
 
-
-**速率控制**
+###### **速率控制**
 [![Image_16](/images/16.png)](https://linux.do/t/topic/1906273)
 1. **CBR** (Constant Bitrate - 固定码率)
 - 原理： aka.恒定比特率，无论画面是静止的还是在剧烈运动，每秒钟产生的数据量都是**强制固定**的（如设置为50000Kbps，就会一直保持这个速度输出）。
@@ -1371,15 +1368,13 @@ CPU带核显的可以考虑核显专门录制，独显跑游戏
 **ctt tip:**
 现代多采用CQP，比CBR更具适应性，后者总是输出相同的恒定比特率，对动态场景处理效果较差
 CQP会根据内容对“带宽的需求”进行调整。如游戏中静止站立在纯色墙壁前，写入的数据量将远远少于在复杂画面频繁转动视角时，相应的，对于复杂画面分配的资源也会智能增加
-
 [![Image_17](/images/17.png)](https://linux.do/t/topic/1906273)
 by Couleur
 至于CQP的值调多少，个人认为21-26之间选一个就行，保持视频属性里显示的码率是100k上下，那些各种“渲染设置”视频里的1字开头的提升并不大，反正最后会被二压浪费掉，完全是烧硬盘。关键在于画布分辨率务必与输出分辨率一致，被一压了可就歇菜了
 
 
-
-**预设**
-[![Image_18](/images/18.png)](https://linux.do/t/topic/1906273)
+###### **预设**
+![Image_18](/images/18.png)
 让显卡的独立编码芯片在**画面质量(视频清晰度)**、**性能消耗(显卡负载)**和**编码延迟(画面处理的时间)**这三个维度之间进行权衡:
 
 **老版本 (pre** [**28.1**](https://obsproject.com/forum/threads/obs-studio-28-1-release-candidate.160580/)**):**
@@ -1406,21 +1401,19 @@ by Couleur
 
 
 **低延迟预设** *(别用)*
-这类预设通过强制关闭 B帧 (B-frames) 等技术，**牺！牲！画！质！**来换取极限的响应速度。
+这类预设通过强制关闭 B帧 (B-frames) 等技术，抛弃节点、预测和前后预测宏区块，**牺！牲！画！质！**来换取极限的响应速度。
 1. 低延迟质量 (Low Latency Quality)
 2. 低延迟 (Low Latency)
 3. 低延迟性能 (Low Latency Performance)
 特点与代价： 顾名思义，这三个选项分别对应上述的质量、平衡和性能，但前提都是**“极低延迟”**。因为关掉了有助于提升画质的关键算法，它们的整体画面表现都**不！如！**对应的“标准预设”
 适用场景： 仅适用于**云游戏串流、远程桌面控制**等要求鼠标点下去屏幕必须立刻给出反应的场景。对于普通的本地录屏或者直播推流，**绝！对！不！要！**选低延迟。
 
-
 **新版本 (post-28.1):**
 我不到啊我懒得再装一个了
 
 
-
-**配置**
-[![Image_19](/images/19.png)](https://linux.do/t/topic/1906273)
+###### **配置**
+![Image_19](/images/19.png)
 **“配置” (Profile)**<span style="color:rgb(26, 26, 26)"> </span>的三个选项（`high`、`main`、`baseline`）属于H.264视频编码标准中的“配置文件”级别，**决定了编码器在压缩视频时可以使用多复杂的算法**。算法越复杂，压缩出来的视频画质越好，但对播放设备（解码）的性能要求也相对更高：
 1. **baseline** (基本配置)
 - 特点：算法最简单、最基础，强制关闭了B帧（大幅提升压缩率的关键画面帧）等高级特性。
@@ -1438,7 +1431,7 @@ by Couleur
 在 post-2020 的现代电脑环境中，强烈建议**永！远！**选择`high`。 `baseline`和`main`在现代 PC 录屏场景下可以直接无视。~~你照抄别人配置没选high也没关系我自己都他妈不知不觉的用了四年baseline 。~~
 
 
-**俩fw**
+###### **俩random**
 ![Image_20](/images/20.png)
 这两个选项属于NVIDIA编码器（NVENC）里的“黑科技”开关，它们都会调用显卡的**CUDA 核心**（也就是显卡用来渲染游戏画面的算力）来辅助独立的NVENC编码芯片进行工作。
 对于常规的 60 帧录制，它们通常是个好东西；**但是**，对于高帧录制和后期渲染的情况下，这两个开关的设定非常关键:
@@ -1460,7 +1453,7 @@ by Couleur
 
 
 
-**回放缓存**
+###### **回放缓存**
 ![Image_21](/images/21.png)
 类似于 NVIDIA ShadowPlay，但质量更高，跟你录制的效果是完全一样的，因为它直接使用OBS的设置进行录制，并将捕获的最后X秒内容保留在RAM中，可以在任何时候按绑定的热键或操作gui将其保存为视频文件。
 可被视为用**LosslessCut**手动裁剪重要clip的替代方法，每次保存将按视频文件分隔。
@@ -1475,14 +1468,12 @@ by Couleur
 取决于剪辑文件的大小，Couleur设置为2048MB，保存的最大文件是1.15GB
 
 
-
-**H.264 (AVC), H.265 (HEVC) or AV1?**
+###### **H.264 (AVC), H.265 (HEVC) or AV1?**
 懒得码直接贴ctt
 ![Image_22](/images/22.png)
 
-
 ---
-###### 3.1.4. Video
+##### 3.1.4. Video
 **ctt**: [https://ctt.cx/video/obs/video/](https://ctt.cx/video/obs/video/)
 
 此模块并没有想象的那么重要，唯须谨记画布分辨率(游戏内分辨率)务必与输出分辨率(导出视频文件的分辨率)**一致**，否则执行缩小时画质会产生断崖式下跌。至于缩小方法无视即可，只要两个分辨率相同它们就不会起作用
@@ -1503,7 +1494,7 @@ by Couleur
 
 
 ---
-###### 3.1.5. Advanced
+##### 3.1.5. Advanced
 主要是些小细节
 ![Image_24](/images/24.png)
 
@@ -1515,84 +1506,321 @@ by Couleur
 
 **颜色格式**
 ![Image_26](/images/26.png)
-无脑**NV12**就行，amd的叫**AMF**
+一般**NV12**就行，amd的叫**AMF**。I420是垃圾，I444和RGB提升不大，且占用很高
+
+OBS 内部渲染器（Direct3D 11 / OpenGL / Vulkan）本身是 RGB 格式，因此选择不同格式本质上是“是否做 **YUV 转换** + 是否做**色度子采样**”。
+| **格式** | **色彩空间类型** | **色度子采样(Chroma Subsampling)** | **数据量（相对）** | **画质特点** | **性能/兼容性** | **典型适用场景** |
+| --- | --- | --- | --- | --- | --- | --- |
+| **NV12** | YUV | 4:2:0（色度水平/垂直减半） | 最低（≈6bit/像素） | 色彩细节最少，红色边缘容易模糊、文字/渐变有色晕 | 最佳（GPU 硬件加速强） | 推流（默认推荐）、普通录制、追求低 CPU/GPU 占用 |
+| **I420** | YUV | 4:2:0（同上） | 与 NV12 几乎相同 | 与 NV12 画质基本一致，极细微差异（内存布局不同） | 非常好（但劣于NV12） | 兼容老采集卡、某些特定编码器时比 NV12 更稳 |
+| **I444** | YUV | 4:4:4（全分辨率，无子采样） | 中高 | 色彩极锐利、文字清晰、渐变自然、无色晕 | 中等（CPU/GPU 占用明显上升） | 高质量本地录制、需要保留色彩细节的场景 |
+| **RGB** | RGB | 4:4:4（全分辨率，无 YUV 转换） | 最高(≈8bit/像素 × 3) | 理论上最高保真度（与屏幕像素 1:1） | 最差（OBS 会弹出警告：CPU 使用率上升） | 极致色彩准确需求（如后期剪辑、无损录制） |
+
+**核心差异**
+1. **色度子采样**
+3. **性能**
+5. **兼容性**
+7. **文件大小与后期处理**
+
+**I444**更接近"录制颜色和屏幕上看到的相同"，不偏色、不丢失细节，但性能开销更大，且主影响"颜色"而非"画质"。若性能有限不推荐再给它分配
 
 
 **色彩空间**
 ![Image_27](/images/27.png)
-保持**709**即可
+通常选**sRGB**
 
-**色彩空间标准（Color Space）**，决定 OBS 是按什么“翻译规则”将画面里的颜色数据记录到视频文件中的。
-**底层逻辑**：
-1. **709** (Rec. 709 / BT.709)：高清视频标准
-- 特点： 目前所有高清视频的国际通用色彩标准。洼球绝大多数的显示器、视频网站以及播放器，都是默认以709标准来解析高清视频的色彩的。
-- 表现：颜色准确，兼容性最好。
+**sRGB**: BT.709转换矩阵 + sRGB曲线gamma (≈2.2)
+- 亮度更高、更接近显示器实际显示。最大程度零损耗保留在游戏里看到的颜色，避免任何gamma偏移或累积误差，能让最终视频最接近屏幕观感 - 高饱和度、色彩鲜艳、对比自然、细节通透
 
-2. **601** (Rec. 601 / BT.601)：已被淘汰的标清时代标准
-- 特点： 这是早年大屁股电视和老式DVD使用的色彩映射标准，其计算红绿蓝颜色的数学矩阵与709不同。什么哪里不同？Gemini没告诉我。
-- 避坑： 选择601时播放器和剪辑软件通常还是会按709来强行读取它。这会直接导致画面发生**偏色**——高饱和度部分会明显发暗、发黄或显得有些脏。
+**709 (Rec.709)**: BT.709矩阵 + 视频标准 gamma (≈2.4)
+- 作为视频平台/电视标准，图像中间调变暗，对比度略低。但会让游戏素材稍微变暗、对比度降低、颜色略偏 (高饱和度材质较明显)。 对「极致观感」来说，这是多余的转换，会引入微小偏差，在高动态模糊视频里会更明显
 
-3. **sRGB**：电脑显示器与图文的标准
-- 特点： sRGB主要用于电脑屏幕、网页浏览和静态图片。和 709 能表现的色彩范围其实是**一模一样**的。
-- 核心差异： 它们唯一的区别在于“**Gamma曲线**”（画面从纯黑过渡到纯白时的亮度变化映射）。在标准的视频工业流中，视频文件应该封装为709，由播放器负责将其正确显示在sRGB的屏幕上。但如果直接用sRGB封装视频流，在跨平台播放时极其容易出现画面整体发灰（对比度丢失）的问题。
+**601 (Rec.601)**: BT.601矩阵 + 标清视频标准 gamma (≈2.2)
+- 老旧的标清电视 (SDTV) 标准 (NTSC/PAL 时代)，色彩原色与现代 HD 不同 (绿色会偏红)，从而产生明显的颜色偏差 (尤其是绿色变暗或过亮)。现基本淘汰，仅为兼容老设备保留
 
-将录制好的素材导入Vegas准备进行渲染时，Vegas默认的高清工程模板就是基于Rec. 709 构建的。OBS录制709的素材，意味着Vegas可以直接进行“点对点”的色彩读取，不需要在后台耗费额外的算力去进行色彩空间转换，能省下一定系统资源。
 
 
 **色彩范围**
 ![Image_28](/images/28.png)
-踩坑「**重灾区**」，单从字面上看，“完整”似乎优于“局部”，**洼人劣根性**导致其会**本能**地想选Full。但在专业的视频录制和剪辑领域，**请相信软件作者比你懂软件，他标推荐是有他的道理的。**
+若追求最佳效果，色彩空间选择决定色彩范围选择:
+**709 - Limited**
+**sRGB - Full**
+- 709 + Limited: 平台兼容性最高，但画面颜色会轻微偏暗、粒子稍灰（gamma 2.4 的视频标准）
+- sRGB + Full: 最接近屏幕原生观感，饱和度更高，粒子最通透、颜色最鲜活
 
-**1. 色阶范围**
-在8-bit的色彩深度下，颜色亮度的数值是从0到 255。
-- Full (完整 / 0-255)： 0代表纯正的死黑，255代表刺眼的纯白。这是电脑显示器和游戏显卡用来渲染画面的标准（PC RGB）。
-- Limited (局部 / 16-235)： 16 代表纯黑，235代表纯白。这是全球视频工业的通用绝对标准（TV/Studio RGB）。无论是各类电影、电视广播，还是皇协站和YouTube的网页播放器，默认都是按这个标准来解析视频文件的。
+如此搭配，OBS的颜色转换和最终解码完全匹配，以避免任何不必要的电平偏移和观感损失
 
-**2. 色彩映射**
-如果选择 `Full`，OBS 会把游戏里 0-255 的满量程数据原封不动地塞进视频文件里。这会引发一系列后遗症：
-- 编辑器不兼容： 把Full色彩范围的视频拖入 Vegas时，Vegas默认的视频工程是遵循 16-235工业标准的。如果未进行繁琐的色彩空间手动转换，Vegas会把 0-15 范围内所有的暗部细节统统当成 6(纯黑) 直接 [毙掉了]；同时把236-255的高光细节全部当成 235(纯白) 也 [毙掉了]。
-- 视觉细节丢失： 画面会遭遇“对比度暴增”。暗部易变成一团毫无细节的死黑，而白色内容则会白茫茫一片，十分的刺眼。
+个人推荐sRGB线
 
-**3. Why Limited**
-选择`Limited`时，OBS 充当了一个极佳的“翻译官”。
-它会在录制时，平滑且无损地将游戏画面里 0-255 的数据，等比例压缩映射到 16-235 的标准视频容器中。
-- 后期兼容： 这样录制出来的视频文件，Vegas可以实现100%的精准识别。画面里的暗部细节和亮部细节都能被完美保留，无论怎么调色/加特效，素材都是最健康的状态。
-- 平台兼容： 渲染输出并上传到平台后，网页播放器也会正确地把它再映射回显示器的 0-255，观众看到的颜色就和游戏内看到的颜色一模一样。
-
-**总结：**
-毫不犹豫地选择`Limited`。视频领域，**守规矩**比强行追求字面上的“完整”“创新”“爆了”“最后一集”更重要。
 
 **ctt**:
 ![Image_29](/images/29.png)
 
-也就是说Full没那么可怕，只是自带额外**饱和度**而已。与Couleur一样，我也对所有颜色格式、空间和范围的了解不多，欢迎大家提出建议。
-![Image_31](/images/30.jpg)
+---
+#### 3.2. Vegas
 
+##### Semi-Intro
+宇宙级大坑来了，怕不是填到pvp圈解散都填不完。先从核心要点往外扩得了，这个那个的tweak设置交给默认，剪辑教程啥的，自己悟吧
+什么why vegas no pr? 离经叛道的自刎归天好不好，已经2026了孩子你还用光流法补帧？还是说你指望那个破烂帧混合出奇迹？什么你想要极致特效？AE，请
+~~vv 2026也不是不行(~~
+
+
+##### 3.2.1. Info
+**本体**
+DL: [https://t.bilibili.com/1128839283738673156](https://t.bilibili.com/1128839283738673156)
+Credit: Milk_Cha
+
+123云盘下不了的话:
+22 (最佳版本): [https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file](https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file)
+14: [https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file](https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file)
+安人网站filecr (14 - 2026, 老版本见Previous version): [https://filecr.com/windows/magix-vegas/](https://filecr.com/windows/magix-vegas/)
+
+**Sapphire FX 蓝宝石**
+![Image_129](/images/30.png)
+filecr: [https://filecr.com/windows/borisfx-sapphire-0002/](https://filecr.com/windows/borisfx-sapphire-0002/)
+mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafire.com/file/esbxxdxyzqefmdi/)
+特效插件，PotPvP剪辑常用
+![Image_130](/images/31.png)
+请选择 dl 4 ofx
+蓝宝石插件读取不了: [https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a](https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a)
+
+**部分版本说明**
+2026 (本该是24): MAGIX被Boris收购了，从版本号命名改为Boris传统的年份命名，特效战未来但目前建议观望
+23: crk疑似跟蓝宝石不兼容
+22: 最强最稳最快版本
+21 build 315: 分水岭，优化了视频预览卡顿问题
+14: 较稳定版本，浅色界面下比高版本好看
+
+
+**Offcial forum**: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
+**Offcial tutorial:** [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
+
+**VEGAS Pro 各种疑难杂症及其解决方案的整理**
+doc: [https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b](https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b)
+opus: [https://www.bilibili.com/read/cv27004832](https://www.bilibili.com/read/cv27004832)
+
+by [zzzzzz9125](https://space.bilibili.com/12355745)，解决**98.46%** vv问题，极其推荐看这个~~所以有问题别来烦我~~
+
+![Image_131](/images/32.png)
+“22最新版”也就是22 build 250，[mediafire](https://www.mediafire.com/file/rnopo5x8iqdkoy4)里那个
+![Image_132](/images/33.png)
+
+
+**一个专栏里没提的issue**: 预览卡飞了，一播放cpu gpu双双飙100%如何解决——
+![Image_133](/images/34.png)
+通常出现在15+版本。禁用这两个，如果本来就是禁用的那就打开
+别的首选项不推荐瞎改，软件工程师比你懂软件
+
+---
+##### 3.2.2. Render
+**写在前面**: Vegas渲染原理是帧混合，即混合前后两帧的图像生成新的中间帧，意味着混合前也就是原素材的fps越高，混合后的效果越好即拖影越少。所以这些个玩意主要影响的是画质，录不了高帧的，还是拿Smoothie补吧
+引经据典:
+![Image_134](/images/35.png)
+不同录制fps的差异: [https://www.bilibili.com/video/av714303917](https://www.bilibili.com/video/av714303917)
+
+**项目属性**中将**重采样**调为**帧混合**才能出动态模糊
+![Image_135](/images/36.png)
+![Image_136](/images/37.png)
+
+**H.264 & H.265**: 同等画质下，h.265的文件体积约为h.264的一半，反过来同等文件体积下h.265的画质是h.264的两倍。h.264兼容性更好，但在2026，这点完全可以忽略。能选265就265吧
+![Image_137](/images/38.png)
+
+![Image_138](/images/39.png)
+至于这玩意，给[专业卡](https://www.nvidia.cn/products/workstations/professional-desktop-gpus/)用的你就别碰了
+
+---
+###### **CORE:**
+高帧素材，降到30fps，依靠帧混合得到动态模糊，质量至上
+在此前提下，最重要的是：
+1. 帧大小: 与素材相同
+2. 码率模式: VBR，可变比特率
+3. 编码模式
+5. 色彩空间: sRGB / Rec.709
+6. 颜色范围 (YCbCr 输出): 完整 /限制
+
+与obs相同，两条线对应才能出最佳效果
+
+![Image_139](/images/40.png)![Image_140](/images/41.png)
+![Image_141](/images/42.png)![Image_142](/images/43.png)
 
 
 ---
-##### 3.2. Vegas
-还在填，这个设置你可以照抄
-![Image_32](/images/30.png)![Image_33](/images/31.png)![Image_34](/images/32.png)![Image_35](/images/33.png)![Image_36](/images/34.png)![Image_37](/images/35.png)![Image_38](/images/36.png)![Image_39](/images/37.png)![Image_40](/images/38.png)![Image_41](/images/39.png)![Image_42](/images/40.png)![Image_43](/images/41.png)
+为什么(没意愿知道的可以跳过了)
 
 ---
-##### 3.3. Smoothie
-
-
----
-##### 3.4. Photoshop
-
+###### **I. 帧大小(<u>S</u>)**
+![Image_143](/images/44.png)
+原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://ffmpeg.org/) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
+upscale: 机器放大，仅仅强制将每帧的像素大小逐个放大，并不会增强画质。但视频平台给4k分配的码率高于1080p，所以利用upscale强改分辨率获得额外的码率分配
 
 ---
-##### 3.5. Credits
-
-
-
----
-## Part 4. Outra
-
-待填坑……
-
+###### **II. 配置文件(<u>P</u>)**
+![Image_144](/images/45.png)
+H.265的底层编码逻辑变了，所以选项与H.264 有所不同
+- H.264: 分为 Baseline（低端）、Main（中端）、High（高端）来适应不同算力的播放设备，High才能保证最佳画质。
+- H.265: 作为新一代标准，其起步点（Default aka. Main）在算法复杂度和压缩效率上，就已经超越了H.264的High Profile.
 
 
 ---
+###### **III. 帧速率(<u>R</u>)**
+![Image_145](/images/46.png)
+传b站就30，60没有大会员看二压的30会非常难受
+不推荐29 31 36等邪门帧率
+
+---
+###### **IV. 场顺序(<u>F</u>)**
+![Image_146](/images/47.png)
+有且只有: **无(逐行扫描）**，但应该会有人疑惑为啥是逐行扫描:
+逐行扫描 (Progressive scan) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
+尽管没出现，提一下与逐行扫描相对的隔行扫描 (Interlaced Scan)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
+很明显隔行是**技术妥协**的产物，现代将其删掉是理所当然的。
+
+---
+###### **V. 码率模块**
+![Image_147](/images/48.png)
+**V - A. 比特率**
+1. **恒定比特率（CBR）**
+2. **可变比特率（VBR）**
+
+
+**VBR & CBR：**
+- <span style="font-size:11pt">质量:</span><span style="font-size:11pt"> VBR 更高且稳定；CBR 在复杂画面下质量下降</span>
+- <span style="font-size:11pt">文件大小:</span><span style="font-size:11pt"> VBR 难以预估；CBR 固定可控</span>
+- <span style="font-size:11pt">兼容性:</span><span style="font-size:11pt"> VBR 偶尔会在极老旧设备上不兼容；CBR 兼容性极好</span>
+
+
+**CBR:** 整个视频维持固定码率
+优点：
+- 码率稳定
+- 对直播、广播、严格带宽限制场景有用
+
+缺点：
+- 码率分配不聪明
+- 简单画面浪费码率，复杂画面又不够
+- 同平均体积下，画质通常不如 VBR
+
+适合：
+- 直播
+- 实时编码
+
+
+**VBR:** 简单画面少给码率省空间，复杂画面多给码率保质量
+优点：
+- 同文件体积下画质更好
+- 更适合高速运动/镜头甩动/细节变化大的视频
+
+缺点：
+- 码率不恒定，文件体积不稳定
+- 某些极端老旧设备/流程不喜欢
+
+适合：
+- 离线成片输出
+- 高质量上传前成片
+
+
+**所以无脑VBR吧**
+
+---
+**VBR - 最大值(bps)**
+意思：
+- VBR允许冲到的上限
+
+作用：
+- 复杂画面瞬时吃得更猛
+- 减少快速转镜时，粒子、HUD、纹理变化时的崩坏
+
+设太低的问题：
+- 复杂画面突然变糊
+
+设太高的问题：
+- 文件更大
+- 极少数设备兼容性可能差一点
+
+
+**VBR - 平均值(bps)**
+意思：
+- 整体平均码率目标
+
+作用：
+- 决定总体体积和总体画质上限
+
+
+---
+举例: 源是 **1080p 480fps**，但成片是 **1080p 30fps**
+要帧混合动态模糊，意味着：
+- 源素材瞬时信息量极高
+- 但成片输出只有30fps，帧混合会把**16**帧混成1帧的视觉效果
+- 这会让运动变“连续”，但单帧内细节也会被模糊掉一部分
+
+所以最终编码问题在于：
+- **Gui / Scoreboard / Chat**
+- **方块硬边**
+- **高对比纹理**
+- **粒子**
+- **拉镜**
+
+这些地方最吃码率。
+
+So
+- 最大：240,000,000
+- 平均：120,000,000
+
+这已经非常高了。b站的4k视频码率限制也就 **20Mbps**，yt 4k在 **60Mbps** 左右。再往上加都会被平台吞掉，虽然**不会**触发更狠的压缩，但也没有额外收益，白白浪费上传时间和流量
+那为什么还要120M呢? 娥因为我这边原素材就是120M的不想被一压
+
+---
+**V - B. 编码模式(<u>M</u>)**
+![Image_148](/images/49.png)
+(以下内容Au/A卡用户同理)
+
+**Intel QSV** (Intel Quick Sync Video) [核显编码]:
+使用 Intel CPU内置核显 的硬件加速编码器
+**优势:** 速度相比软解较快，且功耗比NVENC低很多，有独显的情况下可以边渲染边玩；如果是Intel平台(主要为11代以后带Xe核显或Arc独显)，表现更好。
+**画质:** 基本与独显处于同一水平，部分老版本QSV会稍弱一些，现代差距已经很小
+-
+**NV 编码器** (NVIDIA NVENC) [独显编码]:
+使用 NVIDIA独立显卡 的硬件加速编码器
+**优势:** 速度最快，只吃GPU，CPU几乎无占用。
+**画质:** 现代NVENC (尤其是Ada/Ampere架构以后) 已经非常接近软件编码，但在极高码率或复杂运动场景下，仍可能比软件编码略逊一筹
+-
+**Mainconcept HEVC** [软件编码]
+纯CPU编码，不调用任何硬件加速 (也就是VEGAS自带的MainConcept HEVC编码器)
+**优势:** 画质最高，细节保留和压缩效率最佳
+**缺点:** 速度最慢，渲染时间可能是硬件模式的2-5倍，CPU满载，渲染期间基本没法用系统
+
+**总结**
+- 有独显: **NV 编码器** (最快+画质已足够好)
+- 有时间: **Mainconcept HEVC** (凹画质)
+- 贪玩: **Intel QSV** (核显渲染独显玩)
+
+
+---
+**V - C. 预配置 & RC模式**
+![Image_149](/images/50.png)![Image_150](/images/51.png)
+这些玩意实际和obs output里的**预设**差不多，那些低延迟预设会关闭B帧从而**牺！牲！画！质！**来换取极限的响应速度。所以选标准预设，质量拉最高就行了
+别碰无损，死慢，最后照样被压。况且你obs录的都不是无损就算导出来也不是真无损
+对“画质至上”的需求，**RC 模式别碰任何低延迟，也别碰普通 CBR**
+
+---
+**V - D. 每像素位数**
+![Image_151](/images/52.png)
+aigc已截图:
+![Image_152](/images/53.png)
+总结:
+10-bit: 颜色更细腻，防色带，战未来 (YouTube only)
+8-bit: 足够用，更稳，更快 (没强烈渐变8-bit够了)
+
+---
+###### **VI. 颜色**
+![Image_153](/images/54.png)![Image_154](/images/55.png)
+跟obs那边类似，
+**709 - Limited**
+**sRGB - Full**
+709线少一次转码，sRGB线饱和度更高。你obs怎么设置的这边就怎么设置
+
+---
+###### VII. 音频&系统
+![Image_155](/images/56.png)![Image_156](/images/57.png)![Image_157](/images/58.png)
+别动
+**音频**跟原素材相关，默认就行，音质不能凭空变出来，况且平台也有限制
+**系统**也是你原素材项目的设置，固定在那的，改不了也不用改
