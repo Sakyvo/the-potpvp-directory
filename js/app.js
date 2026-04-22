@@ -256,6 +256,7 @@
   // ── Build hierarchical TOC from h2-h5 ──
   function buildToc() {
     let tocHtml = '';
+    const allIds = new Set();
     document.querySelectorAll('.floor').forEach((floorEl, i) => {
       const id = floorEl.dataset.sectionId || `floor-${i}`;
       const floorNum = `#${i}F`;
@@ -265,9 +266,28 @@
 
       tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}" data-url-slug="${slugifyUrl(title)}">${floorNum} ${title}</a></li>`;
 
+      const parentSlug = { h3: '', h4: '', h5: '' };
       floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
-        const hId = slugify(h.textContent) || `${id}-h${j}`;
+        const hSlug = slugify(h.textContent);
+        if (level === 'h3') parentSlug.h3 = hSlug;
+        else if (level === 'h4') parentSlug.h4 = hSlug;
+        else if (level === 'h5') parentSlug.h5 = hSlug;
+
+        let base;
+        if (level === 'h3' || level === 'h4') {
+          base = `${id}-${hSlug || `h${j}`}`;
+        } else if (level === 'h5') {
+          base = parentSlug.h4 ? `${parentSlug.h4}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
+        } else {
+          base = parentSlug.h5 ? `${parentSlug.h5}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
+        }
+
+        let hId = base;
+        let n = 2;
+        while (allIds.has(hId)) { hId = `${base}-${n++}`; }
+        allIds.add(hId);
+
         h.id = hId;
         h.dataset.urlSlug = slugifyUrl(h.textContent);
         tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}" data-url-slug="${h.dataset.urlSlug}">${h.textContent}</a></li>`;
@@ -341,6 +361,36 @@
         a.setAttribute('rel', 'noopener noreferrer');
       }
     });
+
+    // Initial hash scroll (path-aware, before observer to prevent race)
+    if (location.hash) {
+      const h = location.hash.slice(1);
+      let target = document.getElementById('floor-' + h) || document.getElementById(h);
+      if (!target) {
+        const segments = h.split('/');
+        const floorEl = document.querySelector(`.floor[data-url-slug="${segments[0]}"]`);
+        if (floorEl) {
+          target = floorEl;
+          for (let i = 1; i < segments.length; i++) {
+            const sub = floorEl.querySelector(`[data-url-slug="${segments[i]}"]`);
+            if (!sub) {
+              history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
+              break;
+            }
+            target = sub;
+          }
+        } else {
+          for (let i = segments.length; i > 0; i--) {
+            target = document.querySelector(`[data-url-slug="${segments[i - 1]}"]`);
+            if (target) {
+              if (i < segments.length) history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
+              break;
+            }
+          }
+        }
+      }
+      if (target) target.scrollIntoView({ block: 'start' });
+    }
 
     // TOC click → scroll
     tocEl.addEventListener('click', e => {
@@ -423,23 +473,6 @@
       if (pathHash && location.hash !== '#' + pathHash) history.replaceState(null, '', '#' + pathHash);
     }
     window.addEventListener('scroll', updateTocSub);
-
-    // Initial hash scroll (with fallback for invalid paths)
-    if (location.hash) {
-      const h = location.hash.slice(1);
-      let target = document.getElementById('floor-' + h) || document.getElementById(h);
-      if (!target) {
-        const segments = h.split('/');
-        for (let i = segments.length; i > 0; i--) {
-          target = document.querySelector(`[data-url-slug="${segments[i - 1]}"]`);
-          if (target) {
-            if (i < segments.length) history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
-            break;
-          }
-        }
-      }
-      if (target) setTimeout(() => target.scrollIntoView({ block: 'start' }), 100);
-    }
   }
 
   // ── Sidebar ──
