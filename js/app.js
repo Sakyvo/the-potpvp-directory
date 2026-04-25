@@ -27,7 +27,6 @@
     });
   }
 
-  // ── marked config ──
   marked.setOptions({
     highlight: function(code, lang) {
       if (lang && hljs.getLanguage(lang)) {
@@ -38,9 +37,25 @@
     breaks: true
   });
 
-  // ── Markdown renderer (preserves all blank lines) ──
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
   const WORD_JOINER = '\u2060';
+  const VIEW_MODE_KEY = 'ppdir-view-mode';
+
+  function escapeHtml(text) {
+    return (text || '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[char]);
+  }
+
+  function stripHtml(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html || '';
+    return div.textContent || '';
+  }
 
   function normalizeCjkStrong(md) {
     return md.replace(/\*\*([^\n]*?)\*\*/gu, (match, inner, offset, source) => {
@@ -62,7 +77,6 @@
     md = md.replace(/\r\n/g, '\n');
     md = md.split('\n').map(l => l.trimEnd()).join('\n');
 
-    // Auto-convert bare image URLs, protect lone "-"
     let inCode = false;
     md = md.split('\n').map(line => {
       if (/^```/.test(line)) inCode = !inCode;
@@ -72,23 +86,26 @@
       return line.replace(IMG_URL_RE, '![image]($1)');
     }).join('\n');
 
-    // Protect fenced code blocks from blank-line splitting
     const codeBlocks = [];
     md = md.replace(/```[\s\S]*?```/g, m => {
       codeBlocks.push(m);
       return `%%CB${codeBlocks.length - 1}%%`;
     });
 
-    // Escape < outside code blocks and known HTML tags
     const protectedHtml = [];
-    md = md.replace(/`[^`]+`/g, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
-    md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => { protectedHtml.push(m); return `%%PH${protectedHtml.length - 1}%%`; });
+    md = md.replace(/`[^`]+`/g, m => {
+      protectedHtml.push(m);
+      return `%%PH${protectedHtml.length - 1}%%`;
+    });
+    md = md.replace(/<(\/?)(span|u|sup|sub|br|hr|a|img|b|i|em|strong|s|del|mark)(\s[^>]*)?\/?>/gi, m => {
+      protectedHtml.push(m);
+      return `%%PH${protectedHtml.length - 1}%%`;
+    });
     md = md.replace(/</g, '&lt;');
     md = md.replace(/%%PH(\d+)%%/g, (_, k) => protectedHtml[+k]);
     md = normalizeWhiteTextStyles(md);
     md = normalizeCjkStrong(md);
 
-    // Split by blank lines, keeping separators to count them
     const parts = md.split(/(\n{2,})/);
     let html = '';
     for (let i = 0; i < parts.length; i++) {
@@ -118,7 +135,6 @@
     }
   }
 
-  // ── Maintenance check ──
   let showMaintBadge = false;
   const maintenanceState = await loadMaintenanceState();
   if (maintenanceState.active) {
@@ -130,7 +146,6 @@
     showMaintBadge = true;
   }
 
-  // ── DOM refs ──
   const $ = s => document.querySelector(s);
   const contentEl = $('#content');
   const tocEl = $('#toc');
@@ -139,380 +154,543 @@
   const searchPanel = $('#search-panel');
   const searchInput = $('#search-input');
   const searchCount = $('#search-count');
+  const searchPrevBtn = $('#search-prev');
+  const searchNextBtn = $('#search-next');
+  const searchResultsEl = $('#search-results');
+  const modeToggle = $('#mode-toggle');
   if (showMaintBadge) {
     const badge = $('#maint-badge');
     if (badge) badge.hidden = false;
   }
 
-  // ── Load index ──
   let indexData;
   try {
     const res = await fetch('content/_index.json');
     indexData = await res.json();
-  } catch(e) {
+  } catch {
     contentEl.innerHTML = '<p style="padding:40px;color:red;">无法加载内容索引。</p>';
     return;
   }
 
-  // ── Fetch markdown ──
   async function fetchMd(path) {
     try {
       const res = await fetch(path);
       if (!res.ok) return '';
       return await res.text();
-    } catch { return ''; }
+    } catch {
+      return '';
+    }
   }
 
-  // ── Slugify for IDs ──
   function slugify(text) {
-    return text.replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').substring(0, 40) || 'floor';
+    return (text || '').replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').substring(0, 40) || 'floor';
   }
 
-  // ── Slugify for URL hash (preserves dots, removes trailing dot before hyphen) ──
   function slugifyUrl(text) {
-    return text.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').replace(/\.-/g, '-').replace(/\.+$/, '').substring(0, 80) || 'section';
+    return (text || '').trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').replace(/\.-/g, '-').replace(/\.+$/, '').substring(0, 80) || 'section';
   }
 
-  // ── Split markdown by h2 headings ──
-  function splitByH2(md) {
-    const lines = md.split('\n');
-    const floors = [];
-    let current = { title: '', lines: [] };
+  function stripHeadingMarkup(text) {
+    return stripHtml((text || '').replace(/[*_`~]/g, ' ').replace(/\[(.*?)\]\((.*?)\)/g, '$1')).replace(/\s+/g, ' ').trim();
+  }
 
+  function extractHeadingBlocks(md, minLevel) {
+    const lines = (md || '').replace(/\r\n/g, '\n').split('\n');
+    const blocks = [];
+    let current = null;
     for (const line of lines) {
-      const m = line.match(/^## (.+)/);
-      if (m) {
-        if (current.title || current.lines.some(l => l.trim())) {
-          floors.push({ title: current.title, md: current.lines.join('\n') });
+      const match = line.match(/^(#{1,6})\s+(.+)/);
+      if (match) {
+        const level = match[1].length;
+        if (level > minLevel) {
+          if (current) {
+            current.md = current.lines.join('\n').trim();
+            blocks.push(current);
+          }
+          current = {
+            level,
+            rawTitle: match[2].trim(),
+            title: stripHeadingMarkup(match[2]),
+            lines: []
+          };
+          continue;
         }
-        current = { title: m[1].trim(), lines: [] };
-      } else {
-        current.lines.push(line);
       }
+      if (current) current.lines.push(line);
     }
-    if (current.title || current.lines.some(l => l.trim())) {
-      floors.push({ title: current.title, md: current.lines.join('\n') });
+    if (current) {
+      current.md = current.lines.join('\n').trim();
+      blocks.push(current);
     }
-
-    return floors;
+    return blocks;
   }
 
-  // ── Load all content files ──
-  async function loadAllMd() {
-    // Single file mode
-    if (indexData.file) {
-      return await fetchMd(indexData.file);
+  function getSavedMode() {
+    try {
+      return localStorage.getItem(VIEW_MODE_KEY) === 'part' ? 'part' : 'all';
+    } catch {
+      return 'all';
     }
-    // Multi-file mode (legacy)
-    const files = [];
-    for (const sec of indexData.sections) {
-      if (sec.children) {
-        for (const ch of sec.children) files.push(ch.file);
-      } else if (sec.file) {
-        files.push(sec.file);
+  }
+
+  function saveMode(mode) {
+    try {
+      localStorage.setItem(VIEW_MODE_KEY, mode);
+    } catch {}
+  }
+
+  function getTopbarHeight() {
+    return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h'), 10) || 48;
+  }
+
+  function scrollToElement(target, smooth) {
+    if (!target) return;
+    const topbarH = getTopbarHeight();
+    const top = window.scrollY + target.getBoundingClientRect().top - topbarH - 8;
+    window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
+  }
+
+  function splitMarkdownSections(md) {
+    const lines = md.replace(/\r\n/g, '\n').split('\n');
+    const sections = [];
+    let currentH2 = null;
+    let currentChild = null;
+    let bufferBeforeFirstH2 = [];
+
+    function createSection(title, rawTitle, index) {
+      return {
+        title: title || '序',
+        rawTitle: rawTitle || title || '序',
+        floorIndex: index,
+        floorNum: `#${index}F`,
+        id: slugify(title || `floor-${index}`),
+        urlSlug: slugifyUrl(stripHeadingMarkup(rawTitle || title || '序')),
+        intro: '',
+        children: [],
+        childMap: new Map()
+      };
+    }
+
+    function flushChild() {
+      if (!currentChild || !currentH2) return;
+      currentChild.md = currentChild.lines.join('\n').trim();
+      currentChild.searchText = stripHeadingMarkup(currentChild.title + '\n' + currentChild.md);
+      currentChild.searchPath = [currentH2.urlSlug, currentChild.urlSlug].filter(Boolean).join('/');
+      currentChild.blocks = extractHeadingBlocks(currentChild.md, currentH2.childLevel || 3).map(block => ({
+        ...block,
+        urlSlug: slugifyUrl(block.title)
+      }));
+      currentH2.children.push(currentChild);
+      currentH2.childMap.set(currentChild.urlSlug, currentChild);
+      currentChild = null;
+    }
+
+    function flushSection() {
+      if (!currentH2) return;
+      flushChild();
+      currentH2.intro = currentH2.introLines.join('\n').trim();
+      delete currentH2.introLines;
+      sections.push(currentH2);
+      currentH2 = null;
+    }
+
+    let h2Index = 0;
+    for (const line of lines) {
+      const h2Match = line.match(/^##\s+(.+)/);
+      if (h2Match) {
+        flushSection();
+        const title = stripHeadingMarkup(h2Match[1]);
+        currentH2 = createSection(title, h2Match[1].trim(), h2Index++);
+        currentH2.introLines = bufferBeforeFirstH2.length && h2Index === 1 ? bufferBeforeFirstH2.splice(0) : [];
+        continue;
       }
+
+      if (!currentH2) {
+        bufferBeforeFirstH2.push(line);
+        continue;
+      }
+
+      const childLevel = currentH2.children.length ? 3 : 6;
+      const childMatch = line.match(new RegExp(`^#{3,6}\\s+(.+)`));
+      if (childMatch) {
+        const hashes = line.match(/^#+/)[0].length;
+        const isFirstLevelChild = currentH2.children.length === 0 ? hashes >= 3 : hashes === currentH2.childLevel;
+        if (currentH2.childLevel == null && hashes >= 3) currentH2.childLevel = hashes;
+        if (isFirstLevelChild && hashes === currentH2.childLevel) {
+          flushChild();
+          const rawTitle = childMatch[1].trim();
+          const title = stripHeadingMarkup(rawTitle);
+          currentChild = {
+            title,
+            rawTitle,
+            urlSlug: slugifyUrl(title),
+            id: `${currentH2.id}-${slugify(title)}`,
+            lines: []
+          };
+          continue;
+        }
+      }
+
+      if (currentChild) currentChild.lines.push(line);
+      else currentH2.introLines.push(line);
     }
-    const contents = await Promise.all(files.map(f => fetchMd(f)));
-    return contents.join('\n\n');
+
+    flushSection();
+    return sections.filter(section => section.title || section.intro || section.children.length);
   }
 
-  // ── Build content ──
-  async function buildContent() {
-    const allMd = await loadAllMd();
-
-    // Check if content has h2 headings for auto-splitting
-    const hasH2 = /^## .+/m.test(allMd);
-
-    if (hasH2) {
-      buildH2Floors(allMd);
-    } else {
-      buildLegacyFloors(allMd);
-    }
-
-    initInteraction();
-  }
-
-  // ── H2-based floor building ──
-  function buildH2Floors(allMd) {
-    const floors = splitByH2(allMd);
-    let html = '';
-
-    floors.forEach((floor, i) => {
-      const id = floor.title ? slugify(floor.title) : `floor-${i}`;
-      const floorNum = `#${i}F`;
-      const title = floor.title || '序';
-
-      html += `
-        <div class="floor" id="floor-${id}" data-section-id="${id}" data-url-slug="${slugifyUrl(title)}">
-          <div class="floor-header">${floorNum} &nbsp; ${title}</div>
-          <div class="floor-body">${renderMd(floor.md)}</div>
-        </div>`;
+  function buildSearchIndex(sections) {
+    const results = [];
+    sections.forEach(section => {
+      const sectionText = section.floorIndex !== 0 && section.children.length
+        ? stripHeadingMarkup([section.title, ...section.children.map(child => child.title)].join('\n'))
+        : stripHeadingMarkup([section.title, section.intro].filter(Boolean).join('\n'));
+      results.push({
+        type: 'section',
+        path: section.urlSlug,
+        pageName: section.title,
+        pathLabel: section.floorNum + ' ' + section.title,
+        text: sectionText,
+        title: section.title
+      });
+      section.children.forEach((child, idx) => {
+        const blockText = stripHeadingMarkup([
+          section.title,
+          child.title,
+          child.md
+        ].filter(Boolean).join('\n'));
+        results.push({
+          type: 'child',
+          path: [section.urlSlug, child.urlSlug].filter(Boolean).join('/'),
+          pageName: child.title,
+          parentName: section.title,
+          pathLabel: `${section.floorNum} ${section.title} / ${idx + 1}. ${child.title}`,
+          text: blockText,
+          title: child.title
+        });
+        child.blocks.forEach(block => {
+          results.push({
+            type: 'block',
+            path: [section.urlSlug, child.urlSlug, block.urlSlug].filter(Boolean).join('/'),
+            pageName: block.title,
+            parentName: child.title,
+            pathLabel: `${section.floorNum} ${section.title} / ${child.title} / ${block.title}`,
+            text: stripHeadingMarkup([section.title, child.title, block.title, block.md].filter(Boolean).join('\n')),
+            title: block.title
+          });
+        });
+      });
     });
-
-    contentEl.innerHTML = html;
-    buildToc();
+    return results;
   }
 
-  // ── Build hierarchical TOC from h2-h5 ──
-  function buildToc() {
-    let tocHtml = '';
+  function makeExcerpt(text, query) {
+    const clean = (text || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return '';
+    const lower = clean.toLowerCase();
+    const q = query.toLowerCase();
+    const idx = lower.indexOf(q);
+    if (idx === -1) return clean.slice(0, 110);
+    const start = Math.max(0, idx - 36);
+    const end = Math.min(clean.length, idx + query.length + 64);
+    const prefix = start > 0 ? '…' : '';
+    const suffix = end < clean.length ? '…' : '';
+    return prefix + clean.slice(start, end) + suffix;
+  }
+
+  function parseHashPath() {
+    const raw = location.hash.replace(/^#/, '').trim();
+    if (!raw) return [];
+    return raw.split('/').map(decodeURIComponent).filter(Boolean);
+  }
+
+  function buildHash(parts) {
+    const normalized = (parts || []).filter(Boolean).map(part => encodeURIComponent(part));
+    return normalized.length ? '#' + normalized.join('/') : '';
+  }
+
+  function setHash(parts, replace) {
+    const nextHash = buildHash(parts);
+    const nextUrl = nextHash || location.pathname + location.search;
+    if ((location.hash || '') === nextHash) return;
+    if (replace) history.replaceState(null, '', nextUrl);
+    else history.pushState(null, '', nextUrl);
+  }
+
+  function firstNavigablePage(sections) {
+    return sections[0] ? [sections[0].urlSlug] : [];
+  }
+
+  function buildPartPagerPages(sections) {
+    const pages = [];
+    sections.forEach(section => {
+      pages.push({
+        type: 'section',
+        pathParts: [section.urlSlug],
+        name: section.title
+      });
+      section.children.forEach(child => {
+        pages.push({
+          type: 'child',
+          pathParts: [section.urlSlug, child.urlSlug],
+          name: child.title
+        });
+      });
+    });
+    return pages;
+  }
+
+  function findPageMeta(pages, parts) {
+    const key = (parts || []).join('/');
+    return pages.findIndex(page => page.pathParts.join('/') === key);
+  }
+
+  function buildPagerHtml(currentPathParts, partPages) {
+    const idx = findPageMeta(partPages, currentPathParts);
+    const prev = idx > 0 ? partPages[idx - 1] : null;
+    const next = idx >= 0 && idx < partPages.length - 1 ? partPages[idx + 1] : null;
+    return `
+      <nav class="part-pager">
+        ${prev ? `<a class="part-pager-link" href="${buildHash(prev.pathParts)}"><span class="part-pager-dir">Last</span><span class="part-pager-name">${escapeHtml(prev.name)}</span></a>` : '<div class="part-pager-spacer" aria-hidden="true"></div>'}
+        ${next ? `<a class="part-pager-link" href="${buildHash(next.pathParts)}"><span class="part-pager-dir">Next</span><span class="part-pager-name">${escapeHtml(next.name)}</span></a>` : '<div class="part-pager-spacer" aria-hidden="true"></div>'}
+      </nav>`;
+  }
+
+  function renderPartSectionPage(section, partPages) {
+    const introHtml = section.intro ? `<div class="part-desc">${renderMd(section.intro)}</div>` : '';
+    const showSummaryOnly = section.floorIndex !== 0 && section.children.length;
+    const navCards = section.children.length
+      ? section.children.map((child, idx) => `
+        <a class="part-nav-card" href="${buildHash([section.urlSlug, child.urlSlug])}" data-nav-path="${[section.urlSlug, child.urlSlug].join('/')}">
+          <span class="part-nav-index">${String(idx + 1).padStart(2, '0')}</span>
+          <span class="part-nav-title">${escapeHtml(child.title)}</span>
+          <span class="part-nav-meta">进入该标题3页面</span>
+        </a>`).join('')
+      : `<div class="search-empty">该页面没有可展开的标题3导航。</div>`;
+
+    const summaryBlock = showSummaryOnly
+      ? `<div class="part-grid">${navCards}</div>`
+      : `<section class="part-section">
+          <div class="part-submodule">
+            <div class="part-submodule-header">${escapeHtml(section.title)}</div>
+            <div class="part-submodule-body">${renderMd(section.intro || '')}</div>
+          </div>
+        </section>`;
+
+    return `
+      <div class="floor floor-part" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
+        <div class="floor-header">
+          <span class="floor-label"><span class="floor-rail">${escapeHtml(section.floorNum)}</span>${escapeHtml(section.title)}</span>
+        </div>
+        <div class="part-hero">
+          <div class="part-kicker">Part View</div>
+          <h1 class="part-title">${escapeHtml(section.title)}</h1>
+          ${showSummaryOnly ? '' : introHtml}
+        </div>
+        ${summaryBlock}
+      </div>
+      ${buildPagerHtml([section.urlSlug], partPages)}`;
+  }
+
+  function renderPartChildPage(section, child, partPages) {
+    return `
+      <div class="floor floor-part" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
+        <div class="floor-header">
+          <span class="floor-label"><span class="floor-rail">${escapeHtml(section.floorNum)}</span>${escapeHtml(section.title)}</span>
+        </div>
+        <div class="part-hero">
+          <div class="part-kicker">${escapeHtml(section.title)}</div>
+          <h1 class="part-title">${escapeHtml(child.title)}</h1>
+          <div class="part-desc">本页汇总该标题3下的全部内容，URL 结构保持不变。</div>
+        </div>
+        <section class="part-section">
+          <div class="part-submodule">
+            <div class="part-submodule-header">${escapeHtml(child.title)}</div>
+            <div class="part-submodule-body" id="${escapeHtml(child.id)}" data-url-slug="${escapeHtml(child.urlSlug)}">${renderMd(child.md)}</div>
+          </div>
+        </section>
+      </div>
+      ${buildPagerHtml([section.urlSlug, child.urlSlug], partPages)}`;
+  }
+
+  function renderAllPage(sections) {
+    const html = sections.map(section => `
+      <div class="floor" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
+        <div class="floor-header">${escapeHtml(section.floorNum)} &nbsp; ${escapeHtml(section.title)}</div>
+        <div class="floor-body">${renderMd([section.intro, ...section.children.map(child => `${'#'.repeat(section.childLevel || 3)} ${child.rawTitle}\n${child.md}`)].filter(Boolean).join('\n\n'))}</div>
+      </div>`).join('');
+    contentEl.innerHTML = html;
     const allIds = new Set();
+    let tocHtml = '';
     document.querySelectorAll('.floor').forEach((floorEl, i) => {
       const id = floorEl.dataset.sectionId || `floor-${i}`;
       const floorNum = `#${i}F`;
-      const headerEl = floorEl.querySelector('.floor-header');
-      let title = headerEl ? headerEl.textContent.trim() : '';
-      title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
-
-      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}" data-url-slug="${slugifyUrl(title)}">${floorNum} ${title}</a></li>`;
-
+      const title = sections[i]?.title || '序';
+      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}" data-url-slug="${sections[i]?.urlSlug || ''}">${floorNum} ${escapeHtml(title)}</a></li>`;
       const parentSlug = { h3: '', h4: '', h5: '' };
       floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
-        const hSlug = slugify(h.textContent);
+        const headingText = stripHeadingMarkup(h.textContent);
+        const hSlug = slugify(headingText);
         if (level === 'h3') parentSlug.h3 = hSlug;
         else if (level === 'h4') parentSlug.h4 = hSlug;
         else if (level === 'h5') parentSlug.h5 = hSlug;
-
         let base;
-        if (level === 'h3' || level === 'h4') {
-          base = `${id}-${hSlug || `h${j}`}`;
-        } else if (level === 'h5') {
-          base = parentSlug.h4 ? `${parentSlug.h4}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
-        } else {
-          base = parentSlug.h5 ? `${parentSlug.h5}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
-        }
-
+        if (level === 'h3' || level === 'h4') base = `${id}-${hSlug || `h${j}`}`;
+        else if (level === 'h5') base = parentSlug.h4 ? `${parentSlug.h4}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
+        else base = parentSlug.h5 ? `${parentSlug.h5}-${hSlug || `h${j}`}` : `${id}-${hSlug || `h${j}`}`;
         let hId = base;
         let n = 2;
-        while (allIds.has(hId)) { hId = `${base}-${n++}`; }
+        while (allIds.has(hId)) hId = `${base}-${n++}`;
         allIds.add(hId);
-
         h.id = hId;
-        h.dataset.urlSlug = slugifyUrl(h.textContent);
-        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}" data-url-slug="${h.dataset.urlSlug}">${h.textContent}</a></li>`;
+        h.dataset.urlSlug = slugifyUrl(headingText);
+        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}" data-url-slug="${h.dataset.urlSlug}">${escapeHtml(headingText)}</a></li>`;
       });
     });
     tocEl.innerHTML = tocHtml;
   }
 
-  // ── Legacy floor building (no h2 splitting, uses _index.json structure) ──
-  function buildLegacyFloors(allMd) {
-    // Fall back to _index.json based structure
-    if (indexData.file) {
-      // Single file, no h2 → one big floor
-      contentEl.innerHTML = `
-        <div class="floor" id="floor-main" data-section-id="main">
-          <div class="floor-header">#0F &nbsp; ${indexData.title || '内容'}</div>
-          <div class="floor-body">${renderMd(allMd)}</div>
-        </div>`;
-      buildToc();
-      return;
-    }
-
-    // Multi-file legacy mode - build from _index.json sections
-    const fetchTasks = [];
-    for (const sec of indexData.sections) {
-      if (sec.children) {
-        const childTasks = sec.children.map(ch => fetchMd(ch.file).then(md => ({ ...ch, md })));
-        fetchTasks.push(Promise.all(childTasks).then(children => ({ ...sec, childrenData: children })));
-      } else {
-        fetchTasks.push(fetchMd(sec.file).then(md => ({ ...sec, md })));
-      }
-    }
-
-    Promise.all(fetchTasks).then(sections => {
-      let html = '';
-
-      for (const sec of sections) {
-        if (sec.childrenData) {
-          let bodyHtml = '';
-          for (const ch of sec.childrenData) {
-            bodyHtml += renderMd(ch.md);
-          }
-          const id = sec.id;
-          html += `
-            <div class="floor" id="floor-${id}" data-section-id="${id}">
-              <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
-              <div class="floor-body">${bodyHtml}</div>
-            </div>`;
-        } else {
-          const id = sec.id;
-          html += `
-            <div class="floor" id="floor-${id}" data-section-id="${id}">
-              <div class="floor-header">#${sec.floor} &nbsp; ${sec.title}</div>
-              <div class="floor-body">${renderMd(sec.md)}</div>
-            </div>`;
-        }
-      }
-
-      contentEl.innerHTML = html;
-      buildToc();
+  function renderPartToc(sections, activeSection, activeChild) {
+    const items = [];
+    sections.forEach(section => {
+      const isSectionActive = activeSection && activeSection.urlSlug === section.urlSlug;
+      items.push(
+        `<li><a class="toc-item toc-h2${isSectionActive && !activeChild ? ' active' : ''}" href="${buildHash([section.urlSlug])}" data-path="${section.urlSlug}">${escapeHtml(section.floorNum)} ${escapeHtml(section.title)}</a></li>`
+      );
+      section.children.forEach(child => {
+        const isChildActive = activeChild && activeChild.urlSlug === child.urlSlug && isSectionActive;
+        items.push(
+          `<li><a class="toc-item toc-h3${isChildActive ? ' active-sub' : ''}" href="${buildHash([section.urlSlug, child.urlSlug])}" data-path="${[section.urlSlug, child.urlSlug].join('/')}">${escapeHtml(child.title)}</a></li>`
+        );
+      });
     });
+    tocEl.innerHTML = items.join('');
   }
 
-  // ── Interaction setup ──
-  function initInteraction() {
-    // External links → new tab
+  function setExternalLinks() {
     contentEl.querySelectorAll('a[href]').forEach(a => {
       const href = a.getAttribute('href');
       if (href && /^https?:\/\//.test(href)) {
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener noreferrer');
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
       }
     });
-
-    // Initial hash scroll (path-aware, before observer to prevent race)
-    if (location.hash) {
-      const h = location.hash.slice(1);
-      let target = document.getElementById('floor-' + h) || document.getElementById(h);
-      if (!target) {
-        const segments = h.split('/');
-        const floorEl = document.querySelector(`.floor[data-url-slug="${segments[0]}"]`);
-        if (floorEl) {
-          target = floorEl;
-          for (let i = 1; i < segments.length; i++) {
-            const sub = floorEl.querySelector(`[data-url-slug="${segments[i]}"]`);
-            if (!sub) {
-              history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
-              break;
-            }
-            target = sub;
-          }
-        } else {
-          for (let i = segments.length; i > 0; i--) {
-            target = document.querySelector(`[data-url-slug="${segments[i - 1]}"]`);
-            if (target) {
-              if (i < segments.length) history.replaceState(null, '', '#' + segments.slice(0, i).join('/'));
-              break;
-            }
-          }
-        }
-      }
-      if (target) target.scrollIntoView({ block: 'start' });
-    }
-
-    // TOC click → scroll
-    tocEl.addEventListener('click', e => {
-      const item = e.target.closest('[data-target]');
-      if (!item) return;
-      const target = document.getElementById(item.dataset.target);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        closeSidebar();
-      }
-    });
-
-    // IntersectionObserver for TOC highlight + URL hash
-    const observer = new IntersectionObserver(entries => {
-      let topId = null;
-      let topRatio = 0;
-      for (const entry of entries) {
-        if (entry.isIntersecting && entry.intersectionRatio > topRatio) {
-          topRatio = entry.intersectionRatio;
-          topId = entry.target.dataset.sectionId;
-        }
-      }
-      if (topId) {
-        tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
-        const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
-        if (active) {
-          active.classList.add('active');
-          const floorUrlSlug = active.dataset.urlSlug;
-          if (floorUrlSlug && location.hash !== '#' + floorUrlSlug) history.replaceState(null, '', '#' + floorUrlSlug);
-        }
-        updateTocSub();
-      }
-    }, { rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')} 0px -60% 0px`, threshold: [0, 0.25, 0.5] });
-
-    document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
-
-    // Sub-heading ancestry highlight + path-based URL hash
-    function updateTocSub() {
-      tocEl.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
-      const activeH2 = tocEl.querySelector('.toc-item.active');
-      if (!activeH2) return;
-      const subItems = [];
-      let sib = activeH2.closest('li')?.nextElementSibling;
-      while (sib) {
-        const a = sib.querySelector('.toc-item');
-        if (!a || a.classList.contains('toc-h2')) break;
-        subItems.push(a);
-        sib = sib.nextElementSibling;
-      }
-      if (!subItems.length) return;
-      const topbarH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) || 48;
-      let currentSub = null;
-      for (const item of subItems) {
-        const target = document.getElementById(item.dataset.target);
-        if (target && target.getBoundingClientRect().top <= topbarH + 20) currentSub = item;
-      }
-      if (!currentSub) return;
-      currentSub.classList.add('active-sub');
-      const level = currentSub.classList.contains('toc-h6') ? 6 :
-                    currentSub.classList.contains('toc-h5') ? 5 :
-                    currentSub.classList.contains('toc-h4') ? 4 : 3;
-      // Collect ancestors, build URL path
-      const ancestors = [];
-      if (level > 3) {
-        let prev = currentSub.closest('li')?.previousElementSibling;
-        let needH5 = level >= 6, needH4 = level >= 5, needH3 = true;
-        while (prev && (needH3 || needH4 || needH5)) {
-          const a = prev.querySelector('.toc-item');
-          if (!a || a.classList.contains('toc-h2')) break;
-          if (needH5 && a.classList.contains('toc-h5')) { a.classList.add('active-sub'); ancestors.unshift(a); needH5 = false; }
-          if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); ancestors.unshift(a); needH4 = false; }
-          if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); ancestors.unshift(a); needH3 = false; }
-          prev = prev.previousElementSibling;
-        }
-      }
-      // Build and set path hash
-      const floorSlug = activeH2.dataset.urlSlug || '';
-      const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''];
-      const pathHash = pathParts.filter(Boolean).join('/');
-      if (pathHash && location.hash !== '#' + pathHash) history.replaceState(null, '', '#' + pathHash);
-    }
-    window.addEventListener('scroll', updateTocSub);
   }
 
-  // ── Sidebar ──
-  function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('open'); }
-  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
-  $('#menu-btn').addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-  overlay.addEventListener('click', closeSidebar);
-
-  // ── Search ──
+  let activeMode = getSavedMode();
   let searchMarks = [];
   let currentMarkIdx = -1;
+  let observer = null;
+  let updateTocSubHandler = null;
+  let searchTimer = null;
 
-  function openSearch() {
-    searchPanel.classList.add('open');
-    searchInput.focus();
+  function assignNestedAnchors(root, baseId) {
+    if (!root) return;
+    const used = new Set();
+    root.querySelectorAll('h2, h3, h4, h5, h6').forEach((heading, idx) => {
+      const slug = slugify(stripHeadingMarkup(heading.textContent)) || `sub-${idx}`;
+      let id = `${baseId}-${slug}`;
+      let n = 2;
+      while (used.has(id) || document.getElementById(id)) id = `${baseId}-${slug}-${n++}`;
+      used.add(id);
+      heading.id = id;
+      heading.dataset.urlSlug = slugifyUrl(stripHeadingMarkup(heading.textContent));
+    });
   }
-  function closeSearch() {
-    searchPanel.classList.remove('open');
-    clearSearch();
+
+  function scrollPartTarget(section, child, parts) {
+    if (parts.length > 2 && child) {
+      const body = contentEl.querySelector(`#${CSS.escape(child.id)}`);
+      if (body) {
+        let target = body;
+        for (let i = 2; i < parts.length; i++) {
+          const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+          if (!next) break;
+          target = next;
+        }
+        scrollToElement(target, false);
+        return;
+      }
+    }
+    if (parts.length > 1 && !child) {
+      const body = contentEl.querySelector('.part-submodule-body');
+      if (body) {
+        let target = body;
+        for (let i = 1; i < parts.length; i++) {
+          const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+          if (!next) break;
+          target = next;
+        }
+        scrollToElement(target, false);
+        return;
+      }
+    }
+    const focusTarget = child
+      ? contentEl.querySelector(`#${CSS.escape(child.id)}`)
+      : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
+    if (focusTarget) scrollToElement(focusTarget, false);
   }
-  function clearSearch() {
+
+  function clearAllModeSearch() {
     searchMarks.forEach(m => {
       const parent = m.parentNode;
+      if (!parent) return;
       parent.replaceChild(document.createTextNode(m.textContent), m);
       parent.normalize();
     });
     searchMarks = [];
     currentMarkIdx = -1;
-    searchCount.textContent = '';
   }
 
-  function doSearch(query) {
-    clearSearch();
-    if (!query.trim()) return;
+  function clearSearchUi() {
+    clearAllModeSearch();
+    searchCount.textContent = '';
+    searchResultsEl.hidden = true;
+    searchResultsEl.innerHTML = '';
+    searchPrevBtn.disabled = activeMode === 'part';
+    searchNextBtn.disabled = activeMode === 'part';
+  }
+
+  function renderPartSearchResults(results, query) {
+    if (!query.trim()) {
+      searchResultsEl.hidden = true;
+      searchResultsEl.innerHTML = '';
+      searchCount.textContent = '';
+      return;
+    }
+    searchCount.textContent = results.length ? `${results.length} 个结果` : '无结果';
+    searchPrevBtn.disabled = true;
+    searchNextBtn.disabled = true;
+    searchResultsEl.hidden = false;
+    if (!results.length) {
+      searchResultsEl.innerHTML = '<div class="search-empty">没有找到对应文档位置。</div>';
+      return;
+    }
+    searchResultsEl.innerHTML = `<div class="search-results-list">${results.map(result => `
+      <button class="search-result-item" type="button" data-path="${escapeHtml(result.path)}">
+        <span class="search-result-path">${escapeHtml(result.pathLabel)}</span>
+        <span class="search-result-title">${escapeHtml(result.title)}</span>
+        <span class="search-result-excerpt">${escapeHtml(makeExcerpt(result.text, query))}</span>
+      </button>`).join('')}</div>`;
+  }
+
+  function doAllModeSearch(query) {
+    clearAllModeSearch();
+    searchResultsEl.hidden = true;
+    searchResultsEl.innerHTML = '';
+    searchPrevBtn.disabled = false;
+    searchNextBtn.disabled = false;
+    if (!query.trim()) {
+      searchCount.textContent = '';
+      return;
+    }
     const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
     const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT);
     const textNodes = [];
     while (walker.nextNode()) textNodes.push(walker.currentNode);
-
     for (const node of textNodes) {
+      if (!node.parentNode || /^(script|style|mark)$/i.test(node.parentNode.nodeName)) continue;
       const text = node.textContent;
       if (!regex.test(text)) continue;
       regex.lastIndex = 0;
@@ -531,37 +709,303 @@
       if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
       node.parentNode.replaceChild(frag, node);
     }
-
     searchCount.textContent = searchMarks.length ? `${searchMarks.length} 个结果` : '无结果';
     if (searchMarks.length) navigateMark(0);
+  }
+
+  function doPartModeSearch(query, searchIndex) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      renderPartSearchResults([], query);
+      return;
+    }
+    const results = searchIndex.filter(entry => entry.text.toLowerCase().includes(q)).slice(0, 80);
+    renderPartSearchResults(results, query);
   }
 
   function navigateMark(idx) {
     if (!searchMarks.length) return;
     if (currentMarkIdx >= 0 && searchMarks[currentMarkIdx]) searchMarks[currentMarkIdx].classList.remove('current');
     currentMarkIdx = ((idx % searchMarks.length) + searchMarks.length) % searchMarks.length;
-    const m = searchMarks[currentMarkIdx];
-    m.classList.add('current');
-    m.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const mark = searchMarks[currentMarkIdx];
+    mark.classList.add('current');
+    scrollToElement(mark, true);
     searchCount.textContent = `${currentMarkIdx + 1} / ${searchMarks.length}`;
   }
 
-  $('#search-btn').addEventListener('click', openSearch);
-  $('#search-close').addEventListener('click', closeSearch);
-  $('#search-prev').addEventListener('click', () => navigateMark(currentMarkIdx - 1));
-  $('#search-next').addEventListener('click', () => navigateMark(currentMarkIdx + 1));
+  function openSearch() {
+    searchPanel.classList.add('open');
+    searchInput.focus();
+    searchInput.select();
+  }
 
-  let searchTimer;
-  searchInput.addEventListener('input', () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => doSearch(searchInput.value), 300);
-  });
+  function closeSearch() {
+    searchPanel.classList.remove('open');
+    searchInput.value = '';
+    clearSearchUi();
+  }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeSearch();
-    if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); openSearch(); }
-  });
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  }
 
-  // ── Init ──
-  await buildContent();
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  }
+
+  function bindStaticEvents() {
+    $('#menu-btn').addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+    overlay.addEventListener('click', closeSidebar);
+    $('#search-btn').addEventListener('click', openSearch);
+    $('#search-close').addEventListener('click', closeSearch);
+    searchPrevBtn.addEventListener('click', () => navigateMark(currentMarkIdx - 1));
+    searchNextBtn.addEventListener('click', () => navigateMark(currentMarkIdx + 1));
+    searchResultsEl.addEventListener('click', e => {
+      const item = e.target.closest('[data-path]');
+      if (!item) return;
+      setHash(item.dataset.path.split('/'), false);
+      closeSearch();
+      renderApp(true);
+    });
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        if (activeMode === 'part') doPartModeSearch(searchInput.value, appState.searchIndex);
+        else doAllModeSearch(searchInput.value);
+      }, 200);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (searchPanel.classList.contains('open')) closeSearch();
+        else closeSidebar();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        openSearch();
+      }
+    });
+    modeToggle.addEventListener('click', () => {
+      activeMode = activeMode === 'all' ? 'part' : 'all';
+      saveMode(activeMode);
+      if (activeMode === 'part') {
+        const parts = parseHashPath();
+        if (!parts.length || (parts.length === 1 && appState.sections.find(sec => sec.floorIndex === 0 && sec.urlSlug === parts[0]))) {
+          setHash(firstNavigablePage(appState.sections), true);
+        }
+      }
+      closeSearch();
+      renderApp(false);
+    });
+    window.addEventListener('hashchange', () => renderApp(true));
+  }
+
+  function teardownDynamicEvents() {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    if (updateTocSubHandler) {
+      window.removeEventListener('scroll', updateTocSubHandler);
+      updateTocSubHandler = null;
+    }
+  }
+
+  function initAllModeInteraction() {
+    tocEl.onclick = e => {
+      const item = e.target.closest('[data-target]');
+      if (!item) return;
+      e.preventDefault();
+      const target = document.getElementById(item.dataset.target);
+      if (!target) return;
+      scrollToElement(target, true);
+      closeSidebar();
+    };
+
+    const rootMargin = `-${getTopbarHeight()}px 0px -60% 0px`;
+    observer = new IntersectionObserver(entries => {
+      let topId = null;
+      let topRatio = 0;
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.intersectionRatio > topRatio) {
+          topRatio = entry.intersectionRatio;
+          topId = entry.target.dataset.sectionId;
+        }
+      }
+      if (!topId) return;
+      tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+      const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
+      if (active) {
+        active.classList.add('active');
+        if (active.dataset.urlSlug) setHash([active.dataset.urlSlug], true);
+      }
+      updateTocSubHandler();
+    }, { rootMargin, threshold: [0, 0.25, 0.5] });
+
+    document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
+
+    updateTocSubHandler = function() {
+      tocEl.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
+      const activeH2 = tocEl.querySelector('.toc-item.active');
+      if (!activeH2) return;
+      const subItems = [];
+      let sib = activeH2.closest('li')?.nextElementSibling;
+      while (sib) {
+        const a = sib.querySelector('.toc-item');
+        if (!a || a.classList.contains('toc-h2')) break;
+        subItems.push(a);
+        sib = sib.nextElementSibling;
+      }
+      if (!subItems.length) return;
+      let currentSub = null;
+      const topbarH = getTopbarHeight();
+      for (const item of subItems) {
+        const target = document.getElementById(item.dataset.target);
+        if (target && target.getBoundingClientRect().top <= topbarH + 20) currentSub = item;
+      }
+      if (!currentSub) return;
+      currentSub.classList.add('active-sub');
+      const level = currentSub.classList.contains('toc-h6') ? 6 :
+        currentSub.classList.contains('toc-h5') ? 5 :
+          currentSub.classList.contains('toc-h4') ? 4 : 3;
+      const ancestors = [];
+      if (level > 3) {
+        let prev = currentSub.closest('li')?.previousElementSibling;
+        let needH5 = level >= 6;
+        let needH4 = level >= 5;
+        let needH3 = true;
+        while (prev && (needH3 || needH4 || needH5)) {
+          const a = prev.querySelector('.toc-item');
+          if (!a || a.classList.contains('toc-h2')) break;
+          if (needH5 && a.classList.contains('toc-h5')) {
+            a.classList.add('active-sub');
+            ancestors.unshift(a);
+            needH5 = false;
+          }
+          if (needH4 && a.classList.contains('toc-h4')) {
+            a.classList.add('active-sub');
+            ancestors.unshift(a);
+            needH4 = false;
+          }
+          if (needH3 && a.classList.contains('toc-h3')) {
+            a.classList.add('active-sub');
+            ancestors.unshift(a);
+            needH3 = false;
+          }
+          prev = prev.previousElementSibling;
+        }
+      }
+      const floorSlug = activeH2.dataset.urlSlug || '';
+      const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
+      if (pathParts.length) setHash(pathParts, true);
+    };
+    window.addEventListener('scroll', updateTocSubHandler);
+
+    const parts = parseHashPath();
+    if (parts.length) {
+      let target = document.getElementById('floor-' + parts[0]) || document.getElementById(parts[0]);
+      if (!target) {
+        const floorEl = document.querySelector(`.floor[data-url-slug="${CSS.escape(parts[0])}"]`);
+        if (floorEl) {
+          target = floorEl;
+          for (let i = 1; i < parts.length; i++) {
+            const sub = floorEl.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+            if (!sub) break;
+            target = sub;
+          }
+        } else {
+          target = document.querySelector(`[data-url-slug="${CSS.escape(parts[parts.length - 1])}"]`);
+        }
+      }
+      if (target) scrollToElement(target, false);
+    }
+  }
+
+  function initPartModeInteraction(activeSection, activeChild) {
+    tocEl.onclick = e => {
+      const link = e.target.closest('[href]');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+      e.preventDefault();
+      location.hash = href;
+      closeSidebar();
+    };
+    document.querySelectorAll('.part-pager-link, .part-nav-card, .part-section-title a').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        e.preventDefault();
+        location.hash = href;
+      });
+    });
+    tocEl.querySelectorAll('.toc-item').forEach(item => item.classList.remove('active', 'active-sub'));
+    if (activeSection) {
+      const activeSectionLink = tocEl.querySelector(`.toc-h2[data-path="${activeSection.urlSlug}"]`);
+      if (activeSectionLink) activeSectionLink.classList.add(activeChild ? 'active-sub' : 'active');
+    }
+    if (activeChild && activeSection) {
+      const childLink = tocEl.querySelector(`.toc-h3[data-path="${activeSection.urlSlug}/${activeChild.urlSlug}"]`);
+      if (childLink) childLink.classList.add('active-sub');
+    }
+    scrollPartTarget(activeSection, activeChild, parseHashPath());
+  }
+
+  const rawMd = await fetchMd(indexData.file || 'content/main.md');
+  const sections = splitMarkdownSections(rawMd);
+  const appState = {
+    sections,
+    searchIndex: buildSearchIndex(sections),
+    partPages: buildPartPagerPages(sections)
+  };
+
+  function renderPartPage() {
+    let parts = parseHashPath();
+    if (!parts.length) {
+      parts = firstNavigablePage(appState.sections);
+      setHash(parts, true);
+    }
+    let section = appState.sections.find(sec => sec.urlSlug === parts[0]);
+    if (!section) {
+      parts = firstNavigablePage(appState.sections);
+      setHash(parts, true);
+      section = appState.sections.find(sec => sec.urlSlug === parts[0]);
+    }
+    if (!section) {
+      contentEl.innerHTML = '<p style="padding:40px;color:red;">无法定位页面。</p>';
+      tocEl.innerHTML = '';
+      return;
+    }
+    const child = parts[1] ? section.childMap.get(parts[1]) : null;
+    if (parts[1] && !child && section.children.length) {
+      setHash([section.urlSlug], true);
+      contentEl.innerHTML = renderPartSectionPage(section, appState.partPages);
+      renderPartToc(appState.sections, section, null);
+      return initPartModeInteraction(section, null);
+    }
+    contentEl.innerHTML = child
+      ? renderPartChildPage(section, child, appState.partPages)
+      : renderPartSectionPage(section, appState.partPages);
+    contentEl.querySelectorAll('.part-submodule-body').forEach(el => assignNestedAnchors(el, el.id || section.id));
+    renderPartToc(appState.sections, section, child);
+    initPartModeInteraction(section, child);
+  }
+
+  function renderApp(fromHashChange) {
+    teardownDynamicEvents();
+    clearSearchUi();
+    modeToggle.textContent = activeMode;
+    modeToggle.dataset.mode = activeMode;
+    searchInput.placeholder = activeMode === 'part' ? '搜索文档位置...' : '搜索内容...';
+    if (activeMode === 'part') renderPartPage();
+    else {
+      renderAllPage(appState.sections);
+      initAllModeInteraction();
+    }
+    setExternalLinks();
+  }
+
+  bindStaticEvents();
+  renderApp(false);
 })();

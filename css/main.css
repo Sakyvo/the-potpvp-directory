@@ -44,6 +44,22 @@ body {
 .topbar-right {
   display: flex; align-items: center; gap: 8px; flex-shrink: 0;
 }
+.mode-toggle {
+  min-width: 52px; height: 28px; padding: 0 12px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font: 600 12px/1 "Segoe UI", "Noto Sans SC", sans-serif;
+  text-transform: lowercase;
+  letter-spacing: .6px;
+  cursor: pointer;
+}
+.mode-toggle:hover { background: var(--bg-card); }
+.mode-toggle[data-mode="part"] {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+}
 .maint-badge {
   display: inline-flex; align-items: center; justify-content: center;
   height: 28px; padding: 0 10px;
@@ -67,6 +83,36 @@ body {
 .search-inner {
   max-width: 800px; margin: 0 auto; padding: 8px 16px;
   display: flex; align-items: center; gap: 8px;
+}
+.search-results {
+  max-width: 800px; margin: 0 auto; padding: 0 16px 16px;
+}
+.search-results[hidden] { display: none; }
+.search-results-list {
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+.search-result-item {
+  width: 100%; border: none; border-top: 1px solid var(--border);
+  background: var(--bg-primary); padding: 12px 16px; text-align: left; cursor: pointer;
+}
+.search-result-item:first-child { border-top: none; }
+.search-result-item:hover { background: var(--bg-card); }
+.search-result-path {
+  display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;
+}
+.search-result-title {
+  display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;
+}
+.search-result-excerpt {
+  display: block; font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+}
+.search-empty {
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
 }
 #search-input {
   flex: 1; height: 36px; border: 1px solid var(--border);
@@ -128,6 +174,10 @@ body {
   margin-bottom: 24px; border: 1px solid var(--border);
   overflow: hidden; background: var(--bg-primary);
 }
+.floor.floor-part {
+  border-color: #d5d5d5;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .03);
+}
 .floor-header {
   background: var(--bg-header); color: var(--text-on-dark);
   padding: 10px 20px; font-size: 14px; font-weight: 600;
@@ -135,6 +185,147 @@ body {
 .floor-body {
   padding: 20px 24px; background: var(--bg-primary);
 }
+.floor-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.floor-rail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid rgba(255,255,255,.25);
+  font-size: 11px;
+  letter-spacing: .8px;
+}
+.part-hero {
+  padding: 28px 30px 18px;
+  border-bottom: 1px solid var(--border);
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, .02), rgba(0, 0, 0, 0)),
+    linear-gradient(90deg, rgba(0, 0, 0, .04), rgba(0, 0, 0, 0));
+}
+.part-kicker {
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.part-title {
+  margin: 8px 0 0;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: .4px;
+}
+.part-desc {
+  margin-top: 10px;
+  max-width: 680px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.part-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+.part-nav-card {
+  display: block;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #fff, #f7f7f7);
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 16px;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.part-nav-card:hover {
+  transform: translateY(-1px);
+  border-color: #b9b9b9;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .04);
+}
+.part-nav-index {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: .8px;
+  margin-bottom: 6px;
+}
+.part-nav-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.part-nav-meta {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.part-section {
+  padding: 18px;
+  border-top: 1px solid var(--border);
+}
+.part-section:first-of-type { border-top: none; }
+.part-section-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.part-section-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.part-submodule {
+  border: 1px solid var(--border);
+  background: #fcfcfc;
+  margin-top: 18px;
+}
+.part-submodule-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: #f4f4f4;
+  font-size: 13px;
+  font-weight: 700;
+}
+.part-submodule-body {
+  padding: 18px;
+}
+.part-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.part-pager-link,
+.part-pager-spacer {
+  flex: 1;
+  min-height: 72px;
+}
+.part-pager-link {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #fff, #f6f6f6);
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 14px 16px;
+}
+.part-pager-link:hover { background: var(--bg-card); }
+.part-pager-dir {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.part-pager-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.part-pager-spacer { visibility: hidden; }
 
 /* ── Markdown content styling ── */
 .floor-body { font-size: 14px; }
@@ -209,4 +400,14 @@ mark.search-hl.current { background: #ff9632; }
   .floor-body { padding: 16px; }
   .topbar-title { font-size: 13px; }
   .maint-badge { padding: 0 8px; font-size: 11px; }
+  .topbar-right { gap: 6px; }
+  .mode-toggle { min-width: 46px; padding: 0 10px; }
+  .search-inner { padding-left: 8px; padding-right: 8px; }
+  .search-results { padding-left: 8px; padding-right: 8px; padding-bottom: 12px; }
+  .part-hero { padding: 20px 18px 14px; }
+  .part-title { font-size: 24px; }
+  .part-grid,
+  .part-section { padding: 12px; }
+  .part-submodule-body { padding: 14px; }
+  .part-pager { flex-direction: column; }
 }
