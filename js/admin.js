@@ -1235,7 +1235,7 @@
       // Update index
       setStep(si, 'running');
       const newIndex = {
-        title: indexData.title || 'pdir.cc.cd',
+        title: indexData.title || 'The PotPvP Directory ~ 漠海拾遗',
         file: mainFile
       };
       try {

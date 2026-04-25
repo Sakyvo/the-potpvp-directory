@@ -187,7 +187,7 @@
   }
 
   function slugifyUrl(text) {
-    return (text || '').trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-]/g, '').replace(/\.-/g, '-').replace(/\.+$/, '').substring(0, 80) || 'section';
+    return (text || '').trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\u4e00-\u9fff.\-()（）]/g, '').replace(/\.-/g, '-').replace(/\.+$/, '').substring(0, 80) || 'section';
   }
 
   function stripHeadingMarkup(text) {
