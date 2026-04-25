@@ -40,6 +40,7 @@
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
   const WORD_JOINER = '\u2060';
   const VIEW_MODE_KEY = 'ppdir-view-mode';
+  const TOC_COLLAPSED_KEY = 'ppdir-toc-collapsed';
 
   function escapeHtml(text) {
     return (text || '').replace(/[&<>"']/g, char => ({
@@ -158,6 +159,7 @@
   const searchNextBtn = $('#search-next');
   const searchResultsEl = $('#search-results');
   const modeToggle = $('#mode-toggle');
+  const tocToggle = $('#toc-toggle');
   if (showMaintBadge) {
     const badge = $('#maint-badge');
     if (badge) badge.hidden = false;
@@ -237,6 +239,28 @@
     try {
       localStorage.setItem(VIEW_MODE_KEY, mode);
     } catch {}
+  }
+
+  function getSavedTocCollapsed() {
+    try {
+      return localStorage.getItem(TOC_COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  function saveTocCollapsed(collapsed) {
+    try {
+      localStorage.setItem(TOC_COLLAPSED_KEY, collapsed ? '1' : '0');
+    } catch {}
+  }
+
+  function applyTocCollapseState() {
+    if (!tocEl || !tocToggle) return;
+    tocEl.classList.toggle('collapsed', tocCollapsed);
+    tocToggle.dataset.collapsed = tocCollapsed ? 'true' : 'false';
+    tocToggle.setAttribute('aria-pressed', tocCollapsed ? 'true' : 'false');
+    tocToggle.textContent = tocCollapsed ? '▸' : '▾';
   }
 
   function getTopbarHeight() {
@@ -643,6 +667,7 @@
   let observer = null;
   let updateTocSubHandler = null;
   let searchTimer = null;
+  let tocCollapsed = getSavedTocCollapsed();
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -849,6 +874,11 @@
     overlay.addEventListener('click', closeSidebar);
     $('#search-btn').addEventListener('click', openSearch);
     $('#search-close').addEventListener('click', closeSearch);
+    tocToggle.addEventListener('click', () => {
+      tocCollapsed = !tocCollapsed;
+      saveTocCollapsed(tocCollapsed);
+      applyTocCollapseState();
+    });
     searchPrevBtn.addEventListener('click', () => navigateMark(currentMarkIdx - 1));
     searchNextBtn.addEventListener('click', () => navigateMark(currentMarkIdx + 1));
     searchResultsEl.addEventListener('click', e => {
@@ -1099,6 +1129,7 @@
       renderAllPage(appState.sections);
       initAllModeInteraction();
     }
+    applyTocCollapseState();
     setExternalLinks();
   }
 
