@@ -180,7 +180,6 @@ body {
 .toc-item.toc-h4 { padding-left: 56px; font-weight: 400; font-size: 13px; }
 .toc-item.toc-h5 { padding-left: 72px; font-weight: 400; font-size: 12px; }
 .toc-item.toc-h6 { padding-left: 88px; font-weight: 400; font-size: 11px; }
-.toc.collapsed .toc-h3,
 .toc.collapsed .toc-h4,
 .toc.collapsed .toc-h5,
 .toc.collapsed .toc-h6 {
