@@ -255,12 +255,28 @@
     } catch {}
   }
 
-  function applyTocCollapseState() {
+  function scrollActiveTocItemIntoView(alignTop) {
+    if (!sidebar || !tocEl) return;
+    const activeItem = tocEl.querySelector('.toc-item.active') || tocEl.querySelector('.toc-item.active-sub');
+    if (!activeItem) return;
+    if (alignTop) {
+      const sidebarRect = sidebar.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const headerHeight = sidebar.querySelector('.sidebar-header')?.offsetHeight || 0;
+      const nextTop = sidebar.scrollTop + (itemRect.top - sidebarRect.top) - headerHeight - 8;
+      sidebar.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
+      return;
+    }
+    activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  function applyTocCollapseState(alignTop) {
     if (!tocEl || !tocToggle) return;
     tocEl.classList.toggle('collapsed', tocCollapsed);
     tocToggle.dataset.collapsed = tocCollapsed ? 'true' : 'false';
     tocToggle.setAttribute('aria-pressed', tocCollapsed ? 'true' : 'false');
     tocToggle.textContent = tocCollapsed ? '▸' : '▾';
+    requestAnimationFrame(() => scrollActiveTocItemIntoView(!!alignTop));
   }
 
   function getTopbarHeight() {
@@ -877,7 +893,7 @@
     tocToggle.addEventListener('click', () => {
       tocCollapsed = !tocCollapsed;
       saveTocCollapsed(tocCollapsed);
-      applyTocCollapseState();
+      applyTocCollapseState(true);
     });
     searchPrevBtn.addEventListener('click', () => navigateMark(currentMarkIdx - 1));
     searchNextBtn.addEventListener('click', () => navigateMark(currentMarkIdx + 1));
@@ -961,6 +977,7 @@
         if (active.dataset.urlSlug) setHash([active.dataset.urlSlug], true);
       }
       updateTocSubHandler();
+      scrollActiveTocItemIntoView();
     }, { rootMargin, threshold: [0, 0.25, 0.5] });
 
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
@@ -1019,6 +1036,7 @@
       const floorSlug = activeH2.dataset.urlSlug || '';
       const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
       if (pathParts.length) setHash(pathParts, true);
+      scrollActiveTocItemIntoView();
     };
     window.addEventListener('scroll', updateTocSubHandler);
 
@@ -1075,6 +1093,7 @@
       }
       if (currentPath.startsWith(itemPath + '/')) item.classList.add('active-sub');
     });
+    scrollActiveTocItemIntoView();
     scrollPartTarget(activeSection, activeChild, parseHashPath());
   }
 
