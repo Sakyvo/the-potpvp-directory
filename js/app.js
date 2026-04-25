@@ -457,58 +457,38 @@
   }
 
   function renderPartSectionPage(section, partPages) {
-    const introHtml = section.intro ? `<div class="part-desc">${renderMd(section.intro)}</div>` : '';
     const showSummaryOnly = section.floorIndex !== 0 && section.children.length;
     const navCards = section.children.length
       ? section.children.map((child, idx) => `
         <a class="part-nav-card" href="${buildHash([section.urlSlug, child.urlSlug])}" data-nav-path="${[section.urlSlug, child.urlSlug].join('/')}">
           <span class="part-nav-index">${String(idx + 1).padStart(2, '0')}</span>
           <span class="part-nav-title">${escapeHtml(child.title)}</span>
-          <span class="part-nav-meta">进入该标题3页面</span>
         </a>`).join('')
       : `<div class="search-empty">该页面没有可展开的标题3导航。</div>`;
 
-    const summaryBlock = showSummaryOnly
+    const bodyHtml = showSummaryOnly
       ? `<div class="part-grid">${navCards}</div>`
-      : `<section class="part-section">
-          <div class="part-submodule">
-            <div class="part-submodule-header">${escapeHtml(section.title)}</div>
-            <div class="part-submodule-body">${renderMd(section.intro || '')}</div>
-          </div>
-        </section>`;
+      : renderMd(section.intro || '');
 
     return `
       <div class="floor floor-part" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
-        <div class="floor-header">
-          <span class="floor-label"><span class="floor-rail">${escapeHtml(section.floorNum)}</span>${escapeHtml(section.title)}</span>
+        <div class="floor-header">${escapeHtml(section.floorNum)} &nbsp; ${escapeHtml(section.title)}</div>
+        <div class="floor-body" data-anchor-base="${escapeHtml(section.id)}">
+          ${bodyHtml}
         </div>
-        <div class="part-hero">
-          <div class="part-kicker">Part View</div>
-          <h1 class="part-title">${escapeHtml(section.title)}</h1>
-          ${showSummaryOnly ? '' : introHtml}
-        </div>
-        ${summaryBlock}
       </div>
       ${buildPagerHtml([section.urlSlug], partPages)}`;
   }
 
   function renderPartChildPage(section, child, partPages) {
+    const childHeadingLevel = '#'.repeat(section.childLevel || 3);
+    const childMd = `${childHeadingLevel} ${child.rawTitle}\n\n${child.md}`;
     return `
       <div class="floor floor-part" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
-        <div class="floor-header">
-          <span class="floor-label"><span class="floor-rail">${escapeHtml(section.floorNum)}</span>${escapeHtml(section.title)}</span>
+        <div class="floor-header">${escapeHtml(section.floorNum)} &nbsp; ${escapeHtml(section.title)}</div>
+        <div class="floor-body" data-anchor-base="${escapeHtml(child.id)}">
+          ${renderMd(childMd)}
         </div>
-        <div class="part-hero">
-          <div class="part-kicker">${escapeHtml(section.title)}</div>
-          <h1 class="part-title">${escapeHtml(child.title)}</h1>
-          <div class="part-desc">本页汇总该标题3下的全部内容，URL 结构保持不变。</div>
-        </div>
-        <section class="part-section">
-          <div class="part-submodule">
-            <div class="part-submodule-header">${escapeHtml(child.title)}</div>
-            <div class="part-submodule-body" id="${escapeHtml(child.id)}" data-url-slug="${escapeHtml(child.urlSlug)}">${renderMd(child.md)}</div>
-          </div>
-        </section>
       </div>
       ${buildPagerHtml([section.urlSlug, child.urlSlug], partPages)}`;
   }
@@ -600,12 +580,41 @@
   }
 
   function scrollPartTarget(section, child, parts) {
+    const body = contentEl.querySelector('.floor.floor-part .floor-body');
+    if (parts.length > 2 && child && body) {
+      let target = body;
+      for (let i = 2; i < parts.length; i++) {
+        const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+        if (!next) break;
+        target = next;
+      }
+      scrollToElement(target, false);
+      return;
+    }
+    if (parts.length > 1 && !child && body) {
+      let target = body;
+      for (let i = 1; i < parts.length; i++) {
+        const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+        if (!next) break;
+        target = next;
+      }
+      scrollToElement(target, false);
+      return;
+    }
+    if (body && child) {
+      scrollToElement(body, false);
+      return;
+    }
+    if (body && !child && section && !section.children.length) {
+      scrollToElement(body, false);
+      return;
+    }
     if (parts.length > 2 && child) {
-      const body = contentEl.querySelector(`#${CSS.escape(child.id)}`);
-      if (body) {
-        let target = body;
+      const childBody = contentEl.querySelector(`#${CSS.escape(child.id)}`);
+      if (childBody) {
+        let target = childBody;
         for (let i = 2; i < parts.length; i++) {
-          const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+          const next = childBody.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
           if (!next) break;
           target = next;
         }
@@ -614,11 +623,11 @@
       }
     }
     if (parts.length > 1 && !child) {
-      const body = contentEl.querySelector('.part-submodule-body');
-      if (body) {
-        let target = body;
+      const sectionBody = contentEl.querySelector('.floor.floor-part .floor-body');
+      if (sectionBody) {
+        let target = sectionBody;
         for (let i = 1; i < parts.length; i++) {
-          const next = body.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+          const next = sectionBody.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
           if (!next) break;
           target = next;
         }
@@ -627,7 +636,7 @@
       }
     }
     const focusTarget = child
-      ? contentEl.querySelector(`#${CSS.escape(child.id)}`)
+      ? contentEl.querySelector('.floor.floor-part .floor-body')
       : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
     if (focusTarget) scrollToElement(focusTarget, false);
   }
@@ -987,7 +996,7 @@
     contentEl.innerHTML = child
       ? renderPartChildPage(section, child, appState.partPages)
       : renderPartSectionPage(section, appState.partPages);
-    contentEl.querySelectorAll('.part-submodule-body').forEach(el => assignNestedAnchors(el, el.id || section.id));
+    contentEl.querySelectorAll('.floor.floor-part .floor-body').forEach(el => assignNestedAnchors(el, el.dataset.anchorBase || section.id));
     renderPartToc(appState.sections, section, child);
     initPartModeInteraction(section, child);
   }
