@@ -531,21 +531,100 @@
     tocEl.innerHTML = tocHtml;
   }
 
-  function renderPartToc(sections, activeSection, activeChild) {
+  function collectPartTocEntries(activeSection, activeChild) {
     const items = [];
-    sections.forEach(section => {
-      const isSectionActive = activeSection && activeSection.urlSlug === section.urlSlug;
-      items.push(
-        `<li><a class="toc-item toc-h2${isSectionActive && !activeChild ? ' active' : ''}" href="${buildHash([section.urlSlug])}" data-path="${section.urlSlug}">${escapeHtml(section.floorNum)} ${escapeHtml(section.title)}</a></li>`
-      );
+    const allIds = new Set();
+    const pageFloor = contentEl.querySelector('.floor.floor-part');
+    const pageBody = pageFloor?.querySelector('.floor-body');
+    let activeSectionPath = '';
+    let activeChildPath = '';
+    const parts = parseHashPath();
+
+    if (activeSection) activeSectionPath = activeSection.urlSlug;
+    if (activeSection && activeChild) activeChildPath = [activeSection.urlSlug, activeChild.urlSlug].join('/');
+
+    appState.sections.forEach(section => {
+      items.push({
+        level: 'h2',
+        label: `${section.floorNum} ${section.title}`,
+        href: buildHash([section.urlSlug]),
+        path: section.urlSlug,
+        active: section.urlSlug === activeSectionPath && !activeChild,
+        activeSub: false
+      });
+
       section.children.forEach(child => {
-        const isChildActive = activeChild && activeChild.urlSlug === child.urlSlug && isSectionActive;
-        items.push(
-          `<li><a class="toc-item toc-h3${isChildActive ? ' active-sub' : ''}" href="${buildHash([section.urlSlug, child.urlSlug])}" data-path="${[section.urlSlug, child.urlSlug].join('/')}">${escapeHtml(child.title)}</a></li>`
-        );
+        items.push({
+          level: 'h3',
+          label: child.title,
+          href: buildHash([section.urlSlug, child.urlSlug]),
+          path: [section.urlSlug, child.urlSlug].join('/'),
+          active: false,
+          activeSub: section.urlSlug === activeSectionPath && child.urlSlug === activeChild?.urlSlug
+        });
       });
     });
-    tocEl.innerHTML = items.join('');
+
+    if (!pageBody || !activeSection) return items;
+
+    const nestedPathPrefix = activeChild
+      ? [activeSection.urlSlug, activeChild.urlSlug]
+      : [activeSection.urlSlug];
+    const parentSlug = { h3: activeChild?.urlSlug || '', h4: '', h5: '' };
+
+    pageBody.querySelectorAll('h3, h4, h5, h6').forEach((heading, idx) => {
+      const level = heading.tagName.toLowerCase();
+      const headingText = stripHeadingMarkup(heading.textContent);
+      const slug = slugify(headingText) || `sub-${idx}`;
+      if (level === 'h3' && activeChild) return;
+      if (level === 'h3') parentSlug.h3 = slugifyUrl(headingText);
+      else if (level === 'h4') parentSlug.h4 = slugifyUrl(headingText);
+      else if (level === 'h5') parentSlug.h5 = slugifyUrl(headingText);
+
+      let base;
+      if (level === 'h3' || level === 'h4') base = `${activeSection.id}-${slug}`;
+      else if (level === 'h5') base = parentSlug.h4 ? `${parentSlug.h4}-${slug}` : `${activeSection.id}-${slug}`;
+      else base = parentSlug.h5 ? `${parentSlug.h5}-${slug}` : `${activeSection.id}-${slug}`;
+
+      let headingId = base;
+      let n = 2;
+      while (allIds.has(headingId) || document.getElementById(headingId)) headingId = `${base}-${n++}`;
+      allIds.add(headingId);
+      heading.id = heading.id || headingId;
+      heading.dataset.urlSlug = heading.dataset.urlSlug || slugifyUrl(headingText);
+
+      const pathParts = [...nestedPathPrefix];
+      if (level === 'h4' || level === 'h5' || level === 'h6') {
+        if (parentSlug.h3 && pathParts[pathParts.length - 1] !== parentSlug.h3) pathParts.push(parentSlug.h3);
+      }
+      if (level === 'h5' || level === 'h6') {
+        if (parentSlug.h4 && pathParts[pathParts.length - 1] !== parentSlug.h4) pathParts.push(parentSlug.h4);
+      }
+      if (level === 'h6') {
+        if (parentSlug.h5 && pathParts[pathParts.length - 1] !== parentSlug.h5) pathParts.push(parentSlug.h5);
+      }
+      if (pathParts[pathParts.length - 1] !== heading.dataset.urlSlug) pathParts.push(heading.dataset.urlSlug);
+
+      const itemPath = pathParts.join('/');
+      items.push({
+        level,
+        label: headingText,
+        href: buildHash(pathParts),
+        path: itemPath,
+        target: heading.id,
+        active: false,
+        activeSub: parts.join('/') === itemPath
+      });
+    });
+
+    return items;
+  }
+
+  function renderPartToc(sections, activeSection, activeChild) {
+    const items = collectPartTocEntries(activeSection, activeChild);
+    tocEl.innerHTML = items.map(item => `
+      <li><a class="toc-item toc-${item.level}${item.active ? ' active' : ''}${item.activeSub ? ' active-sub' : ''}" href="${item.href}" data-path="${escapeHtml(item.path)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ''}>${escapeHtml(item.label)}</a></li>
+    `).join('');
   }
 
   function setExternalLinks() {
@@ -951,15 +1030,21 @@
         location.hash = href;
       });
     });
-    tocEl.querySelectorAll('.toc-item').forEach(item => item.classList.remove('active', 'active-sub'));
-    if (activeSection) {
-      const activeSectionLink = tocEl.querySelector(`.toc-h2[data-path="${activeSection.urlSlug}"]`);
-      if (activeSectionLink) activeSectionLink.classList.add(activeChild ? 'active-sub' : 'active');
-    }
-    if (activeChild && activeSection) {
-      const childLink = tocEl.querySelector(`.toc-h3[data-path="${activeSection.urlSlug}/${activeChild.urlSlug}"]`);
-      if (childLink) childLink.classList.add('active-sub');
-    }
+    const currentPath = parseHashPath().join('/');
+    tocEl.querySelectorAll('.toc-item').forEach(item => {
+      item.classList.remove('active', 'active-sub');
+      const itemPath = item.dataset.path || '';
+      if (!itemPath || !currentPath) return;
+      if (item.classList.contains('toc-h2') && (itemPath === currentPath || currentPath.startsWith(itemPath + '/'))) {
+        item.classList.add('active');
+        return;
+      }
+      if (itemPath === currentPath) {
+        item.classList.add('active-sub');
+        return;
+      }
+      if (currentPath.startsWith(itemPath + '/')) item.classList.add('active-sub');
+    });
     scrollPartTarget(activeSection, activeChild, parseHashPath());
   }
 
