@@ -451,8 +451,8 @@
     const next = idx >= 0 && idx < partPages.length - 1 ? partPages[idx + 1] : null;
     return `
       <nav class="part-pager">
-        ${prev ? `<a class="part-pager-link" href="${buildHash(prev.pathParts)}"><span class="part-pager-dir">Last</span><span class="part-pager-name">${escapeHtml(prev.name)}</span></a>` : '<div class="part-pager-spacer" aria-hidden="true"></div>'}
-        ${next ? `<a class="part-pager-link" href="${buildHash(next.pathParts)}"><span class="part-pager-dir">Next</span><span class="part-pager-name">${escapeHtml(next.name)}</span></a>` : '<div class="part-pager-spacer" aria-hidden="true"></div>'}
+        ${prev ? `<a class="part-pager-link" href="${buildHash(prev.pathParts)}"><span class="part-pager-dir">Last</span><span class="part-pager-name">${escapeHtml(prev.name)}</span></a>` : '<div class="part-pager-spacer"><span class="part-pager-dir">Last</span><span class="part-pager-name"></span></div>'}
+        ${next ? `<a class="part-pager-link" href="${buildHash(next.pathParts)}"><span class="part-pager-dir">Next</span><span class="part-pager-name">${escapeHtml(next.name)}</span></a>` : '<div class="part-pager-spacer"><span class="part-pager-dir">Next</span><span class="part-pager-name"></span></div>'}
       </nav>`;
   }
 
@@ -580,6 +580,7 @@
   }
 
   function scrollPartTarget(section, child, parts) {
+    const floor = contentEl.querySelector('.floor.floor-part');
     const body = contentEl.querySelector('.floor.floor-part .floor-body');
     if (parts.length > 2 && child && body) {
       let target = body;
@@ -602,11 +603,11 @@
       return;
     }
     if (body && child) {
-      scrollToElement(body, false);
+      scrollToElement(floor || body, false);
       return;
     }
     if (body && !child && section && !section.children.length) {
-      scrollToElement(body, false);
+      scrollToElement(floor || body, false);
       return;
     }
     if (parts.length > 2 && child) {
@@ -636,7 +637,7 @@
       }
     }
     const focusTarget = child
-      ? contentEl.querySelector('.floor.floor-part .floor-body')
+      ? (contentEl.querySelector('.floor.floor-part') || contentEl.querySelector('.floor.floor-part .floor-body'))
       : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
     if (focusTarget) scrollToElement(focusTarget, false);
   }
@@ -805,6 +806,7 @@
         }
       }
       closeSearch();
+      window.scrollTo({ top: 0, behavior: 'auto' });
       renderApp(false);
     });
     window.addEventListener('hashchange', () => renderApp(true));
