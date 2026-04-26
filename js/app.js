@@ -1026,7 +1026,6 @@
         if (active.dataset.urlSlug) setHash([active.dataset.urlSlug], true);
       }
       updateTocSubHandler();
-      scrollActiveTocItemIntoView();
     }, { rootMargin, threshold: [0, 0.25, 0.5] });
 
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
@@ -1054,7 +1053,6 @@
       const floorSlug = activeH2.dataset.urlSlug || '';
       const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
       if (pathParts.length) setHash(pathParts, true);
-      scrollActiveTocItemIntoView();
     };
     window.addEventListener('scroll', updateTocSubHandler);
 
@@ -1098,7 +1096,6 @@
     });
     const currentPath = parseHashPath().join('/');
     setTocProgressByPath(currentPath);
-    scrollActiveTocItemIntoView();
     scrollPartTarget(activeSection, activeChild, parseHashPath());
   }
 
