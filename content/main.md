@@ -18,14 +18,15 @@
 ![Image_1](/images/1.png)
 
 ---
-2026-04-18 Edited
-Current Version: **1.3.5**
+2026-04-26 Edited
+Current Version: **1.3.9**
 
 Update Log:
-1. 修正。
-2. 降低人机率
-3. vegas render部分完成
-4. 接下来可能先做补帧相关
+1. 对于709和sRGB的拨乱反正
+2. 补点vv issue
+3. 目录美化
+4. part mode
+5. 补帧推迟，五一发upscaling
 
 ---
 
@@ -47,9 +48,9 @@ Update Log:
 **Part 3. Video**
 3.1. OBS
 3.2. Vegas
-3.3. Smoothie
-3.4. Photoshop
-3.5. Credits
+3.3. Upscaling
+3.4. Interpolation
+3.5. Photoshop
 
 **Part 4. Outra**
 4.1. Nation
