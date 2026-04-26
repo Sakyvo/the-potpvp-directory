@@ -227,6 +227,23 @@
     return blocks;
   }
 
+  function flattenHeadingBlocks(blocks, prefixParts) {
+    const entries = [];
+    const stack = [];
+    (blocks || []).forEach(block => {
+      while (stack.length && stack[stack.length - 1].level >= block.level) stack.pop();
+      const pathParts = [...prefixParts, ...stack.map(item => item.urlSlug), block.urlSlug];
+      entries.push({
+        level: 'h' + block.level,
+        label: block.title,
+        pathParts,
+        path: pathParts.join('/')
+      });
+      stack.push(block);
+    });
+    return entries;
+  }
+
   function getSavedMode() {
     try {
       return localStorage.getItem(VIEW_MODE_KEY) === 'part' ? 'part' : 'all';
@@ -276,7 +293,7 @@
     tocToggle.dataset.collapsed = tocCollapsed ? 'true' : 'false';
     tocToggle.setAttribute('aria-pressed', tocCollapsed ? 'true' : 'false');
     tocToggle.textContent = tocCollapsed ? '▸' : '▾';
-    requestAnimationFrame(() => scrollActiveTocItemIntoView(!!alignTop));
+    if (alignTop) requestAnimationFrame(() => scrollActiveTocItemIntoView(true));
   }
 
   function getTopbarHeight() {
@@ -480,6 +497,32 @@
     return pages;
   }
 
+  function buildTocEntries(sections) {
+    const entries = [];
+    sections.forEach(section => {
+      entries.push({
+        level: 'h2',
+        label: `${section.floorNum} ${section.title}`,
+        pathParts: [section.urlSlug],
+        path: section.urlSlug,
+        section
+      });
+      section.children.forEach(child => {
+        const childPath = [section.urlSlug, child.urlSlug];
+        entries.push({
+          level: 'h3',
+          label: child.title,
+          pathParts: childPath,
+          path: childPath.join('/'),
+          section,
+          child
+        });
+        entries.push(...flattenHeadingBlocks(child.blocks, childPath));
+      });
+    });
+    return entries;
+  }
+
   function findPageMeta(pages, parts) {
     const key = (parts || []).join('/');
     return pages.findIndex(page => page.pathParts.join('/') === key);
@@ -540,18 +583,20 @@
         <div class="floor-body">${renderMd([section.intro, ...section.children.map(child => `${'#'.repeat(section.childLevel || 3)} ${child.rawTitle}\n${child.md}`)].filter(Boolean).join('\n\n'))}</div>
       </div>`).join('');
     contentEl.innerHTML = html;
+    const targetByPath = new Map();
     const allIds = new Set();
-    let tocHtml = '';
     document.querySelectorAll('.floor').forEach((floorEl, i) => {
       const id = floorEl.dataset.sectionId || `floor-${i}`;
-      const floorNum = `#${i}F`;
-      const title = sections[i]?.title || '序';
-      tocHtml += `<li><a class="toc-item toc-h2" data-target="floor-${id}" data-url-slug="${sections[i]?.urlSlug || ''}">${floorNum} ${escapeHtml(title)}</a></li>`;
+      const sectionSlug = sections[i]?.urlSlug || '';
+      targetByPath.set(sectionSlug, { target: `floor-${id}`, urlSlug: sectionSlug });
       const parentSlug = { h3: '', h4: '', h5: '' };
+      const pathStack = [sectionSlug];
       floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
+        const levelNum = Number(level.slice(1));
         const headingText = stripHeadingMarkup(h.textContent);
         const hSlug = slugify(headingText);
+        const urlSlug = slugifyUrl(headingText);
         if (level === 'h3') parentSlug.h3 = hSlug;
         else if (level === 'h4') parentSlug.h4 = hSlug;
         else if (level === 'h5') parentSlug.h5 = hSlug;
@@ -564,107 +609,33 @@
         while (allIds.has(hId)) hId = `${base}-${n++}`;
         allIds.add(hId);
         h.id = hId;
-        h.dataset.urlSlug = slugifyUrl(headingText);
-        tocHtml += `<li><a class="toc-item toc-${level}" data-target="${hId}" data-url-slug="${h.dataset.urlSlug}">${escapeHtml(headingText)}</a></li>`;
+        h.dataset.urlSlug = urlSlug;
+        pathStack.length = levelNum - 2;
+        pathStack.push(urlSlug);
+        targetByPath.set(pathStack.join('/'), { target: hId, urlSlug });
       });
     });
-    tocEl.innerHTML = tocHtml;
+    renderToc(appState.tocEntries, { mode: 'all', targetByPath });
   }
 
-  function collectPartTocEntries(activeSection, activeChild) {
-    const items = [];
-    const allIds = new Set();
-    const pageFloor = contentEl.querySelector('.floor.floor-part');
-    const pageBody = pageFloor?.querySelector('.floor-body');
-    let activeSectionPath = '';
-    let activeChildPath = '';
-    const parts = parseHashPath();
-
-    if (activeSection) activeSectionPath = activeSection.urlSlug;
-    if (activeSection && activeChild) activeChildPath = [activeSection.urlSlug, activeChild.urlSlug].join('/');
-
-    appState.sections.forEach(section => {
-      items.push({
-        level: 'h2',
-        label: `${section.floorNum} ${section.title}`,
-        href: buildHash([section.urlSlug]),
-        path: section.urlSlug,
-        active: section.urlSlug === activeSectionPath && !activeChild,
-        activeSub: false
-      });
-
-      section.children.forEach(child => {
-        items.push({
-          level: 'h3',
-          label: child.title,
-          href: buildHash([section.urlSlug, child.urlSlug]),
-          path: [section.urlSlug, child.urlSlug].join('/'),
-          active: false,
-          activeSub: section.urlSlug === activeSectionPath && child.urlSlug === activeChild?.urlSlug
-        });
-      });
-    });
-
-    if (!pageBody || !activeSection) return items;
-
-    const nestedPathPrefix = activeChild
-      ? [activeSection.urlSlug, activeChild.urlSlug]
-      : [activeSection.urlSlug];
-    const parentSlug = { h3: activeChild?.urlSlug || '', h4: '', h5: '' };
-
-    pageBody.querySelectorAll('h3, h4, h5, h6').forEach((heading, idx) => {
-      const level = heading.tagName.toLowerCase();
-      const headingText = stripHeadingMarkup(heading.textContent);
-      const slug = slugify(headingText) || `sub-${idx}`;
-      if (level === 'h3' && activeChild) return;
-      if (level === 'h3') parentSlug.h3 = slugifyUrl(headingText);
-      else if (level === 'h4') parentSlug.h4 = slugifyUrl(headingText);
-      else if (level === 'h5') parentSlug.h5 = slugifyUrl(headingText);
-
-      let base;
-      if (level === 'h3' || level === 'h4') base = `${activeSection.id}-${slug}`;
-      else if (level === 'h5') base = parentSlug.h4 ? `${parentSlug.h4}-${slug}` : `${activeSection.id}-${slug}`;
-      else base = parentSlug.h5 ? `${parentSlug.h5}-${slug}` : `${activeSection.id}-${slug}`;
-
-      let headingId = base;
-      let n = 2;
-      while (allIds.has(headingId) || document.getElementById(headingId)) headingId = `${base}-${n++}`;
-      allIds.add(headingId);
-      heading.id = heading.id || headingId;
-      heading.dataset.urlSlug = heading.dataset.urlSlug || slugifyUrl(headingText);
-
-      const pathParts = [...nestedPathPrefix];
-      if (level === 'h4' || level === 'h5' || level === 'h6') {
-        if (parentSlug.h3 && pathParts[pathParts.length - 1] !== parentSlug.h3) pathParts.push(parentSlug.h3);
-      }
-      if (level === 'h5' || level === 'h6') {
-        if (parentSlug.h4 && pathParts[pathParts.length - 1] !== parentSlug.h4) pathParts.push(parentSlug.h4);
-      }
-      if (level === 'h6') {
-        if (parentSlug.h5 && pathParts[pathParts.length - 1] !== parentSlug.h5) pathParts.push(parentSlug.h5);
-      }
-      if (pathParts[pathParts.length - 1] !== heading.dataset.urlSlug) pathParts.push(heading.dataset.urlSlug);
-
-      const itemPath = pathParts.join('/');
-      items.push({
-        level,
-        label: headingText,
-        href: buildHash(pathParts),
-        path: itemPath,
-        target: heading.id,
-        active: false,
-        activeSub: parts.join('/') === itemPath
-      });
-    });
-
-    return items;
+  function renderToc(entries, options = {}) {
+    const currentPath = parseHashPath().join('/');
+    const mode = options.mode || activeMode;
+    const targetByPath = options.targetByPath || new Map();
+    tocEl.innerHTML = entries.map(entry => {
+      const targetMeta = targetByPath.get(entry.path);
+      const classes = ['toc-item', `toc-${entry.level}`];
+      if (entry.level === 'h2' && (entry.path === currentPath || currentPath.startsWith(entry.path + '/'))) classes.push('active');
+      else if (entry.path === currentPath || currentPath.startsWith(entry.path + '/')) classes.push('active-sub');
+      const attrs = mode === 'all' && targetMeta
+        ? `data-target="${escapeHtml(targetMeta.target)}" data-url-slug="${escapeHtml(targetMeta.urlSlug || '')}"`
+        : `href="${buildHash(entry.pathParts)}" data-path="${escapeHtml(entry.path)}"`;
+      return `<li><a class="${classes.join(' ')}" ${attrs}>${escapeHtml(entry.label)}</a></li>`;
+    }).join('');
   }
 
   function renderPartToc(sections, activeSection, activeChild) {
-    const items = collectPartTocEntries(activeSection, activeChild);
-    tocEl.innerHTML = items.map(item => `
-      <li><a class="toc-item toc-${item.level}${item.active ? ' active' : ''}${item.activeSub ? ' active-sub' : ''}" href="${item.href}" data-path="${escapeHtml(item.path)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ''}>${escapeHtml(item.label)}</a></li>
-    `).join('');
+    renderToc(appState.tocEntries, { mode: 'part' });
   }
 
   function setExternalLinks() {
@@ -684,6 +655,7 @@
   let updateTocSubHandler = null;
   let searchTimer = null;
   let tocCollapsed = getSavedTocCollapsed();
+  let sidebarScrollY = 0;
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -876,11 +848,20 @@
   }
 
   function closeSidebar() {
+    const wasOpen = sidebar.classList.contains('open');
     sidebar.classList.remove('open');
     overlay.classList.remove('open');
+    if (!wasOpen) return;
+    document.body.classList.remove('sidebar-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, sidebarScrollY);
   }
 
   function openSidebar() {
+    if (sidebar.classList.contains('open')) return;
+    sidebarScrollY = window.scrollY;
+    document.body.style.top = `-${sidebarScrollY}px`;
+    document.body.classList.add('sidebar-lock');
     sidebar.classList.add('open');
     overlay.classList.add('open');
   }
@@ -891,9 +872,11 @@
     $('#search-btn').addEventListener('click', openSearch);
     $('#search-close').addEventListener('click', closeSearch);
     tocToggle.addEventListener('click', () => {
+      const keepTop = sidebar.scrollTop;
       tocCollapsed = !tocCollapsed;
       saveTocCollapsed(tocCollapsed);
-      applyTocCollapseState(true);
+      applyTocCollapseState(false);
+      requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
     });
     searchPrevBtn.addEventListener('click', () => navigateMark(currentMarkIdx - 1));
     searchNextBtn.addEventListener('click', () => navigateMark(currentMarkIdx + 1));
@@ -1102,7 +1085,8 @@
   const appState = {
     sections,
     searchIndex: buildSearchIndex(sections),
-    partPages: buildPartPagerPages(sections)
+    partPages: buildPartPagerPages(sections),
+    tocEntries: buildTocEntries(sections)
   };
 
   function renderPartPage() {

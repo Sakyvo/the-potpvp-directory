@@ -22,6 +22,11 @@ body {
   color: var(--text-primary);
   line-height: 1.4;
 }
+body.sidebar-lock {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
 
 /* ── Topbar ── */
 .topbar {
