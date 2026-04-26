@@ -3,12 +3,17 @@
 
   const $ = s => document.querySelector(s);
   const DRAFT_KEY = 'ppd_global_draft';
+  const ADMIN_MODE_KEY = 'ppdir-admin-view-mode';
 
   let indexData = null;
   let indexSha = null;
   let fileShas = {};
   let sourceBuffer = '';
   let currentView = 'rendered';
+  let adminMode = getSavedAdminMode();
+  let activeSegmentKey = '';
+  let activeEditRange = null;
+  let adminDoc = null;
   let maintSha = null;
   let maintActive = false;
   let imageMap = {};
@@ -18,6 +23,40 @@
 
   function setStatus(t) { $('#footer-status').textContent = t; }
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+  function escapeHtml(text) {
+    return (text || '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[char]);
+  }
+
+  function stripHtml(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html || '';
+    return div.textContent || '';
+  }
+
+  function stripHeadingMarkup(text) {
+    return stripHtml((text || '').replace(/[*_`~]/g, ' ').replace(/\[(.*?)\]\((.*?)\)/g, '$1')).replace(/\s+/g, ' ').trim();
+  }
+
+  function getSavedAdminMode() {
+    try {
+      return localStorage.getItem(ADMIN_MODE_KEY) === 'part' ? 'part' : 'all';
+    } catch {
+      return 'all';
+    }
+  }
+
+  function saveAdminMode(mode) {
+    try {
+      localStorage.setItem(ADMIN_MODE_KEY, mode);
+    } catch {}
+  }
 
   // ═══ Base64 UTF-8 helpers ═══
 
@@ -391,6 +430,7 @@
     // }
     setStatus('就绪');
 
+    initAdminModeToggle();
     updateView();
     initViewToggle();
     initPasteHandler();
@@ -462,16 +502,298 @@
   // ═══ View Toggle ═══
 
   function getFloorLines(text) {
-    const lines = text.split('\n');
-    const result = [];
-    for (let i = 0; i < lines.length; i++) {
-      if (/^## .+/.test(lines[i])) {
-        if (result.length === 0 && lines.slice(0, i).some(l => l.trim())) result.push(0);
-        result.push(i);
-      }
+    return parseAdminDoc(text).sections.map(section => section.startLine);
+  }
+
+  function parseAdminDoc(md) {
+    const normalized = (md || '').replace(/\r\n/g, '\n');
+    const lines = normalized.split('\n');
+    const headings = [];
+    let inCode = false;
+
+    lines.forEach((line, lineIndex) => {
+      if (/^```/.test(line.trim())) inCode = !inCode;
+      if (inCode) return;
+      const match = line.match(/^(#{2,6})\s+(.+)/);
+      if (!match) return;
+      const rawTitle = match[2].trim();
+      headings.push({
+        level: match[1].length,
+        rawTitle,
+        title: stripHeadingMarkup(rawTitle) || rawTitle,
+        lineIndex
+      });
+    });
+
+    const h2s = headings.filter(heading => heading.level === 2);
+    const sections = [];
+
+    function addSection(startLine, endLine, heading, index) {
+      const hasHeading = !!heading;
+      const title = heading ? heading.title : '序';
+      const rawTitle = heading ? heading.rawTitle : '序';
+      const section = {
+        key: `section-${index}`,
+        index,
+        floorNum: `#${index}F`,
+        title,
+        rawTitle,
+        startLine,
+        contentStartLine: hasHeading ? heading.lineIndex + 1 : startLine,
+        endLine,
+        hasHeading,
+        childLevel: 0,
+        children: [],
+        entries: []
+      };
+      const nested = headings.filter(item => item.level > 2 && item.lineIndex >= section.contentStartLine && item.lineIndex < endLine);
+      if (nested.length) section.childLevel = nested[0].level;
+      const childHeadings = section.childLevel ? nested.filter(item => item.level === section.childLevel) : [];
+      section.segmentStartLine = startLine;
+      section.segmentEndLine = childHeadings.length ? childHeadings[0].lineIndex : endLine;
+      childHeadings.forEach((childHeading, childIndex) => {
+        const nextChild = childHeadings[childIndex + 1];
+        section.children.push({
+          key: `${section.key}-child-${childIndex}`,
+          index: childIndex,
+          section,
+          title: childHeading.title,
+          rawTitle: childHeading.rawTitle,
+          startLine: childHeading.lineIndex,
+          endLine: nextChild ? nextChild.lineIndex : endLine
+        });
+      });
+      nested.forEach((heading, nestedIndex) => {
+        let segmentKey = section.key;
+        if (section.childLevel) {
+          const owner = section.children.find(child => heading.lineIndex >= child.startLine && heading.lineIndex < child.endLine);
+          if (owner) segmentKey = owner.key;
+        }
+        section.entries.push({
+          level: heading.level,
+          label: heading.title,
+          rawTitle: heading.rawTitle,
+          lineIndex: heading.lineIndex,
+          sectionKey: section.key,
+          segmentKey,
+          target: `admin-${section.index}-h${nestedIndex}`
+        });
+      });
+      sections.push(section);
     }
-    if (result.length === 0) result.push(0);
-    return result;
+
+    if (h2s.length) {
+      let index = 0;
+      if (h2s[0].lineIndex > 0 && lines.slice(0, h2s[0].lineIndex).some(line => line.trim())) {
+        addSection(0, h2s[0].lineIndex, null, index++);
+      }
+      h2s.forEach((heading, idx) => {
+        const next = h2s[idx + 1];
+        addSection(heading.lineIndex, next ? next.lineIndex : lines.length, heading, index++);
+      });
+    } else {
+      addSection(0, lines.length, null, 0);
+    }
+
+    const entries = [];
+    const segments = [];
+    sections.forEach(section => {
+      const sectionSegment = {
+        key: section.key,
+        type: 'section',
+        section,
+        title: section.title,
+        startLine: section.segmentStartLine,
+        endLine: section.segmentEndLine
+      };
+      segments.push(sectionSegment);
+      entries.push({
+        level: 2,
+        label: `${section.floorNum} ${section.title}`,
+        lineIndex: section.startLine,
+        sectionKey: section.key,
+        segmentKey: section.key,
+        target: `admin-floor-${section.index}`
+      });
+      section.children.forEach(child => {
+        segments.push({
+          key: child.key,
+          type: 'child',
+          section,
+          child,
+          title: child.title,
+          startLine: child.startLine,
+          endLine: child.endLine
+        });
+      });
+      section.entries.forEach(entry => entries.push(entry));
+    });
+
+    return {
+      lines,
+      sections,
+      entries,
+      segmentMap: new Map(segments.map(segment => [segment.key, segment])),
+      firstSegmentKey: segments[0]?.key || ''
+    };
+  }
+
+  function getAdminDoc() {
+    adminDoc = parseAdminDoc(sourceBuffer);
+    return adminDoc;
+  }
+
+  function ensureActiveSegment(doc = getAdminDoc()) {
+    if (adminMode !== 'part') return null;
+    if (!activeSegmentKey || !doc.segmentMap.has(activeSegmentKey)) activeSegmentKey = doc.firstSegmentKey;
+    return doc.segmentMap.get(activeSegmentKey) || null;
+  }
+
+  function getSegmentMarkdown(segment, doc = getAdminDoc()) {
+    if (!segment) return '';
+    return doc.lines.slice(segment.startLine, segment.endLine).join('\n');
+  }
+
+  function replaceSegmentMarkdown(segment, value) {
+    if (!segment) return;
+    const lines = sourceBuffer.replace(/\r\n/g, '\n').split('\n');
+    replaceLineRange(lines, segment.startLine, segment.endLine, value);
+    sourceBuffer = lines.join('\n');
+  }
+
+  function replaceLineRange(lines, startLine, endLine, value) {
+    const nextLines = (value || '').replace(/\r\n/g, '\n').split('\n');
+    lines.splice(startLine, Math.max(endLine - startLine, 0), ...nextLines);
+  }
+
+  function syncSourceEditorToBuffer() {
+    if (currentView !== 'source') return;
+    const source = $('#source-editor');
+    if (!source) return;
+    if (adminMode === 'part') {
+      const doc = adminDoc || getAdminDoc();
+      const segment = ensureActiveSegment(doc);
+      if (!activeEditRange && segment) {
+        activeEditRange = {
+          key: segment.key,
+          startLine: segment.startLine,
+          endLine: segment.endLine
+        };
+      }
+      const range = activeEditRange || segment;
+      if (!range) return;
+      const startLine = range.startLine || 0;
+      const lines = sourceBuffer.replace(/\r\n/g, '\n').split('\n');
+      replaceLineRange(lines, range.startLine, range.endLine, source.value);
+      sourceBuffer = lines.join('\n');
+      const nextDoc = getAdminDoc();
+      const nextSegment = [...nextDoc.segmentMap.values()].find(item => startLine >= item.startLine && startLine < item.endLine);
+      if (nextSegment) activeSegmentKey = nextSegment.key;
+      if (activeEditRange) {
+        const delta = source.value.replace(/\r\n/g, '\n').split('\n').length - (activeEditRange.endLine - activeEditRange.startLine);
+        activeEditRange.endLine += delta;
+      }
+      ensureActiveSegment(nextDoc);
+    } else {
+      sourceBuffer = source.value;
+      getAdminDoc();
+    }
+  }
+
+  function scrollSourceToLine(lineIndex) {
+    const el = $('#source-editor');
+    if (!el) return;
+    const lines = el.value.split('\n');
+    lineIndex = Math.max(0, Math.min(lineIndex, lines.length - 1));
+    el.scrollTop = measureTextareaLineTop(el, lineIndex);
+    let pos = 0;
+    for (let i = 0; i < Math.min(lineIndex, lines.length); i++) pos += lines[i].length + 1;
+    el.selectionStart = el.selectionEnd = Math.min(pos, el.value.length);
+    el.focus();
+  }
+
+  function measureTextareaLineTop(textarea, lineIndex) {
+    const style = getComputedStyle(textarea);
+    const mirror = document.createElement('div');
+    mirror.style.position = 'absolute';
+    mirror.style.visibility = 'hidden';
+    mirror.style.pointerEvents = 'none';
+    mirror.style.left = '-9999px';
+    mirror.style.top = '0';
+    mirror.style.width = `${textarea.clientWidth}px`;
+    mirror.style.boxSizing = 'border-box';
+    mirror.style.whiteSpace = textarea.wrap === 'off' ? 'pre' : 'pre-wrap';
+    mirror.style.overflowWrap = 'break-word';
+    mirror.style.wordBreak = style.wordBreak;
+    mirror.style.font = style.font;
+    mirror.style.letterSpacing = style.letterSpacing;
+    mirror.style.lineHeight = style.lineHeight;
+    mirror.style.padding = style.padding;
+    mirror.style.border = style.border;
+    mirror.style.tabSize = style.tabSize;
+
+    const lines = textarea.value.split('\n');
+    const before = lines.slice(0, lineIndex).join('\n') + (lineIndex > 0 ? '\n' : '');
+    mirror.textContent = before;
+    const marker = document.createElement('span');
+    marker.textContent = '\u200b';
+    mirror.appendChild(marker);
+    document.body.appendChild(mirror);
+    const top = marker.offsetTop - (parseFloat(style.paddingTop) || 0) - 4;
+    mirror.remove();
+    return Math.max(0, top);
+  }
+
+  function getTextareaCaretLine(textarea) {
+    return textarea.value.slice(0, textarea.selectionStart || 0).split('\n').length - 1;
+  }
+
+  function setActiveSegmentFromItem(item) {
+    const segmentKey = item.dataset.segmentKey;
+    if (segmentKey) activeSegmentKey = segmentKey;
+  }
+
+  function updateAdminModeButton() {
+    const btn = $('#admin-mode-toggle');
+    if (!btn) return;
+    btn.textContent = adminMode;
+    btn.dataset.mode = adminMode;
+    btn.setAttribute('aria-pressed', adminMode === 'part' ? 'true' : 'false');
+  }
+
+  function initAdminModeToggle() {
+    const btn = $('#admin-mode-toggle');
+    if (!btn) return;
+    updateAdminModeButton();
+    btn.addEventListener('click', () => {
+      syncSourceEditorToBuffer();
+      adminMode = adminMode === 'all' ? 'part' : 'all';
+      activeEditRange = null;
+      saveAdminMode(adminMode);
+      updateAdminModeButton();
+      const doc = getAdminDoc();
+      if (adminMode === 'part') {
+        const floorLines = getFloorLines(sourceBuffer);
+        let firstLine = 0;
+        if (currentView === 'source') {
+          const source = $('#source-editor');
+          firstLine = source ? getTextareaCaretLine(source) : 0;
+        } else {
+          const preview = $('#rendered-preview');
+          const floors = preview ? [...preview.querySelectorAll('.floor')] : [];
+          floors.forEach((floor, idx) => {
+            if (preview && floor.offsetTop - 60 <= preview.scrollTop) firstLine = floorLines[idx] || 0;
+          });
+        }
+        let sectionIdx = 0;
+        for (let i = floorLines.length - 1; i >= 0; i--) {
+          if (floorLines[i] <= firstLine) { sectionIdx = i; break; }
+        }
+        activeSegmentKey = doc.sections[Math.max(sectionIdx, 0)]?.key || doc.firstSegmentKey;
+      }
+      ensureActiveSegment(doc);
+      updateView();
+    });
   }
 
   function initViewToggle() {
@@ -485,9 +807,8 @@
       if (currentView === 'source') {
         const el = $('#source-editor');
         pushUndo();
-        sourceBuffer = el.value;
-        const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
-        const firstLine = Math.floor(el.scrollTop / lineH);
+        syncSourceEditorToBuffer();
+        const firstLine = getTextareaCaretLine(el);
         const floorLines = getFloorLines(sourceBuffer);
         for (let k = floorLines.length - 1; k >= 0; k--) {
           if (floorLines[k] <= firstLine) { anchorIdx = k; break; }
@@ -508,6 +829,10 @@
 
       setTimeout(() => {
         if (currentView === 'source') {
+          if (adminMode === 'part') {
+            scrollSourceToLine(0);
+            return;
+          }
           const el = $('#source-editor');
           const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
           const floorLines = getFloorLines(sourceBuffer);
@@ -528,9 +853,17 @@
     if (currentView === 'source') {
       source.style.display = '';
       rendered.style.display = 'none';
-      source.value = sourceBuffer;
+      const doc = getAdminDoc();
+      const segment = ensureActiveSegment(doc);
+      activeEditRange = adminMode === 'part' && segment ? {
+        key: segment.key,
+        startLine: segment.startLine,
+        endLine: segment.endLine
+      } : null;
+      source.value = adminMode === 'part' && segment ? getSegmentMarkdown(segment, doc) : sourceBuffer;
       source.focus();
     } else {
+      activeEditRange = null;
       source.style.display = 'none';
       rendered.style.display = '';
       renderPreview();
@@ -606,33 +939,23 @@
 
   function renderPreview() {
     const container = $('#rendered-preview');
+    const doc = getAdminDoc();
     const md = expandImages(sourceBuffer.trim());
 
     if (!md) {
       container.innerHTML = '<div class="paste-hint">从石墨文档粘贴内容到此处 (Ctrl+V)</div>';
+      buildAdminToc(doc);
       return;
     }
 
-    // Split by h2 and render as floors
-    const hasH2 = /^## .+/m.test(md);
-    if (hasH2) {
-      const floors = splitByH2(md);
-      let html = '';
-      floors.forEach((floor, i) => {
-        const title = floor.title || '序';
-        html += `<div class="floor" id="admin-floor-${i}">
-          <div class="floor-header">#${i}F &nbsp; ${title}</div>
-          <div class="floor-body">${renderMd(floor.md)}</div>
-        </div>`;
-      });
-      container.innerHTML = html;
+    if (adminMode === 'part') {
+      const segment = ensureActiveSegment(doc);
+      container.innerHTML = segment ? renderAdminPartPreview(segment, doc) : '<div class="paste-hint">没有可预览的分段。</div>';
     } else {
-      container.innerHTML = `<div class="floor" id="admin-floor-0">
-        <div class="floor-body">${renderMd(md)}</div>
-      </div>`;
+      container.innerHTML = doc.sections.map(section => renderAdminSectionPreview(section, doc, false)).join('');
     }
+    assignAdminPreviewAnchors(doc);
 
-    // External links → new tab
     container.querySelectorAll('a[href]').forEach(a => {
       const href = a.getAttribute('href');
       if (href && /^https?:\/\//.test(href)) {
@@ -641,29 +964,52 @@
       }
     });
 
-    buildAdminToc();
+    buildAdminToc(doc);
   }
 
-  function splitByH2(md) {
-    const lines = md.split('\n');
-    const floors = [];
-    let current = { title: '', lines: [] };
+  function renderAdminSectionPreview(section, doc, partMode) {
+    let bodyHtml;
+    if (partMode && section.children.length) {
+      bodyHtml = `<div class="part-grid">${section.children.map((child, idx) => `
+        <a class="part-nav-card" href="#" data-segment-key="${escapeHtml(child.key)}">
+          <span class="part-nav-index">${String(idx + 1).padStart(2, '0')}</span>
+          <span class="part-nav-title">${escapeHtml(child.title)}</span>
+        </a>`).join('')}</div>`;
+    } else {
+      const start = section.hasHeading ? section.contentStartLine : section.startLine;
+      const bodyMd = doc.lines.slice(start, section.endLine).join('\n');
+      bodyHtml = renderMd(expandImages(bodyMd));
+    }
+    return `<div class="floor${partMode ? ' floor-part' : ''}" id="admin-floor-${section.index}">
+      <div class="floor-header">${escapeHtml(section.floorNum)} &nbsp; ${escapeHtml(section.title)}</div>
+      <div class="floor-body">${bodyHtml}</div>
+    </div>`;
+  }
 
-    for (const line of lines) {
-      const m = line.match(/^## (.+)/);
-      if (m) {
-        if (current.title || current.lines.some(l => l.trim())) {
-          floors.push({ title: current.title, md: current.lines.join('\n') });
-        }
-        current = { title: m[1].trim(), lines: [] };
-      } else {
-        current.lines.push(line);
-      }
-    }
-    if (current.title || current.lines.some(l => l.trim())) {
-      floors.push({ title: current.title, md: current.lines.join('\n') });
-    }
-    return floors;
+  function renderAdminPartPreview(segment, doc) {
+    if (segment.type === 'section') return renderAdminSectionPreview(segment.section, doc, true);
+    const md = getSegmentMarkdown(segment, doc);
+    return `<div class="floor floor-part" id="admin-floor-${segment.section.index}">
+      <div class="floor-header">${escapeHtml(segment.section.floorNum)} &nbsp; ${escapeHtml(segment.section.title)}</div>
+      <div class="floor-body">${renderMd(expandImages(md))}</div>
+    </div>`;
+  }
+
+  function assignAdminPreviewAnchors(doc) {
+    const preview = $('#rendered-preview');
+    if (!preview || !doc) return;
+    doc.sections.forEach(section => {
+      const floor = preview.querySelector(`#admin-floor-${section.index}`);
+      if (!floor) return;
+      const headings = [...floor.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6')];
+      const used = new Set();
+      section.entries.forEach(entry => {
+        if (adminMode === 'part' && activeSegmentKey && entry.segmentKey !== activeSegmentKey && entry.level > 2) return;
+        const target = headings.find((h, idx) => !used.has(idx) && h.tagName.toLowerCase() === `h${entry.level}` && stripHeadingMarkup(h.textContent) === entry.label);
+        if (target) used.add(headings.indexOf(target));
+        if (target) target.id = entry.target;
+      });
+    });
   }
 
   // ═══ Paste Handler ═══
@@ -689,17 +1035,22 @@
         e.preventDefault();
         const md = htmlToMarkdown(html, text);
         insertAtCursor(sourceEl, md);
-        sourceBuffer = sourceEl.value;
+        syncSourceEditorToBuffer();
+        buildAdminToc(adminDoc);
         saveDraft();
         downloadShimoImages(sourceBuffer).then(updated => {
           if (updated !== sourceBuffer) {
             sourceBuffer = collapseImages(updated);
-            sourceEl.value = sourceBuffer;
+            updateView();
             saveDraft();
           }
         });
       }
-      // If no HTML, let default plain text paste happen
+      setTimeout(() => {
+        syncSourceEditorToBuffer();
+        buildAdminToc(adminDoc);
+        saveDraft();
+      }, 0);
     });
 
     // Paste in rendered preview
@@ -724,7 +1075,7 @@
 
       if (md) {
         pushUndo();
-        sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
+        appendMarkdownToActiveContext(md);
         renderPreview();
         saveDraft();
         downloadShimoImages(sourceBuffer).then(updated => {
@@ -739,9 +1090,22 @@
 
     // Also handle paste on source input change
     sourceEl.addEventListener('input', debounce(() => {
-      sourceBuffer = sourceEl.value;
+      syncSourceEditorToBuffer();
+      buildAdminToc(adminDoc);
       saveDraft();
     }, 1500));
+  }
+
+  function appendMarkdownToActiveContext(md) {
+    if (adminMode === 'part') {
+      const doc = getAdminDoc();
+      const segment = ensureActiveSegment(doc);
+      const current = getSegmentMarkdown(segment, doc);
+      replaceSegmentMarkdown(segment, current + (current ? '\n\n' : '') + md);
+      getAdminDoc();
+      return;
+    }
+    sourceBuffer += (sourceBuffer ? '\n\n' : '') + md;
   }
 
   function insertAtCursor(textarea, text) {
@@ -762,7 +1126,7 @@
         const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
         imageMap[imageCounter] = { data: reader.result, ext };
         insertAtCursor(textarea, `![Image_${imageCounter}](img://${imageCounter})`);
-        sourceBuffer = textarea.value;
+        syncSourceEditorToBuffer();
         saveDraft();
       };
       reader.readAsDataURL(file);
@@ -777,7 +1141,7 @@
         imageCounter++;
         const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
         imageMap[imageCounter] = { data: reader.result, ext };
-        sourceBuffer += (sourceBuffer ? '\n\n' : '') + `![Image_${imageCounter}](img://${imageCounter})`;
+        appendMarkdownToActiveContext(`![Image_${imageCounter}](img://${imageCounter})`);
         renderPreview();
         saveDraft();
       };
@@ -1037,16 +1401,18 @@
 
   function undo() {
     if (!undoStack.length) return;
+    syncSourceEditorToBuffer();
     redoStack.push(sourceBuffer);
     sourceBuffer = undoStack.pop();
-    renderPreview();
+    updateView();
   }
 
   function redo() {
     if (!redoStack.length) return;
+    syncSourceEditorToBuffer();
     undoStack.push(sourceBuffer);
     sourceBuffer = redoStack.pop();
-    renderPreview();
+    updateView();
   }
 
   document.addEventListener('keydown', e => {
@@ -1153,9 +1519,7 @@
   $('#publish-btn').addEventListener('click', publish);
 
   async function publish() {
-    if (currentView === 'source') {
-      sourceBuffer = $('#source-editor').value;
-    }
+    syncSourceEditorToBuffer();
 
     const btn = $('#publish-btn');
     btn.disabled = true;
@@ -1326,23 +1690,37 @@
 
   // ═══ Admin Sidebar & TOC ═══
 
-  function buildAdminToc() {
+  function buildAdminToc(doc = getAdminDoc()) {
     const tocEl = $('#admin-toc');
     if (!tocEl) return;
-    let html = '';
-    document.querySelectorAll('#rendered-preview .floor').forEach((floorEl, i) => {
-      const headerEl = floorEl.querySelector('.floor-header');
-      let title = headerEl ? headerEl.textContent.trim() : '';
-      title = title.replace(/^#\d+F[\s\u00a0]*/, '').trim() || '序';
-      html += `<li><a class="toc-item toc-h2" data-target="admin-floor-${i}">#${i}F ${title}</a></li>`;
-      floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
-        const level = h.tagName.toLowerCase();
-        const hId = `admin-${i}-h${j}`;
-        h.id = hId;
-        html += `<li><a class="toc-item toc-${level}" data-target="${hId}">${h.textContent}</a></li>`;
-      });
-    });
-    tocEl.innerHTML = html;
+    const segment = adminMode === 'part' ? ensureActiveSegment(doc) : null;
+    tocEl.innerHTML = doc.entries.map(entry => {
+      const classes = ['toc-item', `toc-h${entry.level}`];
+      if (segment) {
+        if (entry.level === 2 && entry.sectionKey === segment.section.key) classes.push('active');
+        else if (entry.segmentKey === segment.key) classes.push('active-sub');
+      }
+      return `<li><a class="${classes.join(' ')}" data-target="${escapeHtml(entry.target)}" data-level="${entry.level}" data-label="${escapeHtml(entry.label)}" data-line="${entry.lineIndex}" data-segment-key="${escapeHtml(entry.segmentKey)}">${escapeHtml(entry.label)}</a></li>`;
+    }).join('');
+  }
+
+  function findEntryForItem(doc, item) {
+    const target = item.dataset.target || '';
+    const level = Number(item.dataset.level || 0);
+    const label = item.dataset.label || '';
+    const oldLine = Number(item.dataset.line || 0);
+    const matches = doc.entries.filter(entry => entry.level === level && entry.label === label);
+    if (matches.length) {
+      return matches.reduce((best, entry) => Math.abs(entry.lineIndex - oldLine) < Math.abs(best.lineIndex - oldLine) ? entry : best, matches[0]);
+    }
+    return doc.entries.find(entry => entry.target === target) || null;
+  }
+
+  function scrollPreviewToTarget(targetId) {
+    setTimeout(() => {
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   function initAdminSidebar() {
@@ -1364,42 +1742,39 @@
       tocEl.addEventListener('click', e => {
         const item = e.target.closest('[data-target]');
         if (!item) return;
+        e.preventDefault();
+        const oldLine = Number(item.dataset.line || 0);
+        let doc;
 
         if (currentView === 'source') {
-          // Navigate within source editor
-          const el = $('#source-editor');
-          sourceBuffer = el.value;
-          const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
-          const target = item.dataset.target;
-          const floorMatch = target.match(/^admin-floor-(\d+)$/);
-
-          if (floorMatch) {
-            const floorIdx = parseInt(floorMatch[1]);
-            const floorLines = getFloorLines(sourceBuffer);
-            const targetLine = floorIdx < floorLines.length ? floorLines[floorIdx] : 0;
-            el.scrollTop = targetLine * lineH;
+          syncSourceEditorToBuffer();
+          doc = getAdminDoc();
+          const freshEntry = findEntryForItem(doc, item);
+          const lineIndex = freshEntry ? freshEntry.lineIndex : oldLine;
+          if (adminMode === 'part') {
+            if (freshEntry) activeSegmentKey = freshEntry.segmentKey;
+            else setActiveSegmentFromItem(item);
+            activeEditRange = null;
+            const segment = ensureActiveSegment(doc);
+            updateView();
+            setTimeout(() => scrollSourceToLine(segment ? Math.max(0, lineIndex - segment.startLine) : 0), 0);
           } else {
-            // Sub-heading: find by text + level prefix
-            const text = item.textContent.trim();
-            const prefix = item.classList.contains('toc-h3') ? '### ' :
-                           item.classList.contains('toc-h4') ? '#### ' :
-                           item.classList.contains('toc-h5') ? '##### ' : '###### ';
-            const lines = sourceBuffer.split('\n');
-            for (let i = 0; i < lines.length; i++) {
-              if (lines[i].startsWith(prefix) && lines[i].includes(text)) {
-                el.scrollTop = i * lineH;
-                break;
-              }
-            }
+            scrollSourceToLine(lineIndex);
           }
           closeAdminSidebar();
           return;
         }
 
-        setTimeout(() => {
-          const target = document.getElementById(item.dataset.target);
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 50);
+        if (adminMode === 'part') {
+          doc = getAdminDoc();
+          const freshEntry = findEntryForItem(doc, item);
+          if (freshEntry) activeSegmentKey = freshEntry.segmentKey;
+          else setActiveSegmentFromItem(item);
+          activeEditRange = null;
+          updateView();
+        }
+
+        scrollPreviewToTarget(item.dataset.target);
 
         closeAdminSidebar();
       });
@@ -1408,7 +1783,17 @@
     // Scroll-based TOC active highlight
     const preview = $('#rendered-preview');
     if (preview) {
+      preview.addEventListener('click', e => {
+        const card = e.target.closest('.part-nav-card[data-segment-key]');
+        if (!card) return;
+        e.preventDefault();
+        activeSegmentKey = card.dataset.segmentKey;
+        activeEditRange = null;
+        updateView();
+      });
+
       preview.addEventListener('scroll', () => {
+        if (adminMode === 'part') return;
         const floors = document.querySelectorAll('#rendered-preview .floor');
         const scrollTop = preview.scrollTop;
         let activeIdx = 0;

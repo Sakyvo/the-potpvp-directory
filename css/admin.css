@@ -69,6 +69,16 @@ body {
 .toggle-btn:last-child { border-right: none; }
 .toggle-btn:hover { background: var(--bg-alt); }
 .toggle-btn.active { background: var(--accent); color: #fff; }
+.admin-mode-toggle {
+  min-width: 48px; height: 28px; padding: 0 10px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); cursor: pointer; font-size: 12px;
+  font-weight: 600; letter-spacing: .5px; text-transform: lowercase;
+}
+.admin-mode-toggle:hover { background: var(--bg-alt); }
+.admin-mode-toggle[data-mode="part"] {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
 
 /* ── Editor Main ── */
 .editor-main {
@@ -107,6 +117,22 @@ body {
   display: flex; align-items: center; justify-content: center;
   min-height: 200px; border: 2px dashed var(--border);
   margin: 40px 0;
+}
+.rendered-preview .part-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.rendered-preview .part-nav-card {
+  display: block; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); text-decoration: none; padding: 16px;
+}
+.rendered-preview .part-nav-card:hover { background: var(--bg-alt); }
+.rendered-preview .part-nav-index {
+  display: block; color: var(--text-sec); font-size: 11px;
+  letter-spacing: .8px; margin-bottom: 6px;
+}
+.rendered-preview .part-nav-title {
+  display: block; font-size: 16px; font-weight: 700; line-height: 1.35;
 }
 
 /* ── Footer ── */
@@ -213,14 +239,17 @@ body {
     flex-wrap: nowrap;
   }
   #admin-menu-btn { width: 30px; height: 30px; }
-  .view-toggle { flex-shrink: 0; }
+  .view-toggle,
+  .admin-mode-toggle { flex-shrink: 0; }
   .toggle-btn,
+  .admin-mode-toggle,
   .maint-toggle,
   .btn-publish {
     white-space: nowrap;
     flex-shrink: 0;
   }
   .toggle-btn,
+  .admin-mode-toggle,
   .maint-toggle { padding-left: 8px; padding-right: 8px; }
   .btn-publish { padding: 0 10px; }
   .undo-redo-btn { width: 26px; height: 26px; }
