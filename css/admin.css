@@ -143,6 +143,12 @@ body {
 }
 
 /* ── Admin Sidebar overrides ── */
+.toc.collapsed .toc-h4,
+.toc.collapsed .toc-h5,
+.toc.collapsed .toc-h6 {
+  display: none;
+}
+
 @media (min-width: 769px) {
   #admin-menu-btn { display: none; }
   .sidebar { bottom: var(--footer-h); }

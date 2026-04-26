@@ -4,6 +4,7 @@
   const $ = s => document.querySelector(s);
   const DRAFT_KEY = 'ppd_global_draft';
   const ADMIN_MODE_KEY = 'ppdir-admin-view-mode';
+  const ADMIN_TOC_COLLAPSED_KEY = 'ppdir-admin-toc-collapsed';
 
   let indexData = null;
   let indexSha = null;
@@ -19,6 +20,7 @@
   let imageMap = {};
   let imageCounter = 0;
   let publishedBuffer = '';
+  let adminTocCollapsed = getSavedAdminTocCollapsed();
   const publishedImageCache = new Map();
 
   function setStatus(t) { $('#footer-status').textContent = t; }
@@ -55,6 +57,20 @@
   function saveAdminMode(mode) {
     try {
       localStorage.setItem(ADMIN_MODE_KEY, mode);
+    } catch {}
+  }
+
+  function getSavedAdminTocCollapsed() {
+    try {
+      return localStorage.getItem(ADMIN_TOC_COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  function saveAdminTocCollapsed(collapsed) {
+    try {
+      localStorage.setItem(ADMIN_TOC_COLLAPSED_KEY, collapsed ? '1' : '0');
     } catch {}
   }
 
@@ -710,6 +726,10 @@
     for (let i = 0; i < Math.min(lineIndex, lines.length); i++) pos += lines[i].length + 1;
     el.selectionStart = el.selectionEnd = Math.min(pos, el.value.length);
     el.focus();
+    const doc = getAdminDoc();
+    const segmentOffset = adminMode === 'part' ? (activeEditRange?.startLine ?? ensureActiveSegment(doc)?.startLine ?? 0) : 0;
+    const entry = findEntryAtLine(doc, segmentOffset + lineIndex);
+    setAdminTocProgress(doc, entry || doc.entries[0]);
   }
 
   function measureTextareaLineTop(textarea, lineIndex) {
@@ -781,6 +801,69 @@
   function setActiveSegmentFromItem(item) {
     const segmentKey = item.dataset.segmentKey;
     if (segmentKey) activeSegmentKey = segmentKey;
+  }
+
+  function applyAdminTocCollapseState() {
+    const tocEl = $('#admin-toc');
+    const toggle = $('#admin-toc-toggle');
+    if (!tocEl || !toggle) return;
+    tocEl.classList.toggle('collapsed', adminTocCollapsed);
+    toggle.dataset.collapsed = adminTocCollapsed ? 'true' : 'false';
+    toggle.setAttribute('aria-pressed', adminTocCollapsed ? 'true' : 'false');
+    toggle.textContent = adminTocCollapsed ? '▸' : '▾';
+  }
+
+  function getAdminTocLevel(item) {
+    const match = [...item.classList].join(' ').match(/\btoc-h([2-6])\b/);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function getAdminTocAncestors(item) {
+    const level = getAdminTocLevel(item);
+    const ancestors = [];
+    const needed = new Set();
+    for (let i = 3; i < level; i++) needed.add(i);
+    let prev = item.closest('li')?.previousElementSibling;
+    while (prev && needed.size) {
+      const a = prev.querySelector('.toc-item');
+      if (!a || a.classList.contains('toc-h2')) break;
+      const prevLevel = getAdminTocLevel(a);
+      if (needed.has(prevLevel)) {
+        ancestors.unshift(a);
+        needed.delete(prevLevel);
+      }
+      prev = prev.previousElementSibling;
+    }
+    return ancestors;
+  }
+
+  function setAdminTocProgress(doc = getAdminDoc(), entry) {
+    const tocEl = $('#admin-toc');
+    if (!tocEl) return;
+    const items = [...tocEl.querySelectorAll('.toc-item')];
+    items.forEach(item => item.classList.remove('active', 'active-sub', 'toc-read', 'toc-ancestor', 'toc-current'));
+    if (!items.length) return;
+    if (!entry) {
+      const segment = adminMode === 'part' ? ensureActiveSegment(doc) : null;
+      entry = segment ? doc.entries.find(item => item.segmentKey === segment.key) : doc.entries[0];
+    }
+    const activeH2 = items.find(item => item.classList.contains('toc-h2') && item.dataset.sectionKey === entry?.sectionKey) || items[0];
+    const currentItem = items.find(item => item.dataset.target === entry?.target) || activeH2;
+    if (activeH2) activeH2.classList.add('active');
+    const currentIndex = items.indexOf(currentItem);
+    if (currentIndex >= 0) {
+      items.slice(0, currentIndex).forEach(item => {
+        if (item !== activeH2) item.classList.add('toc-read');
+      });
+    }
+    if (currentItem && currentItem !== activeH2) {
+      getAdminTocAncestors(currentItem).forEach(item => item.classList.add('toc-ancestor'));
+      currentItem.classList.add('active-sub', 'toc-current');
+    }
+  }
+
+  function setAdminTocProgressByLine(doc = getAdminDoc(), lineIndex = 0) {
+    setAdminTocProgress(doc, findEntryAtLine(doc, lineIndex) || doc.entries[0]);
   }
 
   function updateAdminModeButton() {
@@ -1738,15 +1821,20 @@
   function buildAdminToc(doc = getAdminDoc()) {
     const tocEl = $('#admin-toc');
     if (!tocEl) return;
-    const segment = adminMode === 'part' ? ensureActiveSegment(doc) : null;
     tocEl.innerHTML = doc.entries.map(entry => {
       const classes = ['toc-item', `toc-h${entry.level}`];
-      if (segment) {
-        if (entry.level === 2 && entry.sectionKey === segment.section.key) classes.push('active');
-        else if (entry.segmentKey === segment.key) classes.push('active-sub');
-      }
-      return `<li><a class="${classes.join(' ')}" data-target="${escapeHtml(entry.target)}" data-level="${entry.level}" data-label="${escapeHtml(entry.label)}" data-line="${entry.lineIndex}" data-segment-key="${escapeHtml(entry.segmentKey)}">${escapeHtml(entry.label)}</a></li>`;
+      return `<li><a class="${classes.join(' ')}" data-target="${escapeHtml(entry.target)}" data-level="${entry.level}" data-label="${escapeHtml(entry.label)}" data-line="${entry.lineIndex}" data-section-key="${escapeHtml(entry.sectionKey)}" data-segment-key="${escapeHtml(entry.segmentKey)}">${escapeHtml(entry.label)}</a></li>`;
     }).join('');
+    applyAdminTocCollapseState();
+    if (adminMode === 'part') {
+      const segment = ensureActiveSegment(doc);
+      setAdminTocProgress(doc, segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0]);
+    } else if (currentView === 'source') {
+      const source = $('#source-editor');
+      setAdminTocProgressByLine(doc, source ? getTextareaCaretLine(source) : 0);
+    } else {
+      setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
+    }
   }
 
   function findEntryForItem(doc, item) {
@@ -1796,6 +1884,7 @@
           doc = getAdminDoc();
           const freshEntry = findEntryForItem(doc, item);
           const lineIndex = freshEntry ? freshEntry.lineIndex : oldLine;
+          setAdminTocProgress(doc, freshEntry || findEntryAtLine(doc, lineIndex));
           if (adminMode === 'part') {
             if (freshEntry) activeSegmentKey = freshEntry.segmentKey;
             else setActiveSegmentFromItem(item);
@@ -1817,11 +1906,24 @@
           else setActiveSegmentFromItem(item);
           activeEditRange = null;
           updateView();
+          setAdminTocProgress(doc, freshEntry);
         }
 
         scrollPreviewToTarget(item.dataset.target);
 
         closeAdminSidebar();
+      });
+    }
+
+    const tocToggle = $('#admin-toc-toggle');
+    if (tocToggle) {
+      applyAdminTocCollapseState();
+      tocToggle.addEventListener('click', () => {
+        const keepTop = sidebar.scrollTop;
+        adminTocCollapsed = !adminTocCollapsed;
+        saveAdminTocCollapsed(adminTocCollapsed);
+        applyAdminTocCollapseState();
+        requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
       });
     }
 
@@ -1839,53 +1941,8 @@
 
       preview.addEventListener('scroll', () => {
         if (adminMode === 'part') return;
-        const floors = document.querySelectorAll('#rendered-preview .floor');
-        const scrollTop = preview.scrollTop;
-        let activeIdx = 0;
-        floors.forEach((floor, i) => {
-          if (floor.offsetTop - 60 <= scrollTop) activeIdx = i;
-        });
-        const allItems = document.querySelectorAll('#admin-toc .toc-item');
-        allItems.forEach(item => { item.classList.remove('active'); item.classList.remove('active-sub'); });
-        const tocH2s = document.querySelectorAll('#admin-toc .toc-h2');
-        if (tocH2s[activeIdx]) {
-          tocH2s[activeIdx].classList.add('active');
-          // Sub-heading ancestry highlight
-          const subItems = [];
-          let sib = tocH2s[activeIdx].closest('li')?.nextElementSibling;
-          while (sib) {
-            const a = sib.querySelector('.toc-item');
-            if (!a || a.classList.contains('toc-h2')) break;
-            subItems.push(a);
-            sib = sib.nextElementSibling;
-          }
-          if (subItems.length) {
-            const containerRect = preview.getBoundingClientRect();
-            let currentSub = null;
-            for (const item of subItems) {
-              const target = document.getElementById(item.dataset.target);
-              if (target && target.getBoundingClientRect().top <= containerRect.top + 60) currentSub = item;
-            }
-            if (currentSub) {
-              currentSub.classList.add('active-sub');
-              const level = currentSub.classList.contains('toc-h6') ? 6 :
-                            currentSub.classList.contains('toc-h5') ? 5 :
-                            currentSub.classList.contains('toc-h4') ? 4 : 3;
-              if (level > 3) {
-                let prev = currentSub.closest('li')?.previousElementSibling;
-                let needH5 = level >= 6, needH4 = level >= 5, needH3 = true;
-                while (prev && (needH3 || needH4 || needH5)) {
-                  const a = prev.querySelector('.toc-item');
-                  if (!a || a.classList.contains('toc-h2')) break;
-                  if (needH5 && a.classList.contains('toc-h5')) { a.classList.add('active-sub'); needH5 = false; }
-                  if (needH4 && a.classList.contains('toc-h4')) { a.classList.add('active-sub'); needH4 = false; }
-                  if (needH3 && a.classList.contains('toc-h3')) { a.classList.add('active-sub'); needH3 = false; }
-                  prev = prev.previousElementSibling;
-                }
-              }
-            }
-          }
-        }
+        const doc = adminDoc || getAdminDoc();
+        setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
       });
     }
   }

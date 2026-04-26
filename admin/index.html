@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - The PotPvP Directory</title>
 <link rel="icon" type="image/png" href="../favicon.png">
-<link rel="stylesheet" href="../css/main.css?v=15">
-<link rel="stylesheet" href="../css/admin.css?v=14">
+<link rel="stylesheet" href="../css/main.css?v=21">
+<link rel="stylesheet" href="../css/admin.css?v=15">
 </head>
 <body>
 
@@ -47,7 +47,10 @@
 
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">目录</div>
+    <div class="sidebar-header">
+      <span>目录</span>
+      <button class="sidebar-toggle" id="admin-toc-toggle" type="button" aria-label="切换目录展开状态" aria-pressed="false">▾</button>
+    </div>
     <ul class="toc" id="admin-toc"></ul>
   </nav>
 
@@ -86,6 +89,6 @@
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/json.min.js"></script>
 <script src="../js/codeberg-api.js?v=11"></script>
-<script src="../js/admin.js?v=22"></script>
+<script src="../js/admin.js?v=23"></script>
 </body>
 </html>

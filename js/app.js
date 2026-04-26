@@ -274,7 +274,7 @@
 
   function scrollActiveTocItemIntoView(alignTop) {
     if (!sidebar || !tocEl) return;
-    const activeItem = tocEl.querySelector('.toc-item.active') || tocEl.querySelector('.toc-item.active-sub');
+    const activeItem = tocEl.querySelector('.toc-item.active') || tocEl.querySelector('.toc-item.toc-current') || tocEl.querySelector('.toc-item.active-sub');
     if (!activeItem) return;
     if (alignTop) {
       const sidebarRect = sidebar.getBoundingClientRect();
@@ -305,6 +305,74 @@
     const topbarH = getTopbarHeight();
     const top = window.scrollY + target.getBoundingClientRect().top - topbarH - 8;
     window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
+  }
+
+  function getTocLevel(item) {
+    const match = [...item.classList].join(' ').match(/\btoc-h([2-6])\b/);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function getTocAncestors(item) {
+    const level = getTocLevel(item);
+    const ancestors = [];
+    const needed = new Set();
+    for (let i = 3; i < level; i++) needed.add(i);
+    let prev = item.closest('li')?.previousElementSibling;
+    while (prev && needed.size) {
+      const a = prev.querySelector('.toc-item');
+      if (!a || a.classList.contains('toc-h2')) break;
+      const prevLevel = getTocLevel(a);
+      if (needed.has(prevLevel)) {
+        ancestors.unshift(a);
+        needed.delete(prevLevel);
+      }
+      prev = prev.previousElementSibling;
+    }
+    return ancestors;
+  }
+
+  function getTocActiveH2(item) {
+    if (!item) return null;
+    if (item.classList.contains('toc-h2')) return item;
+    let prev = item.closest('li')?.previousElementSibling;
+    while (prev) {
+      const a = prev.querySelector('.toc-item');
+      if (a?.classList.contains('toc-h2')) return a;
+      prev = prev.previousElementSibling;
+    }
+    return null;
+  }
+
+  function setTocProgress(activeH2, currentItem) {
+    const items = [...tocEl.querySelectorAll('.toc-item')];
+    items.forEach(item => item.classList.remove('active', 'active-sub', 'toc-read', 'toc-ancestor', 'toc-current'));
+    if (!activeH2 && currentItem) activeH2 = getTocActiveH2(currentItem);
+    if (activeH2) activeH2.classList.add('active');
+    currentItem = currentItem || activeH2;
+    const currentIndex = items.indexOf(currentItem);
+    if (currentIndex >= 0) {
+      items.slice(0, currentIndex).forEach(item => {
+        if (item !== activeH2) item.classList.add('toc-read');
+      });
+    }
+    if (currentItem && currentItem !== activeH2) {
+      getTocAncestors(currentItem).forEach(item => item.classList.add('toc-ancestor'));
+      currentItem.classList.add('active-sub', 'toc-current');
+    }
+    return currentItem && currentItem !== activeH2 ? getTocAncestors(currentItem) : [];
+  }
+
+  function setTocProgressByPath(path) {
+    if (!path) return;
+    const items = [...tocEl.querySelectorAll('.toc-item')];
+    const currentItem = items.find(item => item.dataset.path === path) ||
+      items.filter(item => {
+        const itemPath = item.dataset.path || '';
+        return itemPath && path.startsWith(itemPath + '/');
+      }).sort((a, b) => (b.dataset.path || '').length - (a.dataset.path || '').length)[0];
+    if (!currentItem) return;
+    const activeH2 = currentItem.classList.contains('toc-h2') ? currentItem : getTocActiveH2(currentItem);
+    setTocProgress(activeH2, currentItem);
   }
 
   function splitMarkdownSections(md) {
@@ -625,13 +693,12 @@
     tocEl.innerHTML = entries.map(entry => {
       const targetMeta = targetByPath.get(entry.path);
       const classes = ['toc-item', `toc-${entry.level}`];
-      if (entry.level === 'h2' && (entry.path === currentPath || currentPath.startsWith(entry.path + '/'))) classes.push('active');
-      else if (entry.path === currentPath || currentPath.startsWith(entry.path + '/')) classes.push('active-sub');
       const attrs = mode === 'all' && targetMeta
-        ? `data-target="${escapeHtml(targetMeta.target)}" data-url-slug="${escapeHtml(targetMeta.urlSlug || '')}"`
+        ? `data-target="${escapeHtml(targetMeta.target)}" data-url-slug="${escapeHtml(targetMeta.urlSlug || '')}" data-path="${escapeHtml(entry.path)}"`
         : `href="${buildHash(entry.pathParts)}" data-path="${escapeHtml(entry.path)}"`;
       return `<li><a class="${classes.join(' ')}" ${attrs}>${escapeHtml(entry.label)}</a></li>`;
     }).join('');
+    setTocProgressByPath(currentPath);
   }
 
   function renderPartToc(sections, activeSection, activeChild) {
@@ -953,10 +1020,9 @@
         }
       }
       if (!topId) return;
-      tocEl.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
       const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
       if (active) {
-        active.classList.add('active');
+        setTocProgress(active, active);
         if (active.dataset.urlSlug) setHash([active.dataset.urlSlug], true);
       }
       updateTocSubHandler();
@@ -966,7 +1032,6 @@
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
 
     updateTocSubHandler = function() {
-      tocEl.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
       const activeH2 = tocEl.querySelector('.toc-item.active');
       if (!activeH2) return;
       const subItems = [];
@@ -985,37 +1050,7 @@
         if (target && target.getBoundingClientRect().top <= topbarH + 20) currentSub = item;
       }
       if (!currentSub) return;
-      currentSub.classList.add('active-sub');
-      const level = currentSub.classList.contains('toc-h6') ? 6 :
-        currentSub.classList.contains('toc-h5') ? 5 :
-          currentSub.classList.contains('toc-h4') ? 4 : 3;
-      const ancestors = [];
-      if (level > 3) {
-        let prev = currentSub.closest('li')?.previousElementSibling;
-        let needH5 = level >= 6;
-        let needH4 = level >= 5;
-        let needH3 = true;
-        while (prev && (needH3 || needH4 || needH5)) {
-          const a = prev.querySelector('.toc-item');
-          if (!a || a.classList.contains('toc-h2')) break;
-          if (needH5 && a.classList.contains('toc-h5')) {
-            a.classList.add('active-sub');
-            ancestors.unshift(a);
-            needH5 = false;
-          }
-          if (needH4 && a.classList.contains('toc-h4')) {
-            a.classList.add('active-sub');
-            ancestors.unshift(a);
-            needH4 = false;
-          }
-          if (needH3 && a.classList.contains('toc-h3')) {
-            a.classList.add('active-sub');
-            ancestors.unshift(a);
-            needH3 = false;
-          }
-          prev = prev.previousElementSibling;
-        }
-      }
+      const ancestors = setTocProgress(activeH2, currentSub);
       const floorSlug = activeH2.dataset.urlSlug || '';
       const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
       if (pathParts.length) setHash(pathParts, true);
@@ -1062,20 +1097,7 @@
       });
     });
     const currentPath = parseHashPath().join('/');
-    tocEl.querySelectorAll('.toc-item').forEach(item => {
-      item.classList.remove('active', 'active-sub');
-      const itemPath = item.dataset.path || '';
-      if (!itemPath || !currentPath) return;
-      if (item.classList.contains('toc-h2') && (itemPath === currentPath || currentPath.startsWith(itemPath + '/'))) {
-        item.classList.add('active');
-        return;
-      }
-      if (itemPath === currentPath) {
-        item.classList.add('active-sub');
-        return;
-      }
-      if (currentPath.startsWith(itemPath + '/')) item.classList.add('active-sub');
-    });
+    setTocProgressByPath(currentPath);
     scrollActiveTocItemIntoView();
     scrollPartTarget(activeSection, activeChild, parseHashPath());
   }
