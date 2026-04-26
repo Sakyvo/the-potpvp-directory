@@ -748,6 +748,36 @@
     return textarea.value.slice(0, textarea.selectionStart || 0).split('\n').length - 1;
   }
 
+  function findEntryAtLine(doc, lineIndex) {
+    if (!doc?.entries?.length) return null;
+    let current = doc.entries[0];
+    for (const entry of doc.entries) {
+      if (entry.lineIndex <= lineIndex) current = entry;
+      else break;
+    }
+    return current;
+  }
+
+  function getPreviewAnchorEntry(doc) {
+    const preview = $('#rendered-preview');
+    if (!preview || !doc?.entries?.length) return null;
+    const threshold = preview.getBoundingClientRect().top + 32;
+    let bestAbove = null;
+    let firstBelow = null;
+    for (const entry of doc.entries) {
+      const target = document.getElementById(entry.target);
+      if (!target) continue;
+      const top = target.getBoundingClientRect().top;
+      if (top <= threshold) {
+        const distance = threshold - top;
+        if (!bestAbove || distance < bestAbove.distance) bestAbove = { entry, distance };
+      } else if (!firstBelow || top < firstBelow.top) {
+        firstBelow = { entry, top };
+      }
+    }
+    return bestAbove?.entry || firstBelow?.entry || doc.entries[0] || null;
+  }
+
   function setActiveSegmentFromItem(item) {
     const segmentKey = item.dataset.segmentKey;
     if (segmentKey) activeSegmentKey = segmentKey;
@@ -804,16 +834,29 @@
       if (view === currentView) return;
 
       let anchorIdx = 0;
+      let anchorLine = 0;
+      let anchorTarget = '';
       if (currentView === 'source') {
         const el = $('#source-editor');
         pushUndo();
         syncSourceEditorToBuffer();
-        const firstLine = getTextareaCaretLine(el);
-        const floorLines = getFloorLines(sourceBuffer);
+        const doc = getAdminDoc();
+        const segment = adminMode === 'part' ? (activeEditRange || ensureActiveSegment(doc)) : null;
+        const firstLine = (segment?.startLine || 0) + getTextareaCaretLine(el);
+        const entry = findEntryAtLine(doc, firstLine);
+        anchorLine = entry ? entry.lineIndex : firstLine;
+        anchorTarget = entry?.target || '';
+        const floorLines = doc.sections.map(section => section.startLine);
         for (let k = floorLines.length - 1; k >= 0; k--) {
           if (floorLines[k] <= firstLine) { anchorIdx = k; break; }
         }
       } else {
+        const doc = getAdminDoc();
+        const entry = getPreviewAnchorEntry(doc);
+        if (entry) {
+          anchorLine = entry.lineIndex;
+          anchorTarget = entry.target;
+        }
         const preview = $('#rendered-preview');
         const floors = preview.querySelectorAll('.floor');
         const scrollTop = preview.scrollTop;
@@ -830,17 +873,19 @@
       setTimeout(() => {
         if (currentView === 'source') {
           if (adminMode === 'part') {
-            scrollSourceToLine(0);
+            const doc = getAdminDoc();
+            const segment = ensureActiveSegment(doc);
+            scrollSourceToLine(segment ? Math.max(0, anchorLine - segment.startLine) : 0);
             return;
           }
-          const el = $('#source-editor');
-          const lineH = parseFloat(getComputedStyle(el).lineHeight) || 24;
-          const floorLines = getFloorLines(sourceBuffer);
-          const targetLine = anchorIdx < floorLines.length ? floorLines[anchorIdx] : 0;
-          el.scrollTop = targetLine * lineH;
+          scrollSourceToLine(anchorLine);
         } else {
-          const floors = document.querySelectorAll('#rendered-preview .floor');
-          if (floors[anchorIdx]) floors[anchorIdx].scrollIntoView({ block: 'start' });
+          const target = anchorTarget ? document.getElementById(anchorTarget) : null;
+          if (target) target.scrollIntoView({ block: 'start' });
+          else {
+            const floors = document.querySelectorAll('#rendered-preview .floor');
+            if (floors[anchorIdx]) floors[anchorIdx].scrollIntoView({ block: 'start' });
+          }
         }
       }, 50);
     });
