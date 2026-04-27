@@ -150,6 +150,14 @@
     return images;
   }
 
+  function getMaxNumberedImageIndex(images) {
+    return images.reduce((max, image) => {
+      const path = repoImagePathFromSrc(image.src);
+      const match = path.match(/^images\/(\d+)\.[a-z0-9]+$/i);
+      return match ? Math.max(max, Number(match[1])) : max;
+    }, 0);
+  }
+
   function dataUrlToImageData(src) {
     const match = (src || '').match(/^data:image\/([^;]+);base64,(.+)$/i);
     if (!match) return null;
@@ -1656,6 +1664,7 @@
     const images = extractMarkdownImages(md);
     const publishedImages = extractMarkdownImages(publishedBuffer);
     const pendingImages = images.filter(img => img.kind === 'data' || img.kind === 'external');
+    let nextImageIndex = getMaxNumberedImageIndex(publishedImages);
 
     const stepNames = [];
     pendingImages.forEach((_, i) => stepNames.push(`处理图片 ${i + 1}/${pendingImages.length}`));
@@ -1688,7 +1697,7 @@
           if (originalB64 && originalB64 === payload.b64) {
             img.replacement = `![${img.alt}](/${originalPath})`;
           } else {
-            const fname = `${img.order + 1}.${payload.ext}`;
+            const fname = `${++nextImageIndex}.${payload.ext}`;
             await CodebergAPI.uploadImage(fname, payload.b64, `Upload ${fname}`);
             img.replacement = `![${img.alt}](/images/${fname})`;
           }
