@@ -42,6 +42,7 @@
   const VIEW_MODE_KEY = 'ppdir-view-mode';
   const TOC_COLLAPSED_KEY = 'ppdir-toc-collapsed';
   const JUMP_FLASH_MS = 1400;
+  const HASH_SCROLL_STABILIZE_MS = 1200;
 
   function escapeHtml(text) {
     return (text || '').replace(/[&<>"']/g, char => ({
@@ -301,11 +302,42 @@
     return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h'), 10) || 48;
   }
 
+  let hashSyncLockUntil = 0;
+
+  function lockHashSync(ms) {
+    hashSyncLockUntil = Math.max(hashSyncLockUntil, Date.now() + ms);
+  }
+
+  function isHashSyncLocked() {
+    return Date.now() < hashSyncLockUntil;
+  }
+
   function scrollToElement(target, smooth) {
     if (!target) return;
     const topbarH = getTopbarHeight();
     const top = window.scrollY + target.getBoundingClientRect().top - topbarH - 8;
     window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
+  }
+
+  function scrollToHashTarget(target, enableFlash, stabilize) {
+    if (!target) return;
+    lockHashSync(stabilize ? HASH_SCROLL_STABILIZE_MS : 350);
+    scrollToElement(target, false);
+    if (enableFlash) flashJumpTarget(target);
+    if (!stabilize) return;
+
+    const startedAt = Date.now();
+    const realign = () => {
+      if (Date.now() - startedAt > HASH_SCROLL_STABILIZE_MS || !document.body.contains(target)) return;
+      lockHashSync(250);
+      scrollToElement(target, false);
+    };
+    requestAnimationFrame(() => requestAnimationFrame(realign));
+    [120, 360, 800].forEach(delay => window.setTimeout(realign, delay));
+    contentEl.querySelectorAll('img').forEach(img => {
+      if (img.complete || !(img.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING)) return;
+      img.addEventListener('load', realign, { once: true });
+    });
   }
 
   function flashJumpTarget(target) {
@@ -770,8 +802,7 @@
     const firstMark = partSearchMarks[0];
     if (!firstMark) return false;
     currentMarkIdx = -1;
-    scrollToElement(firstMark, false);
-    if (enableFlash) flashJumpTarget(firstMark);
+    scrollToHashTarget(firstMark, enableFlash, true);
     window.setTimeout(() => {
       if (partSearchMarks.every(mark => searchMarks.includes(mark))) clearAllModeSearch();
     }, JUMP_FLASH_MS);
@@ -789,8 +820,7 @@
         if (!next) break;
         target = next;
       }
-      scrollToElement(target, false);
-      if (enableFlash) flashJumpTarget(target);
+      scrollToHashTarget(target, enableFlash, true);
       return;
     }
     if (parts.length > 1 && !child && body) {
@@ -800,20 +830,17 @@
         if (!next) break;
         target = next;
       }
-      scrollToElement(target, false);
-      if (enableFlash) flashJumpTarget(target);
+      scrollToHashTarget(target, enableFlash, true);
       return;
     }
     if (body && child) {
       const childHeading = body.querySelector(`[data-url-slug="${CSS.escape(parts[1] || child.urlSlug || '')}"]`) || body.querySelector('h3, h4, h5, h6');
       const target = childHeading || floor || body;
-      scrollToElement(target, false);
-      if (enableFlash) flashJumpTarget(target);
+      scrollToHashTarget(target, enableFlash, true);
       return;
     }
     if (body && !child && section && !section.children.length) {
-      scrollToElement(floor || body, false);
-      if (enableFlash) flashJumpTarget(floor || body);
+      scrollToHashTarget(floor || body, enableFlash, true);
       return;
     }
     if (parts.length > 2 && child) {
@@ -825,8 +852,7 @@
           if (!next) break;
           target = next;
         }
-        scrollToElement(target, false);
-        if (enableFlash) flashJumpTarget(target);
+        scrollToHashTarget(target, enableFlash, true);
         return;
       }
     }
@@ -839,8 +865,7 @@
           if (!next) break;
           target = next;
         }
-        scrollToElement(target, false);
-        if (enableFlash) flashJumpTarget(target);
+        scrollToHashTarget(target, enableFlash, true);
         return;
       }
     }
@@ -848,8 +873,7 @@
       ? (contentEl.querySelector('.floor.floor-part') || contentEl.querySelector('.floor.floor-part .floor-body'))
       : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
     if (focusTarget) {
-      scrollToElement(focusTarget, false);
-      if (enableFlash) flashJumpTarget(focusTarget);
+      scrollToHashTarget(focusTarget, enableFlash, true);
     }
   }
 
@@ -1059,6 +1083,7 @@
     modeToggle.addEventListener('click', () => {
       activeMode = activeMode === 'all' ? 'part' : 'all';
       saveMode(activeMode);
+      lockHashSync(HASH_SCROLL_STABILIZE_MS);
       if (activeMode === 'part') {
         const parts = parseHashPath();
         if (!parts.length || (parts.length === 1 && appState.sections.find(sec => sec.floorIndex === 0 && sec.urlSlug === parts[0]))) {
@@ -1066,9 +1091,9 @@
         }
       }
       closeSearch();
-      renderApp(false);
+      renderApp({ scrollToHash: true, flash: false });
     });
-    window.addEventListener('hashchange', () => renderApp(true));
+    window.addEventListener('hashchange', () => renderApp({ scrollToHash: true, flash: true }));
   }
 
   function teardownDynamicEvents() {
@@ -1083,6 +1108,9 @@
   }
 
   function initAllModeInteraction(enableFlash) {
+    const parts = parseHashPath();
+    if (parts.length) lockHashSync(HASH_SCROLL_STABILIZE_MS);
+
     tocEl.onclick = e => {
       const item = e.target.closest('[data-target]');
       if (!item) return;
@@ -1091,9 +1119,10 @@
       if (!target) return;
       skipSidebarScrollRestore = true;
       closeSidebar();
+      if (item.dataset.path) setHash(item.dataset.path.split('/'), true);
+      setTocProgress(item.classList.contains('toc-h2') ? item : getTocActiveH2(item), item);
       requestAnimationFrame(() => {
-        scrollToElement(target, false);
-        flashJumpTarget(target);
+        scrollToHashTarget(target, true, true);
       });
     };
 
@@ -1108,6 +1137,7 @@
         }
       }
       if (!topId) return;
+      if (isHashSyncLocked()) return;
       const active = tocEl.querySelector(`[data-target="floor-${topId}"]`);
       if (active) {
         setTocProgress(active, active);
@@ -1144,7 +1174,6 @@
     };
     window.addEventListener('scroll', updateTocSubHandler);
 
-    const parts = parseHashPath();
     if (parts.length) {
       let target = document.getElementById('floor-' + parts[0]) || document.getElementById(parts[0]);
       if (!target) {
@@ -1161,8 +1190,7 @@
         }
       }
       if (target) {
-        scrollToElement(target, false);
-        if (enableFlash) flashJumpTarget(target);
+        scrollToHashTarget(target, enableFlash, true);
       }
     }
   }
@@ -1232,13 +1260,13 @@
     initPartModeInteraction(section, child, enableFlash);
   }
 
-  function renderApp(fromHashChange) {
+  function renderApp(options) {
     teardownDynamicEvents();
     clearSearchUi();
     modeToggle.textContent = activeMode;
     modeToggle.dataset.mode = activeMode;
     searchInput.placeholder = activeMode === 'part' ? '搜索文档位置...' : '搜索内容...';
-    const enableFlash = !!fromHashChange;
+    const enableFlash = typeof options === 'object' && options !== null ? !!options.flash : !!options;
     if (activeMode === 'part') renderPartPage(enableFlash);
     else {
       renderAllPage(appState.sections);
