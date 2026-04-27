@@ -41,6 +41,7 @@
   const WORD_JOINER = '\u2060';
   const VIEW_MODE_KEY = 'ppdir-view-mode';
   const TOC_COLLAPSED_KEY = 'ppdir-toc-collapsed';
+  const JUMP_FLASH_MS = 1400;
 
   function escapeHtml(text) {
     return (text || '').replace(/[&<>"']/g, char => ({
@@ -312,7 +313,7 @@
     target.classList.remove('jump-flash');
     void target.offsetWidth;
     target.classList.add('jump-flash');
-    window.setTimeout(() => target.classList.remove('jump-flash'), 1400);
+    window.setTimeout(() => target.classList.remove('jump-flash'), JUMP_FLASH_MS);
   }
 
   function getTocLevel(item) {
@@ -765,11 +766,15 @@
     const query = pendingPartSearchQuery;
     pendingPartSearchQuery = '';
     highlightPartSearchTerm(query);
-    const firstMark = searchMarks[0];
+    const partSearchMarks = [...searchMarks];
+    const firstMark = partSearchMarks[0];
     if (!firstMark) return false;
     currentMarkIdx = -1;
     scrollToElement(firstMark, false);
     if (enableFlash) flashJumpTarget(firstMark);
+    window.setTimeout(() => {
+      if (partSearchMarks.every(mark => searchMarks.includes(mark))) clearAllModeSearch();
+    }, JUMP_FLASH_MS);
     return true;
   }
 
