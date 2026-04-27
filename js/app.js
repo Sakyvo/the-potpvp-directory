@@ -474,6 +474,18 @@
 
   function buildSearchIndex(sections) {
     const results = [];
+    function getChildLeadMarkdown(child, childLevel) {
+      const lines = (child.md || '').replace(/\r\n/g, '\n').split('\n');
+      if ((childLevel || 3) >= 6) return child.md || '';
+      const nestedRe = new RegExp(`^#{${(childLevel || 3) + 1},6}\\s+`);
+      const lead = [];
+      for (const line of lines) {
+        if (nestedRe.test(line)) break;
+        lead.push(line);
+      }
+      return lead.join('\n').trim();
+    }
+
     sections.forEach(section => {
       const sectionText = section.floorIndex !== 0 && section.children.length
         ? stripHeadingMarkup([section.title, ...section.children.map(child => child.title)].join('\n'))
@@ -490,7 +502,7 @@
         const blockText = stripHeadingMarkup([
           section.title,
           child.title,
-          child.md
+          getChildLeadMarkdown(child, section.childLevel || 3)
         ].filter(Boolean).join('\n'));
         results.push({
           type: 'child',
@@ -732,6 +744,7 @@
   let tocCollapsed = getSavedTocCollapsed();
   let sidebarScrollY = 0;
   let skipSidebarScrollRestore = false;
+  let pendingPartSearchQuery = '';
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -747,9 +760,24 @@
     });
   }
 
+  function scrollPartSearchMatch(enableFlash) {
+    if (!pendingPartSearchQuery) return false;
+    const query = pendingPartSearchQuery;
+    pendingPartSearchQuery = '';
+    highlightPartSearchTerm(query);
+    const firstMark = searchMarks[0];
+    if (!firstMark) return false;
+    firstMark.classList.add('current');
+    currentMarkIdx = 0;
+    scrollToElement(firstMark, false);
+    if (enableFlash) flashJumpTarget(firstMark);
+    return true;
+  }
+
   function scrollPartTarget(section, child, parts, enableFlash) {
     const floor = contentEl.querySelector('.floor.floor-part');
     const body = contentEl.querySelector('.floor.floor-part .floor-body');
+    if (scrollPartSearchMatch(enableFlash)) return;
     if (parts.length > 2 && child && body) {
       let target = body;
       for (let i = 2; i < parts.length; i++) {
@@ -857,11 +885,41 @@
       return;
     }
     searchResultsEl.innerHTML = `<div class="search-results-list">${results.map(result => `
-      <button class="search-result-item" type="button" data-path="${escapeHtml(result.path)}">
+      <button class="search-result-item" type="button" data-path="${escapeHtml(result.path)}" data-query="${escapeHtml(query.trim())}">
         <span class="search-result-path">${escapeHtml(result.pathLabel)}</span>
         <span class="search-result-title">${escapeHtml(result.title)}</span>
         <span class="search-result-excerpt">${escapeHtml(makeExcerpt(result.text, query))}</span>
       </button>`).join('')}</div>`;
+  }
+
+  function highlightPartSearchTerm(query) {
+    clearAllModeSearch();
+    const q = (query || '').trim();
+    if (!q) return;
+    const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    for (const node of textNodes) {
+      if (!node.parentNode || /^(script|style|mark)$/i.test(node.parentNode.nodeName)) continue;
+      const text = node.textContent;
+      if (!regex.test(text)) continue;
+      regex.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let match;
+      while ((match = regex.exec(text))) {
+        if (match.index > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+        const mark = document.createElement('mark');
+        mark.className = 'search-hl';
+        mark.textContent = match[0];
+        frag.appendChild(mark);
+        searchMarks.push(mark);
+        lastIdx = regex.lastIndex;
+      }
+      if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+      node.parentNode.replaceChild(frag, node);
+    }
   }
 
   function doAllModeSearch(query) {
@@ -972,6 +1030,7 @@
     searchResultsEl.addEventListener('click', e => {
       const item = e.target.closest('[data-path]');
       if (!item) return;
+      pendingPartSearchQuery = activeMode === 'part' ? (item.dataset.query || searchInput.value || '') : '';
       setHash(item.dataset.path.split('/'), false);
       closeSearch();
       renderApp(true);
