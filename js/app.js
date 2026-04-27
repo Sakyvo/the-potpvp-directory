@@ -307,6 +307,14 @@
     window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
   }
 
+  function flashJumpTarget(target) {
+    if (!target) return;
+    target.classList.remove('jump-flash');
+    void target.offsetWidth;
+    target.classList.add('jump-flash');
+    window.setTimeout(() => target.classList.remove('jump-flash'), 1400);
+  }
+
   function getTocLevel(item) {
     const match = [...item.classList].join(' ').match(/\btoc-h([2-6])\b/);
     return match ? Number(match[1]) : 0;
@@ -750,6 +758,7 @@
         target = next;
       }
       scrollToElement(target, false);
+      flashJumpTarget(target);
       return;
     }
     if (parts.length > 1 && !child && body) {
@@ -760,14 +769,19 @@
         target = next;
       }
       scrollToElement(target, false);
+      flashJumpTarget(target);
       return;
     }
     if (body && child) {
-      scrollToElement(floor || body, false);
+      const childHeading = body.querySelector(`[data-url-slug="${CSS.escape(parts[1] || child.urlSlug || '')}"]`) || body.querySelector('h3, h4, h5, h6');
+      const target = childHeading || floor || body;
+      scrollToElement(target, false);
+      flashJumpTarget(target);
       return;
     }
     if (body && !child && section && !section.children.length) {
       scrollToElement(floor || body, false);
+      flashJumpTarget(floor || body);
       return;
     }
     if (parts.length > 2 && child) {
@@ -780,6 +794,7 @@
           target = next;
         }
         scrollToElement(target, false);
+        flashJumpTarget(target);
         return;
       }
     }
@@ -793,13 +808,17 @@
           target = next;
         }
         scrollToElement(target, false);
+        flashJumpTarget(target);
         return;
       }
     }
     const focusTarget = child
       ? (contentEl.querySelector('.floor.floor-part') || contentEl.querySelector('.floor.floor-part .floor-body'))
       : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
-    if (focusTarget) scrollToElement(focusTarget, false);
+    if (focusTarget) {
+      scrollToElement(focusTarget, false);
+      flashJumpTarget(focusTarget);
+    }
   }
 
   function clearAllModeSearch() {
@@ -1009,7 +1028,10 @@
       if (!target) return;
       skipSidebarScrollRestore = true;
       closeSidebar();
-      requestAnimationFrame(() => scrollToElement(target, false));
+      requestAnimationFrame(() => {
+        scrollToElement(target, false);
+        flashJumpTarget(target);
+      });
     };
 
     const rootMargin = `-${getTopbarHeight()}px 0px -60% 0px`;
@@ -1075,7 +1097,10 @@
           target = document.querySelector(`[data-url-slug="${CSS.escape(parts[parts.length - 1])}"]`);
         }
       }
-      if (target) scrollToElement(target, false);
+      if (target) {
+        scrollToElement(target, false);
+        flashJumpTarget(target);
+      }
     }
   }
 

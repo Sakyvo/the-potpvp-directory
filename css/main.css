@@ -370,6 +370,14 @@ body.sidebar-lock {
 .floor-body th { background: var(--bg-card); font-weight: 600; }
 .floor-body hr { border: none; border-top: 1px solid var(--border); margin: 1.2em 0; }
 
+.jump-flash {
+  animation: jump-flash 1.35s ease-out;
+}
+@keyframes jump-flash {
+  0%, 42% { background-color: #fff1a8; box-shadow: 0 0 0 4px #fff1a8; }
+  100% { background-color: transparent; box-shadow: 0 0 0 0 transparent; }
+}
+
 /* ── Search highlight ── */
 mark.search-hl { background: #fff3a8; padding: 0; }
 mark.search-hl.current { background: #ff9632; }
