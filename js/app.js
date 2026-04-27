@@ -747,7 +747,7 @@
     });
   }
 
-  function scrollPartTarget(section, child, parts) {
+  function scrollPartTarget(section, child, parts, enableFlash) {
     const floor = contentEl.querySelector('.floor.floor-part');
     const body = contentEl.querySelector('.floor.floor-part .floor-body');
     if (parts.length > 2 && child && body) {
@@ -758,7 +758,7 @@
         target = next;
       }
       scrollToElement(target, false);
-      flashJumpTarget(target);
+      if (enableFlash) flashJumpTarget(target);
       return;
     }
     if (parts.length > 1 && !child && body) {
@@ -769,19 +769,19 @@
         target = next;
       }
       scrollToElement(target, false);
-      flashJumpTarget(target);
+      if (enableFlash) flashJumpTarget(target);
       return;
     }
     if (body && child) {
       const childHeading = body.querySelector(`[data-url-slug="${CSS.escape(parts[1] || child.urlSlug || '')}"]`) || body.querySelector('h3, h4, h5, h6');
       const target = childHeading || floor || body;
       scrollToElement(target, false);
-      flashJumpTarget(target);
+      if (enableFlash) flashJumpTarget(target);
       return;
     }
     if (body && !child && section && !section.children.length) {
       scrollToElement(floor || body, false);
-      flashJumpTarget(floor || body);
+      if (enableFlash) flashJumpTarget(floor || body);
       return;
     }
     if (parts.length > 2 && child) {
@@ -794,7 +794,7 @@
           target = next;
         }
         scrollToElement(target, false);
-        flashJumpTarget(target);
+        if (enableFlash) flashJumpTarget(target);
         return;
       }
     }
@@ -808,7 +808,7 @@
           target = next;
         }
         scrollToElement(target, false);
-        flashJumpTarget(target);
+        if (enableFlash) flashJumpTarget(target);
         return;
       }
     }
@@ -817,7 +817,7 @@
       : contentEl.querySelector(`#floor-${CSS.escape(section?.id || '')}`);
     if (focusTarget) {
       scrollToElement(focusTarget, false);
-      flashJumpTarget(focusTarget);
+      if (enableFlash) flashJumpTarget(focusTarget);
     }
   }
 
@@ -1019,7 +1019,7 @@
     }
   }
 
-  function initAllModeInteraction() {
+  function initAllModeInteraction(enableFlash) {
     tocEl.onclick = e => {
       const item = e.target.closest('[data-target]');
       if (!item) return;
@@ -1099,12 +1099,12 @@
       }
       if (target) {
         scrollToElement(target, false);
-        flashJumpTarget(target);
+        if (enableFlash) flashJumpTarget(target);
       }
     }
   }
 
-  function initPartModeInteraction(activeSection, activeChild) {
+  function initPartModeInteraction(activeSection, activeChild, enableFlash) {
     tocEl.onclick = e => {
       const link = e.target.closest('[href]');
       if (!link) return;
@@ -1125,7 +1125,7 @@
     });
     const currentPath = parseHashPath().join('/');
     setTocProgressByPath(currentPath);
-    scrollPartTarget(activeSection, activeChild, parseHashPath());
+    scrollPartTarget(activeSection, activeChild, parseHashPath(), enableFlash);
   }
 
   const rawMd = await fetchMd(indexData.file || 'content/main.md');
@@ -1137,7 +1137,7 @@
     tocEntries: buildTocEntries(sections)
   };
 
-  function renderPartPage() {
+  function renderPartPage(enableFlash) {
     let parts = parseHashPath();
     if (!parts.length) {
       parts = firstNavigablePage(appState.sections);
@@ -1159,14 +1159,14 @@
       setHash([section.urlSlug], true);
       contentEl.innerHTML = renderPartSectionPage(section, appState.partPages);
       renderPartToc(appState.sections, section, null);
-      return initPartModeInteraction(section, null);
+      return initPartModeInteraction(section, null, enableFlash);
     }
     contentEl.innerHTML = child
       ? renderPartChildPage(section, child, appState.partPages)
       : renderPartSectionPage(section, appState.partPages);
     contentEl.querySelectorAll('.floor.floor-part .floor-body').forEach(el => assignNestedAnchors(el, el.dataset.anchorBase || section.id));
     renderPartToc(appState.sections, section, child);
-    initPartModeInteraction(section, child);
+    initPartModeInteraction(section, child, enableFlash);
   }
 
   function renderApp(fromHashChange) {
@@ -1175,10 +1175,11 @@
     modeToggle.textContent = activeMode;
     modeToggle.dataset.mode = activeMode;
     searchInput.placeholder = activeMode === 'part' ? '搜索文档位置...' : '搜索内容...';
-    if (activeMode === 'part') renderPartPage();
+    const enableFlash = !!fromHashChange;
+    if (activeMode === 'part') renderPartPage(enableFlash);
     else {
       renderAllPage(appState.sections);
-      initAllModeInteraction();
+      initAllModeInteraction(enableFlash);
     }
     applyTocCollapseState();
     setExternalLinks();
