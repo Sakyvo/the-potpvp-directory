@@ -767,8 +767,7 @@
     highlightPartSearchTerm(query);
     const firstMark = searchMarks[0];
     if (!firstMark) return false;
-    firstMark.classList.add('current');
-    currentMarkIdx = 0;
+    currentMarkIdx = -1;
     scrollToElement(firstMark, false);
     if (enableFlash) flashJumpTarget(firstMark);
     return true;
