@@ -1268,8 +1268,8 @@ drill不好看，不看了
 
 #### Semi-Intro
 
-**ctt**: [https://ctt.cx/video/obs/](https://ctt.cx/video/obs/)
-**offical doc**: [https://obsproject.com/kb](https://obsproject.com/kb)
+ctt: [https://ctt.cx/video/obs/](https://ctt.cx/video/obs/)
+offical doc: [https://obsproject.com/kb](https://obsproject.com/kb)
 
 录视频用且只用obs，这是板上钉钉的，你要是电脑破烂只能带的动ocam我也没法说啥了。什么你问bandicam水印怎么去，那我可得给你展示一下伟大贤者也有举起屠刀时刻了，，，
 
@@ -1280,209 +1280,169 @@ github下载加速: [https://ghfast.top/](https://ghfast.top/)
 
 对于新老版本的选择并无统一标准，理论上qt6性能更佳，Couleur也主张越新越好。但这玩意实在是看机器，本人的qt6就启动死慢天天编码过载，反观qt5则是游戏内掉到100fps都不报过载的重量级优化，而且..... qt5的紧凑排版更干净利落有没有?
 
-![Image_61](/images/4.png)
+![Image_34](/images/4.png)
+
 
 ---
+
 #### 3.1.1. Add
-~~防呆不防傻，在考虑是否还要保留这些弱智内容~~
-![Image_62](/images/5.png)
-![Image_63](/images/6.png)
-![Image_64](/images/7.png)
-![Image_65](/images/8.png)
-![Image_66](/images/9.png)
+防呆不防傻，在考虑是否还要保留这些弱智内容
+![Image_35](/images/5.png)
+![Image_36](/images/6.png)
+![Image_37](/images/7.png)
+![Image_38](/images/8.png)
+![Image_39](/images/9.png)
 
-**关于"游戏采集"与"窗口采集":**
-**游戏采集 (Game Capture)**
-- 原理**：** OBS直接“注入（Hook）”到游戏的底层渲染接口（如DirectX、OpenGL或Vulkan）中。在显卡渲染完画面但还没交由系统桌面管理器处理之前，直接截取画面数据。
-- 性能：Insane。因为它是最直接的底层抓取方式，占用的 CPU 和显卡资源极少，对游戏原本的帧数影响微乎其微，并且画面延迟最低。
-
-**窗口采集 (Window Capture)**
-- 原理： OBS向操作系统请求获取某一个特定窗口的画面。画面需要先由游戏提交给系统，系统混合渲染整个桌面后，再把对应窗口的那部分画面“复制”给OBS。
-- 性能：中等，存在额外开销。因为数据多走了一层操作系统的“中间商”，这种方式会占用更多的系统资源，引入轻微的画面延迟，更容易导致游戏掉帧或录制画面卡顿。
-- *extra：Windows 10 1903 版本之后，OBS 引入了 Windows Graphics Capture (WGC) 抓取方式，大幅改善了窗口采集的性能，但性能依然逊色于游戏采集。*
-
-**总结**
-- **游戏采集的性能和效率远优于窗口采集。**只要录制/直播游戏，应该首选此模式以获得最佳的体验。
-- 窗口采集作为备用：只有当游戏采集抓不到画面时再退而求其次使用窗口采集。
+关于"游戏采集"与"窗口采集":
+游戏采集 (Game Capture)
+窗口采集 (Window Capture)
+总结
 
 
 
 ---
+
 #### 3.1.2. General
-![Image_67](/images/10.png)
+![Image_40](/images/10.png)
 
 没啥好说的，基本都是个人习惯问题，最好始终将OBS作为管理员运行提高性能和兼容性:
-![Image_68](/images/11.png)
-![Image_69](/images/12.png)
+![Image_41](/images/11.png)
+![Image_42](/images/12.png)
+
 
 
 ---
+
 #### 3.1.3. Output
-**ctt**: [https://ctt.cx/video/obs/output/#recording](https://ctt.cx/video/obs/output/#recording)
+ctt: [https://ctt.cx/video/obs/output/#recording](https://ctt.cx/video/obs/output/#recording)
 
 最重要的部分，编码过载，十之八九是输出没调好
-输出模式调整为“**高级**”解锁更多设置
-![Image_70](/images/13.png)
-**(没提的就不要动，除非你懂它是干嘛的，我是懒得再码了)**
+输出模式调整为“高级”解锁更多设置
+![Image_43](/images/13.png)
+(没提的就不要动，除非你懂它是干嘛的，我是懒得再码了)
 
 
-##### **录像格式**
-![Image_71](/images/14.png)
+##### 录像格式
+![Image_44](/images/14.png)
 mp4/mkv均可，别的算了
 mp4兼容性更佳，但系统崩溃/磁盘满了会导致录像损坏
 mkv自带崩溃保护，但兼容性较差(来源请求¿)
-extra: 可以在**高级**中启用 自动封装至MP4格式 ，让录制的mkv视频在录制完成后自动转为mp4，只不过需要一定额外开销(不会影响录制效果只是导出慢一点)
+extra: 可以在高级中启用 自动封装至MP4格式 ，让录制的mkv视频在录制完成后自动转为mp4，只不过需要一定额外开销(不会影响录制效果只是导出慢一点)
 
 
-##### **编码器**
-![Image_72](/images/15.png)
+##### 编码器
+![Image_45](/images/15.png)
 速度: NVENC (NVIDIA) ＞ AMF (AMD) ＞ QuickSync (Intel iGPU) ＞ x264/5 (CPU)
-无脑显卡编码即可，即使你是核显也不例外。CPU编码对质量的提高并不大且**极其**消耗性能
+无脑显卡编码即可，即使你是核显也不例外。CPU编码对质量的提高并不大且极其消耗性能
 CPU带核显的可以考虑核显专门录制，独显跑游戏
 
 
-##### **速率控制**
-![Image_73](/images/16.png)
-1. **CBR** (Constant Bitrate - 固定码率)
-- 原理： aka.恒定比特率，无论画面是静止的还是在剧烈运动，每秒钟产生的数据量都是**强制固定**的（如设置为50000Kbps，就会一直保持这个速度输出）。
-- 优点**：**文件可控，主要用于**直播**（因为网络带宽是有限且固定的）。
-- 缺点： 在录制高速运动的画面时（如快速甩鼠标转视角），画面信息量会瞬间暴增，但CBR给的流量上限有限，这此时画面就会瞬间变糊。因此**不建议**用于本地高画质录制**。**
+##### 速率控制
+![Image_46](/images/16.png)
+1. CBR (Constant Bitrate - 固定码率)
+2. CQP (Constant Quantization Parameter - 恒定量化参数)
+3. VBR (Variable Bitrate - 动态码率)
+4. 无损 (Lossless)
 
-2. **CQP** (Constant Quantization Parameter - 恒定量化参数)
-- 原理： 不管码率是多少，**只认画质**。设定一个画质级别 (CQ ，数字越小画质越好，见下方图，编码器会无底线地调动所需的所有流量来维持这个画质。
-- 优点：智能调控**。** 静态画面中每秒只需几m流量；而画面一旦开始高速移动，码率可能会飙到上百兆。而CQP能够确保在任何剧烈运动下，智能分配码率以确保画面质量。
-- 缺点：文件大小不可预估，通常比较大。
-
-3. **VBR** (Variable Bitrate - 动态码率)
-- 原理： 设定一个“目标码率”和一个“最大码率”。静止时用低码率省空间，画面动起来时则自动提升码率保画质，但最高不会超过设定的上限。
-- 表现： 比CBR更**智能**(¿)一点，在画质和文件体积之间做了折中。
-- 但高fps录制情况下，显卡在极短的时间内去频繁计算和调整码率波动，反而会增加额外的计算负担。而且如果“最大码率”给得不够高，剧烈运动时依然会发糊。
-
-4. **无损** (Lossless)
-- 原理： 字面意思，放弃所有的有损压缩算法，100%像素级保留原始画面。
-- 表现： 无敌画质，无敌大小，**显卡硬盘双双爆炸**。
-- 文件体积极其恐怖，一分钟可能高达十几个GB，别作死了。
-
-
-**ctt tip:**
+ctt tip:
 现代多采用CQP，比CBR更具适应性，后者总是输出相同的恒定比特率，对动态场景处理效果较差
 CQP会根据内容对“带宽的需求”进行调整。如游戏中静止站立在纯色墙壁前，写入的数据量将远远少于在复杂画面频繁转动视角时，相应的，对于复杂画面分配的资源也会智能增加
-![Image_74](/images/17.png)
-by Couleur
+![Image_47](/images/17.png)
+chart by Couleur
 
-Milk_Cha Credit (1080p):
-![Image_75](/images/18.png)
+[Milk_Cha](https://t.bilibili.com/1194914662592806932) [Credits](https://t.bilibili.com/1195621115991425073):
+720p
+![Image_48](/images/18.png)
+1080p
+![Image_49](/images/19.png)
+横向
+![Image_50](/images/20.png)
+曲线图
+![Image_51](/images/21.png)
+![Image_52](/images/22.png)
+![Image_53](/images/23.png)
+
 至于CQP的值调多少，个人认为21-28之间选一个就行，保持视频属性里显示的码率是100k上下，那些各种“渲染设置”视频里的1字开头的提升并不大，反正最后会被二压浪费掉，完全是烧硬盘。关键在于画布分辨率务必与输出分辨率一致，被一压了可就歇菜了
 
 
-##### **预设**
-![Image_76](/images/19.png)
-让显卡的独立编码芯片在**画面质量(视频清晰度)**、**性能消耗(显卡负载)**和**编码延迟(画面处理的时间)**这三个维度之间进行权衡:
+##### 预设
+![Image_54](/images/24.png)
+让显卡的独立编码芯片在画面质量(视频清晰度)、性能消耗(显卡负载)和编码延迟(画面处理的时间)这三个维度之间进行权衡:
 
-**老版本 (pre** [**28.1**](https://obsproject.com/forum/threads/obs-studio-28-1-release-candidate.160580/)**):**
-老版本分为 **最高质量 质量 性能 最大性能 低延迟质量 低延迟 低延迟性能** 七个模式
-七个模式可分为两大类：**标准**和**低延迟**:
+老版本 (pre [28.1](https://obsproject.com/forum/threads/obs-studio-28-1-release-candidate.160580/)):
+老版本分为 最高质量 质量 性能 最大性能 低延迟质量 低延迟 低延迟性能 七个模式
+七个模式可分为两大类：标准和低延迟:
 
-**标准预设** *(无脑选这类)*
+标准预设 (无脑选这类)
 这类预设会使用更复杂的压缩算法（例如 B帧 和 画面前瞻功能），能以更小的文件体积提供更好的画质，但会产生几ns到几十ms的编码延迟（对于录像和普通直播来说，这完全感觉不到）。
-1. **最高质量** (Max Quality)
-- 特点： 画质最好。它通常会启用双趟编码 (2-pass encoding) 和最复杂的算法，尽可能保留最多的画面细节
-- 代价： 对显卡 NVENC 编码模块的计算压力最大
+1. 最高质量 (Max Quality)
+2. 质量 (Quality)
+3. 性能 (Performance)
+4. 最大性能 (Max Performance)（一般选这个就行，没啥区别的）
 
-2. **质量** (Quality)
-- 特点： 平衡点。单趟编码下的最高画质，视觉上与“最高质量”极难分辨
-- 代价： 显卡负载适中，是官方最推荐、也是绝大多数用户的首选
-
-3. **性能** (Performance)
-- 特点： 稍微降低一些画面细节的计算度，以此来减轻显卡编码器的压力。
-- 代价： 在相同码率下，高速运动的画面可能会比“质量”预设略显模糊或产生轻微马赛克
-
-4. **最大性能** (Max Performance)*（一般选这个就行，没啥区别的）*
-- 特点： 编码速度最快，对显卡的占用降到最低
-- 代价： 算力消耗最低。处理效果相对最差 ~~(我没感觉到啊gemini你又幻想了)~~
-
-
-**低延迟预设** *(别用)*
-这类预设通过强制关闭 B帧 (B-frames) 等技术，抛弃节点、预测和前后预测宏区块，**牺！牲！画！质！**来换取极限的响应速度。
+低延迟预设 (别用)
+这类预设通过强制关闭 B帧 (B-frames) 等技术，抛弃节点、预测和前后预测宏区块，牺！牲！画！质！来换取极限的响应速度。
 1. 低延迟质量 (Low Latency Quality)
 2. 低延迟 (Low Latency)
 3. 低延迟性能 (Low Latency Performance)
-特点与代价： 顾名思义，这三个选项分别对应上述的质量、平衡和性能，但前提都是**“极低延迟”**。因为关掉了有助于提升画质的关键算法，它们的整体画面表现都**不！如！**对应的“标准预设”
-适用场景： 仅适用于**云游戏串流、远程桌面控制**等要求鼠标点下去屏幕必须立刻给出反应的场景。对于普通的本地录屏或者直播推流，**绝！对！不！要！**选低延迟。
+特点与代价： 顾名思义，这三个选项分别对应上述的质量、平衡和性能，但前提都是“极低延迟”。因为关掉了有助于提升画质的关键算法，它们的整体画面表现都不！如！对应的“标准预设”
+适用场景： 仅适用于云游戏串流、远程桌面控制等要求鼠标点下去屏幕必须立刻给出反应的场景。对于普通的本地录屏或者直播推流，绝！对！不！要！选低延迟。
 
-**新版本 (post-28.1):**
+新版本 (post-28.1):
 我不到啊我懒得再装一个了
 
 
-##### **配置**
-![Image_77](/images/20.png)
-**“配置” (Profile)**<span style="color:rgb(26, 26, 26)"> </span>的三个选项（`high`、`main`、`baseline`）属于H.264视频编码标准中的“配置文件”级别，**决定了编码器在压缩视频时可以使用多复杂的算法**。算法越复杂，压缩出来的视频画质越好，但对播放设备（解码）的性能要求也相对更高：
-1. **baseline** (基本配置)
-- 特点：算法最简单、最基础，强制关闭了B帧（大幅提升压缩率的关键画面帧）等高级特性。
-- 表现： 兼容性最佳，哪怕是北福的破烂win7或酥桃的速龙&750ti都能流畅播放。但压缩效率极差，这意味着在相同的码率设置下，它生成的文件会比另外两个**更大**，或者在固定码率下画质最糊。
-
-2. **main** (主配置)
-- 特点： 开启了中等复杂度的算法，支持B帧。
-- **表**现： 曾在很长一段时间(来源请求¿)里是网页视频的主流标准，在画质和老设备兼容性之间取得了平衡。
-
-3. **high** (高级配置)
-- 特点： 启用了H.264标准里最全面的高级压缩技术（例如8x8内部预测、自定义量化矩阵等）。
-- 表现：画质最好，压缩效率最高。 现代的设备都自带硬件解码芯片，播放`high`配置的视频完全是零压力。
-
-**总结**
-在 post-2020 的现代电脑环境中，强烈建议**永！远！**选择`high`。 `baseline`和`main`在现代 PC 录屏场景下可以直接无视。~~你照抄别人配置没选high也没关系我自己都他妈不知不觉的用了四年baseline 。~~
+##### 配置
+![Image_55](/images/25.png)
+<span style="color:var(--hawk-font-color)">“配置” (Profile)</span><span style="color:var(--hawk-font-color)"> </span>的三个选项（`high`、`main`、`baseline`）属于H.264视频编码标准中的“配置文件”级别，决定了编码器在压缩视频时可以使用多复杂的算法。算法越复杂，压缩出来的视频画质越好，但对播放设备（解码）的性能要求也相对更高：
+1. baseline (基本配置)
+2. main (主配置)
+3. high (高级配置)
+总结
+在 post-2020 的现代电脑环境中，强烈建议永！远！选择`high`。 `baseline`和`main`在现代 PC 录屏场景下可以直接无视。你照抄别人配置没选high也没关系我自己都他妈不知不觉的用了四年baseline 。
 
 
-##### **俩random**
-![Image_78](/images/21.png)
-这两个选项属于NVIDIA编码器（NVENC）里的“黑科技”开关，它们都会调用显卡的**CUDA 核心**（也就是显卡用来渲染游戏画面的算力）来辅助独立的NVENC编码芯片进行工作。
-对于常规的 60 帧录制，它们通常是个好东西；**但是**，对于高帧录制和后期渲染的情况下，这两个开关的设定非常关键:
-1. **前向考虑** (Look-ahead)
-- 原理： 顾名思义，就是让编码器“**往后看几帧**”。它会占用显卡的算力，提前分析接下来要出现的几十张画面。如果发现后面有极其复杂的剧烈视角切换，就会提前调配好数据资源来应对，防止那一瞬间画面变糊。
-- 适用场景： 主要用于**直播**（CBR模式）或**动态码率**（VBR模式）。因为在这两种模式下，总流量是被卡死的，“前向考虑”能把好钢用在刀刃上。
-- **But！：**
-- 1. CQP情况下，只要画面需要，码率会自动无上限提升。所以根本不需要它来“精打细算”分配流量。
-- 2.致命影响**：** 在1秒内处理240+张画面的极限压力下，还要让显卡分出算力去“提前预测”未来的画面，会极大地增加 GPU 负担，甚至可能导致游戏本身掉帧或者 OBS 编码过载。
-- **结论：坚决不勾选**。
-
-2. **心理视觉调整** (Psycho Visual Tuning)
-- 原理： 这是一项欺骗洼人眼睛的技术。它会分析画面，把更多的码率（清晰度）分配给人类视觉最敏感的地方（比如高对比度的边缘、快速运动的物体轮廓），同时偷偷**降！低！**那些人眼注意不到的地方（比如纯黑的角落、平淡无奇的天空）的画质。简而言之，在同等文件大小下，让人感觉画面“更锐利”。
-- 适用场景：直接传平台的原素材，勾选它能让快速转动视角时的方块边缘看起来更清晰。
-- **But！：**
-- 1.后期动态模糊中， 这些后期算法不是人类的眼睛，它们是瞎子，完全靠计算前后两帧像素点（哪怕是暗部像素）的物理位移来生成模糊拖影。
-- 2.如果开启了“心理视觉调整”，编码器可能会在高速运动时悄悄抹除某些它认为“不重要”的像素细节，导致原素材里出现微小的马赛克或像素断层（人眼看不出，但插件看得出）。这会直接导致算出来的动态模糊边缘出现诡异的**果！冻！**效应或脏斑。
-- **结论：不要勾选。** 提供最原始、最未经篡改的像素数据给后期软件，是渲染出完美动态模糊的硬性前提。
+##### 俩random
+![Image_56](/images/26.png)
+这两个选项属于NVENC里的“黑科技”开关，它们都会调用显卡的CUDA 核心（也就是显卡用来渲染游戏画面的算力）来辅助独立的NVENC编码芯片进行工作。
+对于常规的60帧录制，它们通常是个好东西；但是，对于高帧录制和后期渲染的情况下，这两个开关的设定非常关键:
+1. 前向考虑 (Look-ahead)
+But！：
+2. 心理视觉调整 (Psycho Visual Tuning)
+原理： 这是一项欺骗洼人眼睛的技术。它会分析画面，把更多的码率（清晰度）分配给人类视觉最敏感的地方（比如高对比度的边缘、快速运动的物体轮廓），同时偷偷降！低！那些人眼注意不到的地方（比如纯黑的角落、平淡无奇的天空）的画质。简而言之，在同等文件大小下，让人感觉画面“更锐利”。
+But！：
 
 
-
-##### **回放缓存**
-![Image_79](/images/22.png)
+##### 回放缓存
+![Image_57](/images/27.png)
 类似于 NVIDIA ShadowPlay，但质量更高，跟你录制的效果是完全一样的，因为它直接使用OBS的设置进行录制，并将捕获的最后X秒内容保留在RAM中，可以在任何时候按绑定的热键或操作gui将其保存为视频文件。
-可被视为用**LosslessCut**手动裁剪重要clip的替代方法，每次保存将按视频文件分隔。
+可被视为用LosslessCut手动裁剪重要clip的替代方法，每次保存将按视频文件分隔。
 
-**启用回放缓存**
+启用回放缓存
 启用后才能在主页看到回放缓存按钮
 
-**最长回放时间**
+最长回放时间
 每次希望保存的秒数。它被标记为“最长”，因为如果在足够的时间 (X秒) 过去之前启动回放缓冲区并按下保存回放热键，则回放的长度将不会是X秒
 
-**最大内存**
+最大内存
 取决于剪辑文件的大小，Couleur设置为2048MB，保存的最大文件是1.15GB
 
 
-##### **H.264 (AVC), H.265 (HEVC) or AV1?**
+##### H.264 (AVC), H.265 (HEVC) or AV1?
 懒得码直接贴ctt
-![Image_80](/images/23.png)
+![Image_58](/images/28.png)
+
 
 ---
+
 #### 3.1.4. Video
-**ctt**: [https://ctt.cx/video/obs/video/](https://ctt.cx/video/obs/video/)
+ctt: [https://ctt.cx/video/obs/video/](https://ctt.cx/video/obs/video/)
 
-此模块并没有想象的那么重要，唯须谨记画布分辨率(游戏内分辨率)务必与输出分辨率(导出视频文件的分辨率)**一致**，否则执行缩小时画质会产生断崖式下跌。至于缩小方法无视即可，只要两个分辨率相同它们就不会起作用
-![Image_81](/images/24.png)
+此模块并没有想象的那么重要，唯须谨记画布分辨率(游戏内分辨率)务必与输出分辨率(导出视频文件的分辨率)一致，否则执行缩小时画质会产生断崖式下跌。至于缩小方法无视即可，只要两个分辨率相同它们就不会起作用
+![Image_59](/images/29.png)
 
-录制请确保**游戏内fps＞录制fps**
-建议录制fps设定为导出fps的**整数倍**，否则每秒多出来的那几帧会在帧混合中被浪费
+录制请确保游戏内fps＞录制fps
+建议录制fps设定为导出fps的整数倍，否则每秒多出来的那几帧会在帧混合中被浪费
 -
 常用的录制fps:
 240: 重影会很多，录出来很og
@@ -1495,69 +1455,66 @@ Milk_Cha Credit (1080p):
 开动态模糊的话120 240 360选一个就行，mb等级4~8均可
 
 
+
 ---
+
 #### 3.1.5. Advanced
 主要是些小细节
-![Image_82](/images/25.png)
+![Image_60](/images/30.png)
 
 
-##### **进程优先级**
-![Image_83](/images/26.png)
-无脑**高**就行
+##### 进程优先级
+![Image_61](/images/31.png)
+无脑高就行
 
 
-##### **颜色格式**
-![Image_84](/images/27.png)
-一般**NV12**就行，amd的叫**AMF**。I420是垃圾，I444和RGB提升不大，且占用很高
+##### 颜色格式
+![Image_62](/images/32.png)
+一般NV12就行，amd的叫AMF。I420是垃圾，I444和RGB提升不大，且占用很高
 
-OBS 内部渲染器（Direct3D 11 / OpenGL / Vulkan）本身是 RGB 格式，因此选择不同格式本质上是“是否做 **YUV 转换** + 是否做**色度子采样**”。
-| **格式** | **色彩空间类型** | **色度子采样(Chroma Subsampling)** | **数据量（相对）** | **画质特点** | **性能/兼容性** | **典型适用场景** |
+OBS 内部渲染器（Direct3D 11 / OpenGL / Vulkan）本身是 RGB 格式，因此选择不同格式本质上是“是否做 YUV 转换 + 是否做色度子采样”。
+| 格式 | 色彩空间类型 | 色度子采样(Chroma Subsampling) | 数据量（相对） | 画质特点 | 性能/兼容性 | 典型适用场景 |
 | --- | --- | --- | --- | --- | --- | --- |
-| **NV12** | YUV | 4:2:0（色度水平/垂直减半） | 最低（≈6bit/像素） | 色彩细节最少，红色边缘容易模糊、文字/渐变有色晕 | 最佳（GPU 硬件加速强） | 推流（默认推荐）、普通录制、追求低 CPU/GPU 占用 |
-| **I420** | YUV | 4:2:0（同上） | 与 NV12 几乎相同 | 与 NV12 画质基本一致，极细微差异（内存布局不同） | 非常好（但劣于NV12） | 兼容老采集卡、某些特定编码器时比 NV12 更稳 |
-| **I444** | YUV | 4:4:4（全分辨率，无子采样） | 中高 | 色彩极锐利、文字清晰、渐变自然、无色晕 | 中等（CPU/GPU 占用明显上升） | 高质量本地录制、需要保留色彩细节的场景 |
-| **RGB** | RGB | 4:4:4（全分辨率，无 YUV 转换） | 最高(≈8bit/像素 × 3) | 理论上最高保真度（与屏幕像素 1:1） | 最差（OBS 会弹出警告：CPU 使用率上升） | 极致色彩准确需求（如后期剪辑、无损录制） |
+| NV12 | YUV | 4:2:0（色度水平/垂直减半） | 最低（≈6bit/像素） | 色彩细节最少，红色边缘容易模糊、文字/渐变有色晕 | 最佳（GPU 硬件加速强） | 推流（默认推荐）、普通录制、追求低 CPU/GPU 占用 |
+| I420 | YUV | 4:2:0（同上） | 与 NV12 几乎相同 | 与 NV12 画质基本一致，极细微差异（内存布局不同） | 非常好（但劣于NV12） | 兼容老采集卡、某些特定编码器时比 NV12 更稳 |
+| I444 | YUV | 4:4:4（全分辨率，无子采样） | 中高 | 色彩极锐利、文字清晰、渐变自然、无色晕 | 中等（CPU/GPU 占用明显上升） | 高质量本地录制、需要保留色彩细节的场景 |
+| RGB | RGB | 4:4:4（全分辨率，无 YUV 转换） | 最高(≈8bit/像素 × 3) | 理论上最高保真度（与屏幕像素 1:1） | 最差（OBS 会弹出警告：CPU 使用率上升） | 极致色彩准确需求（如后期剪辑、无损录制） |
 
-**I444**更接近"录制颜色和屏幕上看到的相同"，不偏色、不丢失细节，但性能开销更大，且主影响"颜色"而非"画质"。若性能有限不推荐再给它分配
-
-
-##### **色彩空间**
-![Image_85](/images/28.png)
-**709**偏原生，**sRGB**素材饱和度更高
-
-**sRGB**: BT.709转换矩阵 + sRGB曲线gamma (≈2.2)
-- 亮度更高，减少了gamma偏移或累积误差，高饱和度、色彩鲜艳、对比自然、细节通透
-
-**709 (Rec.709)**: BT.709矩阵 + 视频标准gamma (≈2.4)
-- 作为视频平台/电视标准，更与平台兼容，图像中间调较暗，对比度略低，画面更柔和
-
-**601 (Rec.601)**: BT.601矩阵 + 标清视频标准gamma (≈2.2)
-- 老旧的标清电视 (SDTV) 标准 (NTSC/PAL 时代)，色彩原色与现代 HD 不同 (绿色会偏红)，从而产生明显的颜色偏差 (尤其是绿色变暗或过亮)。现基本淘汰，仅为兼容老设备保留
+I444更接近"录制颜色和屏幕上看到的相同"，不偏色、不丢失细节，但性能开销更大，且主影响"颜色"而非"画质"。若性能有限不推荐再给它分配
 
 
+##### 色彩空间
+![Image_63](/images/33.png)
+709偏原生，sRGB素材饱和度更高
 
-##### **色彩范围**
-![Image_86](/images/29.png)
+sRGB: BT.709转换矩阵 + sRGB曲线gamma (≈2.2)
+709 (Rec.709): BT.709矩阵 + 视频标准gamma (≈2.4)
+601 (Rec.601): BT.601矩阵 + 标清视频标准gamma (≈2.2)
+
+
+##### 色彩范围
+![Image_64](/images/34.png)
 为最佳效果，色彩空间建议与色彩范围对应:
-**709 - Limited** [原生]
-**sRGB - Full** [高饱和]
+709 - Limited [原生]
+sRGB - Full [高饱和]
 如此搭配，OBS的颜色转换和最终解码完全匹配，以避免任何不必要的电平偏移和观感损失
 709也可以上Full，饱和度介于709+Limited和sRGB+Full之间。sRGB不建议上Limited
 
 
-**ctt**:
-![Image_87](/images/30.png)
+ctt:
+![Image_65](/images/35.png)
+
 
 ---
 ### 3.2. Vegas
 #### Semi-Intro
-宇宙级大坑来了，怕不是填到pvp圈解散都填不完。先从核心要点往外扩得了，这个那个的tweak设置直接默认，剪辑教程啥的，自己悟吧
-什么why vegas no pr? 离经叛道的自刎归天好不好，已经2026了孩子你还用光流法补帧？还是说你指望那个破烂帧混合出奇迹？什么你想要极致特效？AE，请
+宇宙级大坑来了，怕不是填到pvp圈解散都填不完。先从核心要点往外扩得了，这个那个的tweak设置直接默认专业厂商比你懂，剪辑教程啥的，自己悟吧
+什么why vegas not pr? 离经叛道的自刎归天好不好，已经2026了孩子你还用光流法补帧？还是说你指望那个破烂帧混合出奇迹？什么你想要极致特效？AE，请
 ~~vv 2026也不是不行(~~
 
 
 #### 3.2.1. Info
-**本体**
+##### **本体**
 DL: [https://t.bilibili.com/1128839283738673156](https://t.bilibili.com/1128839283738673156)
 Credit: Milk_Cha
 
@@ -1566,40 +1523,40 @@ Credit: Milk_Cha
 14: [https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file](https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file)
 安人网站filecr (14 - 2026, 老版本见Previous version): [https://filecr.com/windows/magix-vegas/](https://filecr.com/windows/magix-vegas/)
 
-**Sapphire FX 蓝宝石**
-![Image_88](/images/31.png)
+##### **Sapphire FX 蓝宝石**
+![Image_1](/images/36.png)
 filecr: [https://filecr.com/windows/borisfx-sapphire-0002/](https://filecr.com/windows/borisfx-sapphire-0002/)
 mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafire.com/file/esbxxdxyzqefmdi/)
 特效插件，PotPvP剪辑常用
-![Image_89](/images/32.png)
+![Image_2](/images/37.png)
 请选择 dl 4 ofx
 蓝宝石插件读取不了: [https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a](https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a)
 
-**部分版本说明**
+##### **部分版本说明**
 2026 (本该是24): MAGIX被Boris收购了，从版本号命名改为Boris传统的年份命名，特效战未来但目前建议观望
 23: crk疑似跟蓝宝石不兼容
 22: 最强最稳最快版本
 21 build 315: 分水岭，优化了视频预览卡顿问题
 14: 较稳定版本，浅色界面下比高版本好看
 
-
+##### Issues
 **Offcial forum**: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
 **Offcial tutorial:** [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
 
 **VEGAS Pro 各种疑难杂症及其解决方案的整理**
-doc: [https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b](https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b)
-opus: [https://www.bilibili.com/read/cv27004832](https://www.bilibili.com/read/cv27004832)
+文档: [https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b](https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b)
+专栏: [https://www.bilibili.com/read/cv27004832](https://www.bilibili.com/read/cv27004832)
 
-by [zzzzzz9125](https://space.bilibili.com/12355745)，解决**98.46%** vv问题，极其推荐看这个~~所以有问题别来烦我~~
+by [bilibili zzzzzz9125](https://space.bilibili.com/12355745)，解决**98.46%** vv问题，极其推荐看这个 ~~所以有问题别来烦我~~
 
-![Image_90](/images/33.png)
+![Image_3](/images/38.png)
 “22最新版”也就是22 build 250，[mediafire](https://www.mediafire.com/file/rnopo5x8iqdkoy4)里那个
-![Image_91](/images/34.png)
+![Image_4](/images/39.png)
 
 
-**专栏里没提的一些issue**:
+**专栏里没提的一些问题**:
 1. 预览卡飞了，一播放cpu gpu双双飙100%
-![Image_92](/images/35.png)
+![Image_5](/images/40.png)
 通常出现在15+版本。禁用这两个，如果本来就是禁用的那就打开
 别的首选项不推荐瞎改，软件工程师比你懂软件
 
@@ -1617,29 +1574,29 @@ C:\Program Files\Common Files\OFX\Plugins\Sapphire.ofx.bundle\Contents\Win64\Bor
 
 
 3. vv渲染设置中，nv编码器的“预配置”丢失，尝试渲染报错，intel qsv和hevc正常
-![Image_93](/images/36.png)![Image_94](/images/37.png)
+![Image_6](/images/41.png)![Image_7](/images/42.png)
 NVIDIA新驱动 (591.xx+) 的已知 bug，新驱动里移除了VEGAS pre 23使用的旧版NVENC SDK支持，唯有回退驱动或换23/2026解决 (推荐581.57 Studio)
 NVCleanstall: [https://www.techpowerup.com/download/techpowerup-nvcleanstall/](https://www.techpowerup.com/download/techpowerup-nvcleanstall/)
-Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和高级调试
+Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和调试高级选项
 参考设置:
-![Image_95](/images/38.png)![Image_96](/images/39.png)
+![Image_8](/images/43.png)![Image_9](/images/44.png)
 
 
 ---
 #### 3.2.2. Render
 **写在前面**: Vegas渲染原理是帧混合，即混合前后两帧的图像生成新的中间帧，意味着混合前也就是原素材的fps越高，混合后的效果越好即拖影越少。所以这些个玩意主要影响的是画质，录不了高帧的，还是拿Smoothie补吧
 引经据典:
-![Image_97](/images/40.png)
+![Image_10](/images/45.png)
 不同录制fps的差异: [https://www.bilibili.com/video/av714303917](https://www.bilibili.com/video/av714303917)
 
 **项目属性**中将**重采样**调为**帧混合**才能出动态模糊
-![Image_98](/images/41.png)
-![Image_99](/images/42.png)
+![Image_11](/images/46.png)
+![Image_12](/images/47.png)
 
 **H.264 & H.265**: 同等画质下，h.265的文件体积约为h.264的一半，反过来同等文件体积下h.265的画质是h.264的两倍。h.264兼容性更好，但在2026，这点完全可以忽略。能选265就265吧
-![Image_100](/images/43.png)
+![Image_13](/images/48.png)
 
-![Image_101](/images/44.png)
+![Image_14](/images/49.png)
 至于这玩意，给[专业卡](https://www.nvidia.cn/products/workstations/professional-desktop-gpus/)用的你就别碰了
 
 ---
@@ -1654,19 +1611,19 @@ Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和
 
 与obs相同，两条线对应才能出最佳效果
 
-![Image_102](/images/45.png)![Image_103](/images/46.png)
-![Image_104](/images/47.png)![Image_105](/images/48.png)
+![Image_15](/images/50.png)![Image_16](/images/51.png)
+![Image_17](/images/52.png)![Image_18](/images/53.png)
 
 
 ---
 ##### **I. 帧大小(<u>S</u>)**
-![Image_106](/images/49.png)
-原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://ffmpeg.org/) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
+![Image_19](/images/54.png)
+原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
 upscale: 机器放大，仅仅强制将每帧的像素大小逐个放大，并不会增强画质。但视频平台给4k分配的码率高于1080p，所以利用upscale强改分辨率获得额外的码率分配
 
 ---
 ##### **II. 配置文件(<u>P</u>)**
-![Image_107](/images/50.png)
+![Image_20](/images/55.png)
 H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 - H.264: 分为 Baseline（低端）、Main（中端）、High（高端）来适应不同算力的播放设备，High才能保证最佳画质。
 - H.265: 作为新一代标准，其起步点（Default aka. Main）在算法复杂度和压缩效率上，就已经超越了H.264的High Profile.
@@ -1674,13 +1631,13 @@ H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 
 ---
 ##### **III. 帧速率(<u>R</u>)**
-![Image_108](/images/51.png)
+![Image_21](/images/56.png)
 传b站就30，60没有大会员看二压的30会非常难受
 不推荐29 31 36等邪门帧率
 
 ---
 ##### **IV. 场顺序(<u>F</u>)**
-![Image_109](/images/52.png)
+![Image_22](/images/57.png)
 有且只有: **无(逐行扫描）**，但应该会有人疑惑为啥是逐行扫描:
 逐行扫描 (Progressive scan) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
 尽管没出现，提一下与逐行扫描相对的隔行扫描 (Interlaced Scan)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
@@ -1688,7 +1645,7 @@ H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 
 ---
 ##### **V. 码率模块**
-![Image_110](/images/53.png)
+![Image_23](/images/58.png)
 **V - A. 比特率**
 1. **恒定比特率（CBR）**
 2. **可变比特率（VBR）**
@@ -1781,7 +1738,7 @@ So
 
 ---
 **V - B. 编码模式(<u>M</u>)**
-![Image_111](/images/54.png)
+![Image_24](/images/59.png)
 (以下内容Au/A卡用户同理)
 
 **Intel QSV** (Intel Quick Sync Video) [核显编码]:
@@ -1807,23 +1764,23 @@ So
 
 ---
 **V - C. 预配置 & RC模式**
-![Image_112](/images/55.png)![Image_113](/images/56.png)
+![Image_25](/images/60.png)![Image_26](/images/61.png)
 这些玩意实际和obs output里的**预设**差不多，那些低延迟预设会关闭B帧从而**牺！牲！画！质！**来换取极限的响应速度。所以选标准预设，质量拉最高就行了
 别碰无损，死慢，最后照样被压。况且你obs录的都不是无损就算导出来也不是真无损
 对“画质至上”的需求，**RC 模式别碰任何低延迟，也别碰普通 CBR**
 
 ---
 **V - D. 每像素位数**
-![Image_114](/images/57.png)
+![Image_27](/images/62.png)
 aigc已截图:
-![Image_115](/images/58.png)
+![Image_28](/images/63.png)
 总结:
 10-bit: 颜色更细腻，防色带，战未来 (YouTube only)
 8-bit: 足够用，更稳，更快 (没强烈渐变8-bit够了)
 
 ---
 ##### **VI. 颜色**
-![Image_116](/images/59.png)![Image_117](/images/60.png)
+![Image_29](/images/64.png)![Image_30](/images/65.png)
 跟obs那边类似，
 **709 - Limited**
 **sRGB - Full**
@@ -1831,7 +1788,7 @@ aigc已截图:
 
 ---
 ##### VII. 音频&系统
-![Image_118](/images/61.png)![Image_119](/images/62.png)![Image_120](/images/63.png)
+![Image_31](/images/66.png)![Image_32](/images/67.png)![Image_33](/images/68.png)
 **音频**跟原素材相关，默认就行，音质不能凭空变出来，况且平台也有限制
 **系统**也是你原素材项目的设置，固定在那的，改不了也不用改
 
