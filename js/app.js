@@ -723,6 +723,7 @@
   let searchTimer = null;
   let tocCollapsed = getSavedTocCollapsed();
   let sidebarScrollY = 0;
+  let skipSidebarScrollRestore = false;
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -921,11 +922,13 @@
     if (!wasOpen) return;
     document.body.classList.remove('sidebar-lock');
     document.body.style.top = '';
-    window.scrollTo(0, sidebarScrollY);
+    if (!skipSidebarScrollRestore) window.scrollTo(0, sidebarScrollY);
+    skipSidebarScrollRestore = false;
   }
 
   function openSidebar() {
     if (sidebar.classList.contains('open')) return;
+    skipSidebarScrollRestore = false;
     sidebarScrollY = window.scrollY;
     document.body.style.top = `-${sidebarScrollY}px`;
     document.body.classList.add('sidebar-lock');
@@ -981,7 +984,6 @@
         }
       }
       closeSearch();
-      window.scrollTo({ top: 0, behavior: 'auto' });
       renderApp(false);
     });
     window.addEventListener('hashchange', () => renderApp(true));
@@ -1005,8 +1007,9 @@
       e.preventDefault();
       const target = document.getElementById(item.dataset.target);
       if (!target) return;
-      scrollToElement(target, true);
+      skipSidebarScrollRestore = true;
       closeSidebar();
+      requestAnimationFrame(() => scrollToElement(target, false));
     };
 
     const rootMargin = `-${getTopbarHeight()}px 0px -60% 0px`;
@@ -1083,8 +1086,9 @@
       const href = link.getAttribute('href');
       if (!href || !href.startsWith('#')) return;
       e.preventDefault();
-      location.hash = href;
+      skipSidebarScrollRestore = true;
       closeSidebar();
+      location.hash = href;
     };
     document.querySelectorAll('.part-pager-link, .part-nav-card, .part-section-title a').forEach(link => {
       link.addEventListener('click', e => {

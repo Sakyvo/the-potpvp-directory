@@ -14,7 +14,7 @@
   --sidebar-w: 280px;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: var(--topbar-h); }
+html { scroll-behavior: auto; scroll-padding-top: var(--topbar-h); }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
