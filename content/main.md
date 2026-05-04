@@ -2043,3 +2043,434 @@ Topaz Proteus
 其实这玩意还能补帧，但感觉不如Smoothie
 
 ---
+### 3.4. Interpolation
+#### Semi-Intro
+现代补帧科技的进步，让渣机也能渲染出好看的动态模糊。想想2022那会咱还在看Blyard的PR蒙版RSMB教程，真觉得现在的创作条件简直是天堂。但是！2026了还有一堆人视频拿个必剪剪完就发不渲染的，甚至cos Verzide Kyzuko OTFZaiji的，闹麻了好吗洼完了好吗你们这代人完蛋了好吗。现在立刻马上把世界最强补帧教学端上来，冰沙Smoothie——参见！
+![Image_7](/images/98.png)
+
+[Q: 为什么不用Blur?](https://ctt.cx/video/smoothie/smoothievsblur)
+A: 法国方块人fork而来的Smoothie是PotPvP渲染特化之作，Blur能干的Smoothie都能干，Blur不能干的Smoothie照样能干。Tekno是哪根葱？不熟
+![Image_8](/images/99.png)
+
+---
+#### 获取
+安装包: [https://ghfast.top/https://github.com/couleur-tweak-tips/SmoothieInstaller/releases/latest/download/SmoothieInstaller.exe](https://ghfast.top/https://github.com/couleur-tweak-tips/SmoothieInstaller/releases/latest/download/SmoothieInstaller.exe)
+Github: [https://github.com/couleur-tweak-tips/smoothie-rs](https://github.com/couleur-tweak-tips/smoothie-rs)
+说明文档: [https://ctt.cx/video/smoothie/](https://ctt.cx/video/smoothie/)
+
+安装包安装路径固定为`C:\Users\<用户名>\AppData\Roaming\Smoothie`，不想装在C盘的可以下[便携版](https://ghfast.top/https://github.com/couleur-tweak-tips/smoothie-rs/releases/latest/download/smoothie-rs-nightly.zip)，但更新会比较麻烦，且得手动配置Send to
+
+---
+#### 配置
+![Image_9](/images/100.png)
+![Image_10](/images/101.png)
+Smoothie有gui，但实质上是配置文件recipe.ini的镜面。recipe采用类yaml语法，调试也更方便，所以更推荐直接在recipe里调
+
+recipe说明文档: [https://ctt.cx/video/smoothie/recipe/](https://ctt.cx/video/smoothie/recipe/)
+效果展示(120fps无动态模糊录制): [https://www.bilibili.com/video/av116481694177034](https://www.bilibili.com/video/av116481694177034)
+
+个人经验:
+flowblur(光流法)和pre-interp(预插帧)必须开其中一个，不然就会像p3一样猎奇
+flowblur效果好但非常吃cpu
+![Image_11](/images/102.png)
+pre-interp吃显卡，能分担flowblur的高cpu占用
+![Image_12](/images/103.png)
+
+---
+##### 官方文档参考翻译
+recipe (食谱，Smoothie的配置文件) 是 Smoothie学习曲线中最难的部分，阅读本文并使用短视频片段进行测试是熟悉它的最佳方式。
+为了方便起见，可以打开或关闭的值（布尔值）有许多别名，我（指Couleur，下同）建议输入 y/n 或 1/0 作为简写。
+如果有你不需要的功能，随时都可以将其从文件中删除，这不会破坏任何设置，并且其效果就像禁用了它一样
+- Smoothie 会加载`defaults.ini`，它就像用户的`recipe.ini`一样，但所有内容都被禁用且具有最大兼容性，然后它会使用 `recipe.ini`中现有的值覆盖这些设置。
+
+
+以下是每个文件的作用：
+`recipe.ini`
+- 需要编辑的默认配置文件。
+
+`defaults.ini`
+- 所有现有设置的备份，它会首先被加载，然后被 `recipe.ini` 覆盖，因此你可以删除不使用的功能。
+
+`encoding_presets.ini`
+- 针对 [output enc args](https://#output) 配置文件设置的预设配置文件。
+
+`jamba.vpy`
+- Smoothie 使用的 [VapourSynth 脚本](https://www.vapoursynth.com/doc/gettingstarted.html#example-script)，你可以阅读如何使用每个配置值。把它放在这里意味着没有任何东西能阻止您在 `/bin/vapoursynth64/plugins/` 中安装额外的插件并连接您自己的配置文件成分。尽管存在一些[硬编码的配置文件检查](https://github.com/search?q=repo%3Acouleur-tweak-tips%2Fsmoothie-rs+path%3A*.rs+recipe.get&type=code)
+
+
+---
+###### frame blending / 帧混合
+`[frame blending]`(帧混合) 就像 blur 的 `- blur` 配置类别、VEGAS的智能重采样和FFmpeg的`tmix`滤镜——但速度要快得多。它将每一帧与其相邻帧进行平均处理，从而产生运动轨迹，看起来就像逼真的动态模糊。
+左边是240FPS的视频，右边是带有帧混合的60FPS视频，这不是一个漂亮的例子，但它展示了帧在较低的FPS中实际是如何被挤压融合的。
+Video: [https://ctt.cx/assets/videos/video/smoothie/frameblending.mp4](https://ctt.cx/assets/videos/video/smoothie/frameblending.mp4)
+
+> **注意：若需在视频编辑器中对帧混合素材使用变速**
+> 如果您喜欢在剪辑之前通过 Smoothie 处理您的片段，您可以像这样调整上述设置：
+> 根据您的需求，将 `fps` 设置为 120、180 或更高
+> 根据您的口味将 `blur intensity`（模糊强度）提高到 2.5 甚至更高
+> 然后在编辑器中再次进行帧混合 / 智能重采样
+> *译者注: FPS太低的视频，使用Vegas变速时会出现丢帧现象，渲染出来会很卡。120fps以上可解决问题(Vegas变速上限为4x)*
+
+`enabled`: yes
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`fps`: 60 (30)
+- 输出帧率，此项和 `intensity` 会影响要平均的相邻帧（权重）的数量，混合**后**视频的帧率将被限制为该值。
+- *译者注: 传b站强烈推荐30fps，没有大会员看60fps视频会非常难受*
+
+`intensity`: 1.0
+- 帧混合烈度，这与 blur 的 `blur amount`（模糊量）相同。
+
+`weighting`: equal
+- 权重，即指每个混合帧的透明度权重，可以手动设置它们，如 `[1.0, 1.0, 1.0, 1.0, 1.0]`，或从[可用预设](https://github.com/couleur-tweak-tips/smoothie-rs/blob/main/target/scripts/weighting.py)中选择：
+
+`equal`: 相等
+`vegas`: 最接近 VEGAS Pro 智能重采样的权重（在强度为 1.0 时使用）
+`gaussian`: 上升高斯曲线
+`gaussian_sym`: 对称高斯曲线
+`ascending`: 我个人最喜欢的，我喜欢将它与更高的强度搭配使用
+`descending`（逐渐下降）
+`pyramid`: 金字塔，不透明度在中间达到峰值，两边低
+`custom`: 自定义（非常硬核）。任何 Python 表达式（具有[受限的命名空间](https://github.com/couleur-tweak-tips/smoothie-rs/blob/f04526681aecf6564d5b83f5a7c8d35edeb8bf2f/target/scripts/weighting.py#L116-L144)），例如 `custom; func = x**2`
+(同样非常硬核) 对于 `gaussian`、`gaussian_sym` 和 `custom`，可以像这样更改顶点、边界和标准差：`gaussian; apex = 2; bound = [0,2]; std_dev = 1`
+`equal` 和 `ascending` 的外观比较：
+[https://ctt.cx/assets/videos/video/smoothie/weights.mp4](https://ctt.cx/assets/videos/video/smoothie/weights.mp4)
+`bright blend`: no
+- 使混合效果看起来类似于 Premiere Pro 的帧混合 (往好的方面说)，它类似于使用相加模式混合两张图像，比非明亮混合慢，它是通过在混合期间临时将剪辑转换为 RGB48 色彩空间来实现的。感谢 Zaphyr
+
+
+---
+###### interpolation / 补帧
+- 补帧用于在现有帧之间创建帧，如同魔法一样提高帧率。但这会产生不完美的帧，不可避免地会产生我们称之为“伪影”的东西，例如在静态（HUD / 覆盖层）部分出现拖影。并且在低 fps 输入下，快速运动可能看起来非常诡异。Smoothie 中的interpolation是使用[SVPFlow](https://github.com/couleurm/VSBundler/blob/main/smCi.ps1#L29) 的无 DRM 旧版本构建来完成的。另请参阅他们的 [wiki](https://www.svp-team.com/wiki/Manual:SVPflow)。
+
+建议以尽可能高的 fps 录制（**至少 120FPS** 以获得尚可的结果）。如果您只打算使用 SVPFlow 进行补帧，像 60FPS 这样的较低帧率[通常看起来比原始剪辑更糟](https://www.youtube.com/watch?v=QihBOhLzQj8)。
+另请参阅 [pre-interp](https://#pre-interp)（前置补帧），这是一种更慢、更准确的补帧方法
+`enabled`: yes
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`masking`: yes
+- 是否希望使用伪影遮罩，注意如果在伪影遮罩类别中禁用了该功能，则此设置将无关紧要
+
+`fps`: 960
+- 想要补帧到的目标帧率。
+
+`speed`: medium
+- 补帧计算的精度，影响渲染速度，可用值:
+- `medium`（中等，最准确）
+- `fast`（快）
+- `faster`（更快）
+
+`tuning`: weak
+- 针对内容类型调整设置。来自[InterFrame2 文档](https://www.spirton.com/uploads/InterFrame/InterFrame2.html)：
+
+`animation`（动画） - 我从未见过它用于游戏画面。
+`film`（电影） - 在单个移动对象的准确性和画面的连贯性之间提供了很好的平衡。
+`smooth`（平滑） - 提高了单个移动对象的准确性，同时降低了画面的连贯性。
+`weak`（弱） - 降低了单个移动对象的准确性，同时提高了画面的连贯性。
+注意：这会在很大程度上削弱补帧效果，这意味着运动不会那么平滑。
+大多数人更喜欢 `weak`，有些人喜欢将`film` 用于低 fps 输入。
+`algorithm`: 23
+- 设置算法。来自同一文档：
+
+`2` - 这会做出强烈的预测，这对于卡通片很有用，但也可能留下巨大的伪影。
+`13` - 最智能的算法，因为掩盖了许多伪影，但不如 23 平滑。
+`23` - 最平滑的算法，但它没有 13 那样的伪影遮盖功能。
+- 大多数人使用 23 / 13
+
+`block size`: auto
+- 定义块匹配算法的块大小，可以是 8x8、16x8、16x16、32x16 或 32x32
+- 越大速度越快，但产生的帧越差。
+- 更多信息：[https://www.svp-team.com/wiki/Manual:SVPflow](https://www.svp-team.com/wiki/Manual:SVPflow)（按 CTRL+F 并搜索 "`h:`" 以查找更多相关信息）
+
+`use gpu`: no
+- 是否在 CPU 旁边使用 GPU 来加速转换并提高质量。 为了兼容性，默认情况下它是关闭的，但我建议将其打开。
+- 注意: 此模式可能会运行得更慢，虽然它进行计算的速度快得多，但它也在进行更复杂的计算以提高质量。
+
+`area`: 0
+- 设置区域遮罩的强度，我建议将其保持在 `0`。更高的值将减少伪影，但会大大降低平滑度。
+
+
+---
+###### flowblur / 光流法
+常常与与 Reel Smart Motion blur (RSMB) 进行比较，它通常会比补帧产生更多的伪影（建议使用伪影遮罩）。
+`enabled`: no
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`masking`: yes
+- 是否使用伪影遮罩，注意如果在伪影遮罩类别中禁用了该功能，则此设置将无关紧要。
+
+`amount`: 100
+- 模糊的强度，0 表示没有效果，200 是最大值。
+
+`do blending`: after
+- 执行帧混合和 Flowblur 的顺序：
+
+`after`：较慢，帧混合在应用 Flowblur 之后完成，如果希望复刻[Freeman's Mind 运动模糊](https://youtu.be/2Rtqm8U7CC8?t=89) 则可使用此项。
+`before`：较快且最类似于 RSMB，帧混合在应用 Flowblur 之前完成。
+
+---
+###### output / 输出
+如果想知道编码过程在多大程度上降低了渲染速度，尝试使用 `--tonull`
+`process`: ffmpeg
+- FFmpeg 可执行文件的文件路径，默认情况下它只会尝试从 PATH 环境变量中调用它，如果您配置了它的其他参数，则可以使用任何其他接受来自 STDIN 的 YUV4MPEG 输入的 CLI 编码器。
+
+`enc args`: H264 CPU
+- FFmpeg CLI 编码参数，为了方便起见，您可以使用全部存储在[encoding_presets.ini](https://github.com/couleur-tweak-tips/smoothie-rs/blob/main/target/encoding_presets.ini) 中的预设。
+- 如果您不明白这些是什么意思，我建议您阅读一下 [<u>我应该使用哪种编解码器？</u>](https://../codecguide.md)。 *(译者注: 推荐H265 CPU）*
+- 提示：在末尾添加 `4K` 将扩展为[将视频放大到4K](https://../ffmpeg/upscaling.md) 所需的参数。
+
+`container`: MP4
+- 视频容器格式，默认为 MP4。
+- 要容纳 UTVideo 编解码器，您需要切换到 .AVI 或 .MKV
+- 在完成渲染之前，可以使用 .MKV 来读取已经渲染的内容。
+
+`file format`: %FILENAME% ~ %FRUIT% %OUTPUT_FPS%
+- 输出文件名格式，如果已指定 `-o` / `--output` 则不使用
+
+%FILENAME% 是输出文件的基本名称（不带扩展名）
+%FRUIT% 将扩展为[此列表](https://github.com/couleur-tweak-tips/smoothie-rs/blob/5bedf4ff231fd56832deacf4e32c5eb9f640c004/src/video.rs#L92-L101)中的一种随机水果 😋 *(译者注: 换成固定的不容易搞混)*
+可以使用配置文件中的其他值，请参阅[此处](https://github.com/couleur-tweak-tips/smoothie-rs/blob/5bedf4ff231fd56832deacf4e32c5eb9f640c004/src/video.rs#L140)了解它是如何实现的
+
+---
+###### preview window / 预览窗口
+使 FFmpeg 将渲染好的视频实时输出到 ffplay，这是一款几乎总是与 FFmpeg 捆绑在一起的视频播放器。
+按 F 切换全屏，按 SPACE 暂停，按 ESC 或 q 退出
+它可以被关闭而不会导致崩溃，有时会显示错误，但这并不影响您的视频是否被渲染。
+它还有一些其他的杂项[键盘快捷键](https://ffmpeg.org/ffplay.html#While-playing)
+`enabled`: no
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`process`: ffplay
+- 要管道传输到的可执行文件的文件路径，如果您使用 mpv，渲染速度最高将只能达到实时速度（1.0x）。
+
+`output args`: -f yuv4mpegpipe -
+- 要附加到 ffmpeg 参数中以创建第二个输出流的额外参数，您可以在 [[miscellaneous]](https://#miscellaneous)（杂项）中修改 ffplay 参数。
+
+
+---
+###### artifact masking / 伪影遮罩
+当使用补帧、flowblur 或前置补帧时，您可以选择不将这些效果应用到视频的特定区域，方法是使用伪影遮罩，它们是具有黑色和白色区域的图像。黑色区域将还原所应用的效果（还记得所有的 `masking: yes` 值吗？这就是您单独切换遮罩的方式）。
+它们是特定于分辨率的，如果您将 1280x720 的视频与 1920x1080 的遮罩配对，Smoothie 将会崩溃。
+教程视频: [https://www.youtube.com/watch?v=5GW2TUx78WY&t=20](https://www.youtube.com/watch?v=5GW2TUx78WY&t=20)
+`enabled`: no
+- 全局切换伪影遮罩，如果禁用，则此类别中的其余部分都无关紧要。
+
+`feathering`: yes
+- 如果视频有介于白色和黑色之间的颜色 (如制作灰色渐变)，请将其打开以支持此功能，像素颜色越暗，效果的不透明度越低。
+
+`folder path`: 默认为空
+- 示例: D:\smrs\masks\n
+- 您希望存储伪影遮罩图像的文件夹路径，您可以按住 Shift 键右键单击该文件夹 -> 复制为路径，即可轻松获取它。
+
+`file name`: 默认为空
+- 示例: overwatch.png
+- 要使用的遮罩图像文件的名称。
+
+
+---
+###### miscellaneous / 杂项
+`source plugin`: lsmash
+- 要使用的 VapourSynth 源插件，可以是 `ffms2`、`lsmash` 或`bestsource`，后者可能在处理 AV1 时效果更好，但索引速度要慢得多，如果您使用 lsmash 没有问题并且介意 bestsource 漫长的索引时间，请切换到 lsmash。
+
+`play ding`: no
+- 应该在 Smoothie 渲染完成后使用 ffplay 播放 `C:\Windows\Media\ding.wav`，但在 smoothie-py 中尚未实现。
+
+`always verbose`: no
+- 等效于如果您总是向参数传递 `--verbose`（不过建议实际使用该参数，因为它会更早地激活详细日志记录，并记录更多数据）。
+
+`dedup threshold`: 0.0
+- 很少使用，因为很难衡量，这是一个尝试猜测哪些帧是由于编码延迟而重复的，并将其替换为补帧的[插件](https://github.com/couleur-tweak-tips/smoothie-rs/blob/main/target/scripts/filldrops.py)。
+
+`global output folder`: 默认为空
+- 默认情况下，Smoothie 会将其输出到与输入文件相同的目录中，并使用 `[output] file format:`（文件格式）。
+
+`source indexing`: no
+- 为输入剪辑建立索引，在 %TEMP% 中创建一个缓存，如果您要多次渲染同一个剪辑，启用此功能会很有用。
+
+`ffmpeg options`: -loglevel error -i - -hide_banner -stats -stats_period 0.15
+- 首先传递给 ffmpeg 的参数。
+
+`ffplay options`: -loglevel quiet -i - -autoexit -window_title smoothie.preview
+- 启用[预览窗口](https://#preview-window)时传递给 ffplay 的参数，请参阅[ffplay.html#Main-options](https://ffmpeg.org/ffplay.html#Main-options)
+
+
+---
+###### console / 控制台
+在 Windows 上，您可以自定义终端窗口的行为（旨在与 `conhost.exe` 一起使用，在 Windows 11 上，它们默认切换到了更精美的 Windows Terminal）。
+Windows Terminal 对此处理得不好。
+`stay on top`: no
+- 使窗口保持在最前面，但仍然可以最小化。
+
+`borderless`: yes
+- 隐藏窗口标题栏，您无法移动窗口，但仍然可以通过在任务栏中单击它来使其最小化。
+
+`position`: top left
+- 将终端窗口移动到主显示器的某个角落
+
+`width`: 900 / `height`: 350
+- 窗口的尺寸。
+
+
+---
+###### timescale / 调速
+`in`: 1.0
+- 输入速度。若输入剪辑是以 10% 的速度录制的，可以输入 0.1 将其加速 10 倍。
+
+`out`: 1.0
+- 输出速度。若想稍微加快一点成品的velocity，可以设置为 1.03。😼
+
+
+---
+###### color grading / 调色
+`enabled`: no
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`brightness` / `saturation` / `contrast` / `hue`: 1.0
+- 亮度/饱和度/对比度/色调。控制输出视频的颜色设置。
+
+
+---
+###### LUT / 颜色查找表
+[查找表](https://en.wikipedia.org/wiki/Lookup_table#Lookup_tables_in_image_processing)（Look up table）滤镜
+有点像颜色滤镜，可以使颜色完全符合某个标准，但我们这些nerds主要将它用于酷炫的颜色分级 :)
+`enabled`: no
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`path`:
+- LUT 滤镜 (.cube) 的完整文件路径。
+
+`opacity`: 0.20
+- 滤镜的不透明度。
+
+
+---
+###### pre-interp / 预插帧
+预插帧使用「[RIFE NCNN Vulkan](https://github.com/styler00dollar/VapourSynth-RIFE-ncnn-Vulkan)」(本地AI模型) 进行补帧，在滤镜链中，它在[补帧](https://#interpolation)之前被应用，因此称为“pre-”（预-）。
+使用起来非常慢，请在[此处](https://./installation.md#installing-rife-models)查看如何安装模型。
+使用 NCNN 而不是 RIFE 是因为它具有更小的依赖项（CUDA大概有5GB  °O°）。
+
+> **警告：某些颜色格式无法转换并导致前置补帧崩溃**
+> 根据在 [OBS 的高级设置选项卡](https://../obs/advanced.md) 中配置颜色的方式，
+> 前置补帧可能无法与它们一起工作，这目前是[仓库中的一个未解决问题](https://github.com/couleur-tweak-tips/smoothie-rs/issues/36)
+> 建议尝试调整一下，直到找到可行的设置，sRGB 空间和 Limited（有限）范围对我来说没问题
+> *译者注: Couleur确实对色彩方面了解不多*
+
+`enabled`: no
+- 是否希望启用此设置，如果禁用，则此类别中的其余部分都无关紧要。
+
+`masking`: no
+- 是否希望使用伪影遮罩，请注意，如果在伪影遮罩类别中禁用了该功能，则此设置将无关紧要。
+
+`factor`: 3x
+- 希望将输入 FPS 乘以多少并补帧到多少，例如，如果视频的输入fps是60，factor是 3：60x3=180 则它将补帧到180fps。
+
+`model`: rife-v4.4
+- RIFE模型文件夹的路径，它们不包含在Smoothie中，请参阅[安装说明](https://./installation.md#installing-rife-models)。
+
+
+---
+###### Using multiple recipe files / 使用多个配置文件
+1. 复制一份`recipe.ini`并将其命名为其他名称
+2. 复制一份用来打开 Smoothie 的快捷方式
+3. 将`--recipe name.ini`添加到参数中（对于[发送到快捷方式](https://./installation.md#making-a-send-to-shortcut)，请确保它在`-i`之前，`-i`必须是最后一个参数）。
+
+
+---
+##### recipe示例
+(魔改自[skytherd](https://discord.gg/3gPuJw98Rv) 60-30 recipe)
+```
+[interpolation]
+enabled: yes
+masking: yes
+fps: 1200
+speed: medium
+tuning: film
+algorithm: 23
+use gpu: yes
+
+
+[frame blending]
+enabled: yes
+fps: 30
+intensity: 1.1
+weighting: [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1]
+bright blend: no
+
+
+[flowblur]
+enabled: yes
+masking: yes
+amount: 100
+do blending: before
+
+
+[output]
+process: ffmpeg
+enc args: H265 CPU
+file format: %FILENAME% - Smoothie
+container: .mp4
+
+
+[preview window]
+enabled: yes
+process: ffplay
+output args: -f yuv4mpegpipe -
+
+
+[artifact masking]
+enabled: yes
+feathering: no
+folder path: C:\Users\ASUS\AppData\Roaming\Smoothie\masks
+file name: best.png
+
+
+[miscellaneous]
+source plugin: bestsource
+play ding: no
+always verbose: no
+dedup threshold: 0.0
+global output folder: F:\Finished\Upscaling
+source indexing: no
+ffmpeg options: -loglevel error -i - -hide_banner -stats -stats_period 0.15
+ffplay options: -loglevel quiet -i - -autoexit -window_title smoothie.preview
+
+
+[console]
+stay on top: no
+borderless: no
+position: top left
+width: 900
+height: 350
+
+
+[timescale]
+in: 1.0
+out: 1.0
+
+
+[color grading]
+enabled: no
+brightness: 1.04
+saturation: 1.2
+contrast: 1.0
+
+
+[lut]
+enabled: no
+path: 
+opacity: 0.2
+
+
+[pre-interp]
+enabled: no
+masking: yes
+factor: 4x
+model: "F:\Finished\Upscaling\rife-ncnn-vulkan-20221029-windows\rife-v4.6"
+```
+
+
+---
+##### extra
+1. 报错截图的时候，**一！定！**要把终端内容也接出来，弹窗只是告诉你出问题了，log在终端里
+2. mask的分辨率要和输入视频的分辨率相同，懒得搞就直接关mask然后把algorithm调成13
+3. 输出视频码率低是因为用的默认encoding_presets.int，打开这个文本然后调整你用的那个编码模式，语法同ffmpeg，可以照抄Upscaling里的脚本
