@@ -18,15 +18,13 @@
 ![Image_1](/images/1.png)
 
 ---
-2026-04-26 Edited
-Current Version: **1.3.9**
+2026-05-04 Edited
+Current Version: **1.5.0**
 
 Update Log:
-1. 对于709和sRGB的拨乱反正
-2. 补点vv issue
-3. 目录美化
-4. part mode
-5. 补帧推迟，五一发upscaling
+1. 扩帧
+2. 补帧
+3. 05-06我才想起来没更新log
 
 ---
 
