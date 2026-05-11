@@ -248,9 +248,12 @@
 
   function getSavedMode() {
     try {
-      return localStorage.getItem(VIEW_MODE_KEY) === 'part' ? 'part' : 'all';
+      const saved = localStorage.getItem(VIEW_MODE_KEY);
+      if (saved === 'part') return 'part';
+      if (saved === 'all') localStorage.setItem(VIEW_MODE_KEY, 'full');
+      return 'full';
     } catch {
-      return 'all';
+      return 'full';
     }
   }
 
@@ -732,7 +735,7 @@
         headingStack.push({ level: levelNum, urlSlug });
       });
     });
-    renderToc(appState.tocEntries, { mode: 'all', targetByPath });
+    renderToc(appState.tocEntries, { mode: 'full', targetByPath });
   }
 
   function renderToc(entries, options = {}) {
@@ -742,7 +745,7 @@
     tocEl.innerHTML = entries.map(entry => {
       const targetMeta = targetByPath.get(entry.path);
       const classes = ['toc-item', `toc-${entry.level}`];
-      const attrs = mode === 'all' && targetMeta
+      const attrs = mode === 'full' && targetMeta
         ? `data-target="${escapeHtml(targetMeta.target)}" data-url-slug="${escapeHtml(targetMeta.urlSlug || '')}" data-path="${escapeHtml(entry.path)}"`
         : `href="${buildHash(entry.pathParts)}" data-path="${escapeHtml(entry.path)}"`;
       return `<li><a class="${classes.join(' ')}" ${attrs}>${escapeHtml(entry.label)}</a></li>`;
@@ -1077,7 +1080,7 @@
       }
     });
     modeToggle.addEventListener('click', () => {
-      activeMode = activeMode === 'all' ? 'part' : 'all';
+      activeMode = activeMode === 'full' ? 'part' : 'full';
       saveMode(activeMode);
       lockHashSync(HASH_SCROLL_STABILIZE_MS);
       if (activeMode === 'part') {
