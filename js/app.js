@@ -303,6 +303,7 @@
   }
 
   let hashSyncLockUntil = 0;
+  let scrollJumpSeq = 0;
 
   function lockHashSync(ms) {
     hashSyncLockUntil = Math.max(hashSyncLockUntil, Date.now() + ms);
@@ -321,6 +322,7 @@
 
   function scrollToHashTarget(target, enableFlash, stabilize) {
     if (!target) return;
+    const jumpSeq = ++scrollJumpSeq;
     lockHashSync(stabilize ? HASH_SCROLL_STABILIZE_MS : 350);
     scrollToElement(target, false);
     if (enableFlash) flashJumpTarget(target);
@@ -328,7 +330,7 @@
 
     const startedAt = Date.now();
     const realign = () => {
-      if (Date.now() - startedAt > HASH_SCROLL_STABILIZE_MS || !document.body.contains(target)) return;
+      if (jumpSeq !== scrollJumpSeq || Date.now() - startedAt > HASH_SCROLL_STABILIZE_MS || !document.body.contains(target)) return;
       lockHashSync(250);
       scrollToElement(target, false);
     };
