@@ -348,28 +348,15 @@
     window.setTimeout(() => target.classList.remove('jump-flash'), JUMP_FLASH_MS);
   }
 
-  function getTocLevel(item) {
-    const match = [...item.classList].join(' ').match(/\btoc-h([2-6])\b/);
-    return match ? Number(match[1]) : 0;
-  }
-
   function getTocAncestors(item) {
-    const level = getTocLevel(item);
-    const ancestors = [];
-    const needed = new Set();
-    for (let i = 3; i < level; i++) needed.add(i);
-    let prev = item.closest('li')?.previousElementSibling;
-    while (prev && needed.size) {
-      const a = prev.querySelector('.toc-item');
-      if (!a || a.classList.contains('toc-h2')) break;
-      const prevLevel = getTocLevel(a);
-      if (needed.has(prevLevel)) {
-        ancestors.unshift(a);
-        needed.delete(prevLevel);
-      }
-      prev = prev.previousElementSibling;
-    }
-    return ancestors;
+    const path = item?.dataset.path || '';
+    if (!path) return [];
+    return [...tocEl.querySelectorAll('.toc-item')].filter(candidate => {
+      const candidatePath = candidate.dataset.path || '';
+      return candidatePath && candidatePath !== path &&
+        !candidate.classList.contains('toc-h2') &&
+        path.startsWith(candidatePath + '/');
+    }).sort((a, b) => (a.dataset.path || '').length - (b.dataset.path || '').length);
   }
 
   function getTocActiveH2(item) {
@@ -711,15 +698,22 @@
       const sectionSlug = sections[i]?.urlSlug || '';
       targetByPath.set(sectionSlug, { target: `floor-${id}`, urlSlug: sectionSlug });
       const parentSlug = { h3: '', h4: '', h5: '' };
-      const pathStack = [sectionSlug];
+      const headingStack = [];
       floorEl.querySelectorAll('.floor-body h3, .floor-body h4, .floor-body h5, .floor-body h6').forEach((h, j) => {
         const level = h.tagName.toLowerCase();
         const levelNum = Number(level.slice(1));
         const headingText = stripHeadingMarkup(h.textContent);
         const hSlug = slugify(headingText);
         const urlSlug = slugifyUrl(headingText);
-        if (level === 'h3') parentSlug.h3 = hSlug;
-        else if (level === 'h4') parentSlug.h4 = hSlug;
+        while (headingStack.length && headingStack[headingStack.length - 1].level >= levelNum) headingStack.pop();
+        if (level === 'h3') {
+          parentSlug.h3 = hSlug;
+          parentSlug.h4 = '';
+          parentSlug.h5 = '';
+        } else if (level === 'h4') {
+          parentSlug.h4 = hSlug;
+          parentSlug.h5 = '';
+        }
         else if (level === 'h5') parentSlug.h5 = hSlug;
         let base;
         if (level === 'h3' || level === 'h4') base = `${id}-${hSlug || `h${j}`}`;
@@ -731,9 +725,9 @@
         allIds.add(hId);
         h.id = hId;
         h.dataset.urlSlug = urlSlug;
-        pathStack.length = levelNum - 2;
-        pathStack.push(urlSlug);
-        targetByPath.set(pathStack.join('/'), { target: hId, urlSlug });
+        h.dataset.path = [sectionSlug, ...headingStack.map(item => item.urlSlug), urlSlug].filter(Boolean).join('/');
+        targetByPath.set(h.dataset.path, { target: hId, urlSlug });
+        headingStack.push({ level: levelNum, urlSlug });
       });
     });
     renderToc(appState.tocEntries, { mode: 'all', targetByPath });
@@ -1107,6 +1101,32 @@
     }
   }
 
+  function findAllModeHashTarget(parts) {
+    const path = (parts || []).join('/');
+    if (!path) return null;
+    const tocItem = tocEl.querySelector(`[data-path="${CSS.escape(path)}"][data-target]`);
+    const tocTarget = tocItem?.dataset.target ? document.getElementById(tocItem.dataset.target) : null;
+    if (tocTarget) return tocTarget;
+
+    const exactTarget = contentEl.querySelector(`[data-path="${CSS.escape(path)}"]`);
+    if (exactTarget) return exactTarget;
+
+    const floorEl = contentEl.querySelector(`.floor[data-url-slug="${CSS.escape(parts[0])}"]`);
+    if (floorEl) {
+      let target = floorEl;
+      for (let i = 1; i < parts.length; i++) {
+        const subPath = parts.slice(0, i + 1).join('/');
+        const sub = floorEl.querySelector(`[data-path="${CSS.escape(subPath)}"]`) ||
+          floorEl.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
+        if (!sub) break;
+        target = sub;
+      }
+      return target;
+    }
+
+    return contentEl.querySelector(`[data-url-slug="${CSS.escape(parts[parts.length - 1])}"]`);
+  }
+
   function initAllModeInteraction(enableFlash) {
     const parts = parseHashPath();
     if (parts.length) lockHashSync(HASH_SCROLL_STABILIZE_MS);
@@ -1117,6 +1137,7 @@
       e.preventDefault();
       const target = document.getElementById(item.dataset.target);
       if (!target) return;
+      lockHashSync(HASH_SCROLL_STABILIZE_MS);
       skipSidebarScrollRestore = true;
       closeSidebar();
       if (item.dataset.path) setHash(item.dataset.path.split('/'), true);
@@ -1149,6 +1170,7 @@
     document.querySelectorAll('[data-section-id]').forEach(el => observer.observe(el));
 
     updateTocSubHandler = function() {
+      if (isHashSyncLocked()) return;
       const activeH2 = tocEl.querySelector('.toc-item.active');
       if (!activeH2) return;
       const subItems = [];
@@ -1169,26 +1191,15 @@
       if (!currentSub) return;
       const ancestors = setTocProgress(activeH2, currentSub);
       const floorSlug = activeH2.dataset.urlSlug || '';
-      const pathParts = [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
+      const pathParts = currentSub.dataset.path
+        ? currentSub.dataset.path.split('/')
+        : [floorSlug, ...ancestors.map(a => a.dataset.urlSlug || ''), currentSub.dataset.urlSlug || ''].filter(Boolean);
       if (pathParts.length) setHash(pathParts, true);
     };
     window.addEventListener('scroll', updateTocSubHandler);
 
     if (parts.length) {
-      let target = document.getElementById('floor-' + parts[0]) || document.getElementById(parts[0]);
-      if (!target) {
-        const floorEl = document.querySelector(`.floor[data-url-slug="${CSS.escape(parts[0])}"]`);
-        if (floorEl) {
-          target = floorEl;
-          for (let i = 1; i < parts.length; i++) {
-            const sub = floorEl.querySelector(`[data-url-slug="${CSS.escape(parts[i])}"]`);
-            if (!sub) break;
-            target = sub;
-          }
-        } else {
-          target = document.querySelector(`[data-url-slug="${CSS.escape(parts[parts.length - 1])}"]`);
-        }
-      }
+      const target = findAllModeHashTarget(parts);
       if (target) {
         scrollToHashTarget(target, enableFlash, true);
       }
