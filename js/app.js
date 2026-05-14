@@ -307,6 +307,7 @@
 
   let hashSyncLockUntil = 0;
   let scrollJumpSeq = 0;
+  const SCROLL_JUMP_CANCEL_EVENTS = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
 
   function lockHashSync(ms) {
     hashSyncLockUntil = Math.max(hashSyncLockUntil, Date.now() + ms);
@@ -323,6 +324,18 @@
     window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
   }
 
+  function watchScrollJumpCancel(jumpSeq) {
+    const cancel = () => {
+      if (jumpSeq === scrollJumpSeq) scrollJumpSeq++;
+      unwatch();
+    };
+    const unwatch = () => {
+      SCROLL_JUMP_CANCEL_EVENTS.forEach(type => window.removeEventListener(type, cancel, true));
+    };
+    SCROLL_JUMP_CANCEL_EVENTS.forEach(type => window.addEventListener(type, cancel, { capture: true, passive: true }));
+    return unwatch;
+  }
+
   function scrollToHashTarget(target, enableFlash, stabilize) {
     if (!target) return;
     const jumpSeq = ++scrollJumpSeq;
@@ -332,6 +345,7 @@
     if (!stabilize) return;
 
     const startedAt = Date.now();
+    const unwatchScrollJumpCancel = watchScrollJumpCancel(jumpSeq);
     const realign = () => {
       if (jumpSeq !== scrollJumpSeq || Date.now() - startedAt > HASH_SCROLL_STABILIZE_MS || !document.body.contains(target)) return;
       lockHashSync(250);
@@ -339,6 +353,7 @@
     };
     requestAnimationFrame(() => requestAnimationFrame(realign));
     [120, 360, 800].forEach(delay => window.setTimeout(realign, delay));
+    window.setTimeout(unwatchScrollJumpCancel, HASH_SCROLL_STABILIZE_MS);
     contentEl.querySelectorAll('img').forEach(img => {
       if (img.complete || !(img.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING)) return;
       img.addEventListener('load', realign, { once: true });
