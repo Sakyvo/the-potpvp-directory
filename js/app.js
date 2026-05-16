@@ -1309,4 +1309,15 @@
 
   bindStaticEvents();
   renderApp(false);
+
+  const siteFooter = document.getElementById('site-footer');
+  if (siteFooter) {
+    const footerObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        siteFooter.classList.toggle('is-visible', entry.isIntersecting);
+        siteFooter.setAttribute('aria-hidden', entry.isIntersecting ? 'false' : 'true');
+      });
+    }, { threshold: 0.05 });
+    footerObserver.observe(siteFooter);
+  }
 })();

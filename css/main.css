@@ -203,7 +203,54 @@ body.sidebar-lock {
 /* ── Content ── */
 .content {
   max-width: 840px; margin: 0 auto;
-  padding: calc(var(--topbar-h) + 16px) 8px 80px;
+  padding: calc(var(--topbar-h) + 16px) 8px 32px;
+}
+
+/* ── Site Footer ── */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .45s ease, transform .45s ease;
+  pointer-events: none;
+}
+.site-footer.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.site-footer-flag {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.site-footer-text {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.site-footer-sakyvo {
+  color: #1F4FA8;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.site-footer-sakyvo:hover { opacity: .75; }
+.site-footer-project { color: #B22936; }
+@media (min-width: 769px) {
+  .site-footer { margin-left: var(--sidebar-w); max-width: none; }
 }
 
 /* ── Floor ── */
