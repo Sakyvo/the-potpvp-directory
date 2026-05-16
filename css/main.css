@@ -209,9 +209,8 @@ body.sidebar-lock {
 /* ── Site Footer ── */
 .site-footer {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 22px;
   max-width: 840px;
   margin: 0 auto;
   padding: 24px 16px 48px;
@@ -224,6 +223,38 @@ body.sidebar-lock {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+.site-footer-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.site-footer-divider-half {
+  flex: 1;
+  height: 2px;
+}
+.site-footer-divider-red { background: #B22936; }
+.site-footer-divider-blue { background: #1F4FA8; }
+.site-footer-divider-center {
+  width: 12px;
+  height: 12px;
+  background: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.site-footer-divider-dot {
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+}
+.site-footer-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 .site-footer-flag {
   width: 34px;
@@ -248,6 +279,13 @@ body.sidebar-lock {
   transition: opacity .15s;
 }
 .site-footer-sakyvo:hover { opacity: .75; }
+.site-footer-arrow {
+  font-size: .62em;
+  margin-left: 1px;
+  font-weight: 600;
+  vertical-align: super;
+  line-height: 1;
+}
 .site-footer-project { color: #B22936; }
 @media (min-width: 769px) {
   .site-footer { margin-left: var(--sidebar-w); max-width: none; }
