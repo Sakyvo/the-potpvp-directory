@@ -277,14 +277,19 @@ body.sidebar-lock {
   color: #1F4FA8;
   text-decoration: none;
   transition: opacity .15s;
+  position: relative;
+  padding-right: 11px;
 }
 .site-footer-sakyvo:hover { opacity: .75; }
 .site-footer-arrow {
-  font-size: .62em;
-  margin-left: 1px;
-  font-weight: 600;
-  vertical-align: super;
-  line-height: 1;
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  display: block;
+  pointer-events: none;
+  user-select: none;
 }
 .site-footer-project { color: #B22936; }
 @media (min-width: 769px) {
