@@ -453,6 +453,26 @@ body.sidebar-lock {
   background: #f6f8fa; overflow-x: auto;
 }
 .floor-body pre code { background: none; padding: 0; }
+.code-copy-wrap { position: relative; margin: 0 0 .8em; }
+.code-copy-wrap pre { margin-bottom: 0; padding-right: 48px; }
+.code-copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #d0d7de; background: #fff; color: #57606a;
+  cursor: pointer; opacity: .72;
+  transition: opacity .15s, color .15s, border-color .15s, background .15s;
+}
+.code-copy-btn:hover,
+.code-copy-btn:focus-visible {
+  opacity: 1; color: #24292f; border-color: #8c959f; background: #f6f8fa;
+}
+.code-copy-btn.is-copied { color: #1a7f37; border-color: #7ac68c; }
+.code-copy-btn.is-error { color: #cf222e; border-color: #ff8182; }
+.floor-body .code-copy-btn svg {
+  display: block; width: 16px; height: 16px; margin: 0;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
 .floor-body table { width: 100%; border-collapse: collapse; margin: 0 0 .8em; }
 .floor-body th, .floor-body td {
   border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 14px;

@@ -167,6 +167,63 @@
     if (badge) badge.hidden = false;
   }
 
+  const COPY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+  const CHECK_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>';
+
+  function setCodeCopyButtonState(button, copied) {
+    button.classList.toggle('is-copied', copied);
+    button.innerHTML = copied ? CHECK_ICON : COPY_ICON;
+    button.title = copied ? '已复制' : '复制代码';
+    button.setAttribute('aria-label', button.title);
+  }
+
+  async function copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    textarea.remove();
+    if (!copied) throw new Error('Copy failed');
+  }
+
+  function enhanceCodeBlocks(root = contentEl) {
+    root.querySelectorAll('.floor-body pre > code').forEach(code => {
+      const pre = code.parentElement;
+      if (!pre || pre.closest('.code-copy-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'code-copy-wrap';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy-btn';
+      setCodeCopyButtonState(button, false);
+      button.addEventListener('click', async () => {
+        try {
+          await copyTextToClipboard(code.textContent || '');
+          setCodeCopyButtonState(button, true);
+          clearTimeout(button.copyTimer);
+          button.copyTimer = setTimeout(() => setCodeCopyButtonState(button, false), 1200);
+        } catch {
+          button.classList.add('is-error');
+          clearTimeout(button.copyTimer);
+          button.copyTimer = setTimeout(() => button.classList.remove('is-error'), 1200);
+        }
+      });
+      wrap.appendChild(button);
+    });
+  }
+
   let indexData;
   try {
     const res = await fetch('content/_index.json');
@@ -1303,6 +1360,7 @@
       renderAllPage(appState.sections);
       initAllModeInteraction(enableFlash);
     }
+    enhanceCodeBlocks(contentEl);
     applyTocCollapseState();
     setExternalLinks();
   }
