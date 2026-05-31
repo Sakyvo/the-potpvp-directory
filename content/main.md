@@ -12,7 +12,7 @@
 
 ---
 ~~其实啊这只是两年前开的一个坑罢了~~
-![](/imgs/2026-05-31/D9mPnGYxlb0Gr5Ac.png)![](/images/105.png)
+![image](blob:https://111666.best/296da029-66e7-4047-9378-5a9caba8c0dd)
 
 ---
 2026-05-31 Edited
@@ -74,7 +74,7 @@ Optimized Resource Pack Discovery. When using more than 50 resource packs, the s
 
 Q: 太长不看，怎么选
 A:
-![](/imgs/2026-05-31/dxemxALIc81RDKLs.png)![](/images/107.png)
+![image](blob:https://111666.best/3957ab42-5bde-4483-8976-966509e38724)
 
 建议去用lcqt，这个图我忘记在哪画的了，不改了
 
@@ -569,7 +569,7 @@ ind: [https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
 A:
-![](/imgs/2026-05-31/PyO1tjZXXHY3I1zz.png)![](/images/108.png)
+![image](blob:https://111666.best/843c6df7-ba13-4df1-a29e-69ac50fae172)
 
 ---
 ### 1.3. 服务器
