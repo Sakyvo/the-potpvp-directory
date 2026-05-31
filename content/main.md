@@ -764,7 +764,7 @@ more: [https://sspai.com/post/98911](https://sspai.com/post/98911)
 ---
 #### 1.4.3. Productivity
 
-- 重装系统: [https://linux.do/t/topic/1465089](https://linux.do/t/topic/1465089)
+- 重装系统: [https://linux.do/t/topic/1667411](https://linux.do/t/topic/1667411)
 by @[akane](https://space.bilibili.com/507699321)
 
 - Bandizip 7.06: [https://www.lanzn.com/iUP8Hv0taej](https://www.lanzn.com/iUP8Hv0taej)
