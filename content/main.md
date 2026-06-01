@@ -1437,8 +1437,7 @@ mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafi
 **Offcial tutorial:** [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
 
 **VEGAS Pro 各种疑难杂症及其解决方案的整理**
-文档: [https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b](https://docs.qq.com/doc/p/c1828ff31c5f03da27dd6c0c26d49ddd6d1d868b)
-专栏: [https://www.bilibili.com/read/cv27004832](https://www.bilibili.com/read/cv27004832)
+[https://zzzzzz9125.github.io/VegTips/zh/](https://zzzzzz9125.github.io/VegTips/zh/)
 
 by [bilibili zzzzzz9125](https://space.bilibili.com/12355745)，解决**98.46%** vv问题，极其推荐看这个 ~~所以有问题别来烦我~~
 
