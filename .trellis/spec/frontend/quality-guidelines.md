@@ -1,0 +1,77 @@
+# Quality Guidelines
+
+> Code quality standards for frontend development.
+
+---
+
+## Overview
+
+Frontend changes must stay scoped, preserve existing flows, and validate browser-specific behavior when external hosts depend on request headers or referrer policy.
+
+---
+
+## Forbidden Patterns
+
+### Don't: Fetch Shimo image URLs with the default referrer
+
+**Problem**
+
+Shimo pasted image URLs can return an anti-leech placeholder when the page referrer is sent.
+
+**Why it's bad**
+
+The upload flow stores the placeholder instead of the actual image.
+
+**Instead**
+
+```js
+await fetch(url, { mode: 'cors', referrerPolicy: 'no-referrer' });
+```
+
+Set the same policy on any `Image` fallback used for the same URL.
+
+### Don't: Expand the workaround to all remote images
+
+**Problem**
+
+Blanket header changes can alter unrelated image imports.
+
+**Why it's bad**
+
+Non-Shimo hosts should keep existing behavior.
+
+---
+
+## Required Patterns
+
+### Pattern: Host-scoped remote-image normalization
+
+**What**
+
+Treat `uploader.shimo.im` and `*.shimonote.com` image URLs as a special case during remote import.
+
+**Why**
+
+These hosts may require a no-referrer request to resolve the final authorized image response.
+
+**Example**
+
+```js
+const dataUrl = await fetchAsDataUrl(url, { noReferrer: isShimoImageUrl(url) });
+```
+
+---
+
+## Testing Requirements
+
+- Run syntax check and diff check for JS changes.
+- When a fix depends on browser request headers or redirects, validate the final network response path against the affected host.
+- Keep validation focused on the touched flow.
+
+---
+
+## Code Review Checklist
+
+- Confirm the host scope is narrow.
+- Confirm non-Shimo remote images still use the existing path.
+- Confirm primary fetch and fallback image load use the same referrer policy.

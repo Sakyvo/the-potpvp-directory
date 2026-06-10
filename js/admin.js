@@ -122,6 +122,15 @@
     return match ? match[1] : '';
   }
 
+  function isShimoImageUrl(url) {
+    try {
+      const host = new URL(url, location.href).hostname;
+      return /(?:^|\.)shimo\.im$/i.test(host) || /(?:^|\.)shimonote\.com$/i.test(host);
+    } catch {
+      return /(?:shimo\.im|shimonote\.com)/i.test(url || '');
+    }
+  }
+
   function extractMarkdownImages(md) {
     const re = /!\[([^\]]*)\]\(([^)\r\n]+)\)/g;
     const images = [];
@@ -1565,9 +1574,12 @@
 
   // ═══ Shimo Image Download ═══
 
-  async function fetchAsDataUrl(url) {
+  async function fetchAsDataUrl(url, { noReferrer = false } = {}) {
     try {
-      const res = await fetch(url, { mode: 'cors' });
+      const res = await fetch(url, {
+        mode: 'cors',
+        ...(noReferrer ? { referrerPolicy: 'no-referrer' } : {})
+      });
       const blob = await res.blob();
       return await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1581,6 +1593,10 @@
       return await new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
+        if (noReferrer) {
+          img.referrerPolicy = 'no-referrer';
+          img.setAttribute('referrerpolicy', 'no-referrer');
+        }
         img.onload = () => {
           const c = document.createElement('canvas');
           c.width = img.naturalWidth; c.height = img.naturalHeight;
@@ -1604,7 +1620,7 @@
       const m = matches[i];
       const url = m[2].slice(0, -1); // remove trailing )
       setStatus(`下载石墨图片 (${i + 1}/${matches.length})...`);
-      const dataUrl = await fetchAsDataUrl(url);
+      const dataUrl = await fetchAsDataUrl(url, { noReferrer: isShimoImageUrl(url) });
       if (dataUrl) {
         result = result.replace(m[0], `${m[1]}${dataUrl})`);
       }
@@ -1686,7 +1702,7 @@
           if (img.kind === 'data') {
             payload = dataUrlToImageData(img.src);
           } else {
-            const dataUrl = await fetchAsDataUrl(img.src);
+            const dataUrl = await fetchAsDataUrl(img.src, { noReferrer: isShimoImageUrl(img.src) });
             payload = dataUrl ? dataUrlToImageData(dataUrl) : null;
           }
           if (!payload) throw new Error('图片读取失败');
