@@ -80,6 +80,23 @@ Adjust article markdown spacing through the smallest relevant `.floor-body` sele
 
 The public article view and admin preview share these rules, so scoped changes keep both views consistent without affecting chrome, TOC, or editor controls.
 
+**Example**
+
+```css
+.floor-body ul, .floor-body ol { padding-left: 1.7em; }
+.floor-body li > ul, .floor-body li > ol { padding-left: 1.15em; }
+```
+
+### Pattern: Nested list alignment
+
+**What**
+
+Tighten nested list indentation so child bullets sit under the parent item text start, not under the marker column.
+
+**Why**
+
+This keeps article markdown readable without widening all list spacing or changing line-height.
+
 ---
 
 ## Testing Requirements
@@ -88,6 +105,7 @@ The public article view and admin preview share these rules, so scoped changes k
 - When a fix depends on browser request headers or redirects, validate the final network response path against the affected host.
 - Keep validation focused on the touched flow.
 - For markdown spacing changes, verify both public content and admin preview and confirm global line-height did not change.
+- For nested list alignment, verify a numbered list with child bullets aligns visually with the parent item text start.
 
 ---
 

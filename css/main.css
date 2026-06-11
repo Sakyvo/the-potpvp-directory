@@ -428,6 +428,7 @@ body.sidebar-lock {
 .floor-body br { display: block; margin-bottom: 3px; }
 .floor-body .bl { height: calc(0.8em + 2px); }
 .floor-body ul, .floor-body ol { margin: 0; padding-left: 1.7em; }
+.floor-body li > ul, .floor-body li > ol { padding-left: 1.15em; }
 .floor-body blockquote {
   margin: 0 0 .8em; padding: 12px 16px;
   border-left: 3px solid var(--border-dark); background: var(--bg-card);
