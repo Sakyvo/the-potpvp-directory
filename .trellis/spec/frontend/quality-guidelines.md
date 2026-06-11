@@ -40,6 +40,16 @@ Blanket header changes can alter unrelated image imports.
 
 Non-Shimo hosts should keep existing behavior.
 
+### Don't: Change global typography for one markdown spacing issue
+
+**Problem**
+
+List, heading, table, and paragraph styling all share the markdown rendering surface.
+
+**Why it's bad**
+
+Global line-height, font-size, or paragraph changes can silently alter every article and the admin preview.
+
 ---
 
 ## Required Patterns
@@ -60,6 +70,16 @@ These hosts may require a no-referrer request to resolve the final authorized im
 const dataUrl = await fetchAsDataUrl(url, { noReferrer: isShimoImageUrl(url) });
 ```
 
+### Pattern: Scope markdown layout tweaks to `.floor-body`
+
+**What**
+
+Adjust article markdown spacing through the smallest relevant `.floor-body` selector.
+
+**Why**
+
+The public article view and admin preview share these rules, so scoped changes keep both views consistent without affecting chrome, TOC, or editor controls.
+
 ---
 
 ## Testing Requirements
@@ -67,6 +87,7 @@ const dataUrl = await fetchAsDataUrl(url, { noReferrer: isShimoImageUrl(url) });
 - Run syntax check and diff check for JS changes.
 - When a fix depends on browser request headers or redirects, validate the final network response path against the affected host.
 - Keep validation focused on the touched flow.
+- For markdown spacing changes, verify both public content and admin preview and confirm global line-height did not change.
 
 ---
 
