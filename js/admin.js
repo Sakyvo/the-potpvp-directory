@@ -4,7 +4,9 @@
   const $ = s => document.querySelector(s);
   const DRAFT_KEY = 'ppd_global_draft';
   const ADMIN_MODE_KEY = 'ppdir-admin-view-mode';
-  const ADMIN_TOC_COLLAPSED_KEY = 'ppdir-admin-toc-collapsed';
+  const ADMIN_TOC_DEPTH_KEY = 'ppdir-admin-toc-depth';
+  const ADMIN_TOC_TRACK_KEY = 'ppdir-admin-toc-track';
+  const ADMIN_TOC_LEGACY_COLLAPSED_KEY = 'ppdir-admin-toc-collapsed';
 
   let indexData = null;
   let indexSha = null;
@@ -20,7 +22,8 @@
   let imageMap = {};
   let imageCounter = 0;
   let publishedBuffer = '';
-  let adminTocCollapsed = getSavedAdminTocCollapsed();
+  let adminTocDepth = getSavedAdminTocDepth();
+  let adminTocTrackEnabled = getSavedAdminTocTrack();
   const publishedImageCache = new Map();
 
   function setStatus(t) { $('#footer-status').textContent = t; }
@@ -60,17 +63,33 @@
     } catch {}
   }
 
-  function getSavedAdminTocCollapsed() {
+  function getSavedAdminTocDepth() {
     try {
-      return localStorage.getItem(ADMIN_TOC_COLLAPSED_KEY) === '1';
+      const saved = Number(localStorage.getItem(ADMIN_TOC_DEPTH_KEY));
+      if (saved >= 1 && saved <= 3) return saved;
+      return localStorage.getItem(ADMIN_TOC_LEGACY_COLLAPSED_KEY) === '0' ? 3 : 1;
+    } catch {
+      return 1;
+    }
+  }
+
+  function saveAdminTocDepth(depth) {
+    try {
+      localStorage.setItem(ADMIN_TOC_DEPTH_KEY, String(depth));
+    } catch {}
+  }
+
+  function getSavedAdminTocTrack() {
+    try {
+      return localStorage.getItem(ADMIN_TOC_TRACK_KEY) === '1';
     } catch {
       return false;
     }
   }
 
-  function saveAdminTocCollapsed(collapsed) {
+  function saveAdminTocTrack(enabled) {
     try {
-      localStorage.setItem(ADMIN_TOC_COLLAPSED_KEY, collapsed ? '1' : '0');
+      localStorage.setItem(ADMIN_TOC_TRACK_KEY, enabled ? '1' : '0');
     } catch {}
   }
 
@@ -820,14 +839,90 @@
     if (segmentKey) activeSegmentKey = segmentKey;
   }
 
-  function applyAdminTocCollapseState() {
+  function getAdminSourceCaretDocLine(doc = getAdminDoc()) {
+    const source = $('#source-editor');
+    const line = source ? getTextareaCaretLine(source) : 0;
+    if (adminMode !== 'part') return line;
+    const segmentOffset = activeEditRange?.startLine ?? ensureActiveSegment(doc)?.startLine ?? 0;
+    return segmentOffset + line;
+  }
+
+  function getAdminTocScrollAnchorItem() {
     const tocEl = $('#admin-toc');
-    const toggle = $('#admin-toc-toggle');
-    if (!tocEl || !toggle) return;
-    tocEl.classList.toggle('collapsed', adminTocCollapsed);
-    toggle.dataset.collapsed = adminTocCollapsed ? 'true' : 'false';
-    toggle.setAttribute('aria-pressed', adminTocCollapsed ? 'true' : 'false');
-    toggle.textContent = adminTocCollapsed ? '▸' : '▾';
+    if (!tocEl) return null;
+    const currentItem = tocEl.querySelector('.toc-item.toc-current') || tocEl.querySelector('.toc-item.active-sub') || tocEl.querySelector('.toc-item.active');
+    if (!currentItem) return null;
+    const maxVisibleLevel = adminTocDepth === 1 ? 3 : adminTocDepth === 2 ? 4 : 6;
+    if (getAdminTocLevel(currentItem) <= maxVisibleLevel) return currentItem;
+    return getAdminTocAncestors(currentItem).reverse().find(item => getAdminTocLevel(item) <= maxVisibleLevel) || currentItem;
+  }
+
+  function getAdminTocCurrentItem() {
+    const tocEl = $('#admin-toc');
+    return tocEl?.querySelector('.toc-item.toc-current') || tocEl?.querySelector('.toc-item.active-sub') || tocEl?.querySelector('.toc-item.active') || null;
+  }
+
+  function applyAdminTocTrackState() {
+    const tocEl = $('#admin-toc');
+    if (!tocEl) return;
+    tocEl.querySelectorAll('.toc-track-visible').forEach(item => item.classList.remove('toc-track-visible'));
+    if (!adminTocTrackEnabled) return;
+    const rootItem = getAdminTocCurrentItem();
+    if (!rootItem) return;
+    rootItem.classList.add('toc-track-visible');
+    getAdminTocAncestors(rootItem).forEach(item => item.classList.add('toc-track-visible'));
+    const rootLevel = getAdminTocLevel(rootItem);
+    let next = rootItem.closest('li')?.nextElementSibling;
+    while (next) {
+      const item = next.querySelector('.toc-item');
+      if (!item) break;
+      const level = getAdminTocLevel(item);
+      if (level <= rootLevel) break;
+      item.classList.add('toc-track-visible');
+      next = next.nextElementSibling;
+    }
+  }
+
+  function scrollActiveAdminTocItemIntoView(alignTop) {
+    const sidebar = $('#sidebar');
+    const tocEl = $('#admin-toc');
+    if (!sidebar || !tocEl) return;
+    const activeItem = getAdminTocScrollAnchorItem();
+    if (!activeItem) return;
+    if (alignTop) {
+      const sidebarRect = sidebar.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const controlHeight = (sidebar.querySelector('.sidebar-header')?.offsetHeight || 0) + (sidebar.querySelector('.toc-track-control')?.offsetHeight || 0);
+      const visibleTrackItems = [...tocEl.querySelectorAll('.toc-track-visible')].filter(item => item.offsetParent !== null);
+      const lastTrackItem = visibleTrackItems[visibleTrackItems.length - 1];
+      const lastRect = lastTrackItem?.getBoundingClientRect();
+      const availableHeight = sidebarRect.height - controlHeight - 8;
+      const trackHeight = lastRect ? lastRect.bottom - itemRect.top : itemRect.height;
+      const alignBottom = trackHeight > availableHeight && lastRect;
+      const nextTop = alignBottom
+        ? sidebar.scrollTop + (lastRect.bottom - sidebarRect.bottom) + 8
+        : sidebar.scrollTop + (itemRect.top - sidebarRect.top) - controlHeight - 8;
+      sidebar.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
+      return;
+    }
+    activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  function applyAdminTocDepthState(alignTop) {
+    const tocEl = $('#admin-toc');
+    const depthControl = $('#admin-toc-depth-control');
+    const trackToggle = $('#admin-toc-track-toggle');
+    if (!tocEl || !depthControl) return;
+    tocEl.dataset.depth = String(adminTocDepth);
+    tocEl.classList.toggle('track', adminTocTrackEnabled);
+    depthControl.querySelectorAll('[data-toc-depth]').forEach(btn => {
+      const active = Number(btn.dataset.tocDepth) === adminTocDepth;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    if (trackToggle) trackToggle.checked = adminTocTrackEnabled;
+    applyAdminTocTrackState();
+    if (alignTop) requestAnimationFrame(() => scrollActiveAdminTocItemIntoView(true));
   }
 
   function getAdminTocLevel(item) {
@@ -867,6 +962,7 @@
     const activeH2 = items.find(item => item.classList.contains('toc-h2') && item.dataset.sectionKey === entry?.sectionKey) || items[0];
     const currentItem = items.find(item => item.dataset.target === entry?.target) || activeH2;
     if (activeH2) activeH2.classList.add('active');
+    const ancestors = currentItem && currentItem !== activeH2 ? getAdminTocAncestors(currentItem) : [];
     const currentIndex = items.indexOf(currentItem);
     if (currentIndex >= 0) {
       items.slice(0, currentIndex).forEach(item => {
@@ -874,9 +970,10 @@
       });
     }
     if (currentItem && currentItem !== activeH2) {
-      getAdminTocAncestors(currentItem).forEach(item => item.classList.add('toc-ancestor'));
+      ancestors.forEach(item => item.classList.add('toc-ancestor'));
       currentItem.classList.add('active-sub', 'toc-current');
     }
+    applyAdminTocTrackState();
   }
 
   function setAdminTocProgressByLine(doc = getAdminDoc(), lineIndex = 0) {
@@ -1861,13 +1958,12 @@
       const classes = ['toc-item', `toc-h${entry.level}`];
       return `<li><a class="${classes.join(' ')}" data-target="${escapeHtml(entry.target)}" data-level="${entry.level}" data-label="${escapeHtml(entry.label)}" data-line="${entry.lineIndex}" data-section-key="${escapeHtml(entry.sectionKey)}" data-segment-key="${escapeHtml(entry.segmentKey)}">${escapeHtml(entry.label)}</a></li>`;
     }).join('');
-    applyAdminTocCollapseState();
+    applyAdminTocDepthState();
     if (adminMode === 'part') {
       const segment = ensureActiveSegment(doc);
       setAdminTocProgress(doc, segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0]);
     } else if (currentView === 'source') {
-      const source = $('#source-editor');
-      setAdminTocProgressByLine(doc, source ? getTextareaCaretLine(source) : 0);
+      setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
     } else {
       setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
     }
@@ -1890,6 +1986,19 @@
       const target = document.getElementById(targetId);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
+  }
+
+  function refreshAdminTocProgressForCurrentView() {
+    if (currentView === 'source') syncSourceEditorToBuffer();
+    const doc = getAdminDoc();
+    if (adminMode === 'part') {
+      const segment = ensureActiveSegment(doc);
+      if (currentView === 'source') setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
+      else setAdminTocProgress(doc, segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0]);
+      return;
+    }
+    if (currentView === 'source') setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
+    else setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
   }
 
   function initAdminSidebar() {
@@ -1951,15 +2060,26 @@
       });
     }
 
-    const tocToggle = $('#admin-toc-toggle');
-    if (tocToggle) {
-      applyAdminTocCollapseState();
-      tocToggle.addEventListener('click', () => {
+    const depthControl = $('#admin-toc-depth-control');
+    if (depthControl) {
+      applyAdminTocDepthState();
+      depthControl.addEventListener('click', e => {
+        const btn = e.target.closest('[data-toc-depth]');
+        if (!btn) return;
         const keepTop = sidebar.scrollTop;
-        adminTocCollapsed = !adminTocCollapsed;
-        saveAdminTocCollapsed(adminTocCollapsed);
-        applyAdminTocCollapseState();
+        adminTocDepth = Math.min(3, Math.max(1, Number(btn.dataset.tocDepth) || 1));
+        saveAdminTocDepth(adminTocDepth);
+        applyAdminTocDepthState();
         requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
+      });
+    }
+
+    const trackToggle = $('#admin-toc-track-toggle');
+    if (trackToggle) {
+      trackToggle.addEventListener('change', () => {
+        adminTocTrackEnabled = trackToggle.checked;
+        saveAdminTocTrack(adminTocTrackEnabled);
+        applyAdminTocDepthState();
       });
     }
 
@@ -1981,11 +2101,21 @@
         setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
       });
     }
+
+    const source = $('#source-editor');
+    if (source) {
+      const refreshSourceToc = debounce(() => {
+        if (currentView === 'source') refreshAdminTocProgressForCurrentView();
+      }, 80);
+      ['click', 'keyup', 'mouseup', 'input', 'select'].forEach(type => source.addEventListener(type, refreshSourceToc));
+    }
   }
 
   function openAdminSidebar() {
+    refreshAdminTocProgressForCurrentView();
     $('#sidebar').classList.add('open');
     $('#sidebar-overlay').classList.add('open');
+    applyAdminTocDepthState(true);
   }
 
   function closeAdminSidebar() {

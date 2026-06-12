@@ -40,7 +40,9 @@
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
   const WORD_JOINER = '\u2060';
   const VIEW_MODE_KEY = 'ppdir-view-mode';
-  const TOC_COLLAPSED_KEY = 'ppdir-toc-collapsed';
+  const TOC_DEPTH_KEY = 'ppdir-toc-depth';
+  const TOC_TRACK_KEY = 'ppdir-toc-track';
+  const TOC_LEGACY_COLLAPSED_KEY = 'ppdir-toc-collapsed';
   const JUMP_FLASH_MS = 1400;
   const HASH_SCROLL_STABILIZE_MS = 1200;
 
@@ -161,7 +163,8 @@
   const searchNextBtn = $('#search-next');
   const searchResultsEl = $('#search-results');
   const modeToggle = $('#mode-toggle');
-  const tocToggle = $('#toc-toggle');
+  const tocDepthControl = $('#toc-depth-control');
+  const tocTrackToggle = $('#toc-track-toggle');
   if (showMaintBadge) {
     const badge = $('#maint-badge');
     if (badge) badge.hidden = false;
@@ -330,41 +333,102 @@
     } catch {}
   }
 
-  function getSavedTocCollapsed() {
+  function getSavedTocDepth() {
     try {
-      return localStorage.getItem(TOC_COLLAPSED_KEY) === '1';
+      const saved = Number(localStorage.getItem(TOC_DEPTH_KEY));
+      if (saved >= 1 && saved <= 3) return saved;
+      return localStorage.getItem(TOC_LEGACY_COLLAPSED_KEY) === '0' ? 3 : 1;
+    } catch {
+      return 1;
+    }
+  }
+
+  function saveTocDepth(depth) {
+    try {
+      localStorage.setItem(TOC_DEPTH_KEY, String(depth));
+    } catch {}
+  }
+
+  function getSavedTocTrack() {
+    try {
+      return localStorage.getItem(TOC_TRACK_KEY) === '1';
     } catch {
       return false;
     }
   }
 
-  function saveTocCollapsed(collapsed) {
+  function saveTocTrack(enabled) {
     try {
-      localStorage.setItem(TOC_COLLAPSED_KEY, collapsed ? '1' : '0');
+      localStorage.setItem(TOC_TRACK_KEY, enabled ? '1' : '0');
     } catch {}
+  }
+
+  function getTocItemLevel(item) {
+    const match = [...(item?.classList || [])].join(' ').match(/\btoc-h([2-6])\b/);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function getTocScrollAnchorItem() {
+    const currentItem = tocEl.querySelector('.toc-item.toc-current') || tocEl.querySelector('.toc-item.active-sub') || tocEl.querySelector('.toc-item.active');
+    if (!currentItem) return null;
+    const maxVisibleLevel = tocDepth === 1 ? 3 : tocDepth === 2 ? 4 : 6;
+    if (getTocItemLevel(currentItem) <= maxVisibleLevel) return currentItem;
+    return getTocAncestors(currentItem).reverse().find(item => getTocItemLevel(item) <= maxVisibleLevel) || getTocActiveH2(currentItem) || currentItem;
+  }
+
+  function getTocCurrentItem() {
+    return tocEl.querySelector('.toc-item.toc-current') || tocEl.querySelector('.toc-item.active-sub') || tocEl.querySelector('.toc-item.active');
   }
 
   function scrollActiveTocItemIntoView(alignTop) {
     if (!sidebar || !tocEl) return;
-    const activeItem = tocEl.querySelector('.toc-item.active') || tocEl.querySelector('.toc-item.toc-current') || tocEl.querySelector('.toc-item.active-sub');
+    const activeItem = getTocScrollAnchorItem();
     if (!activeItem) return;
     if (alignTop) {
       const sidebarRect = sidebar.getBoundingClientRect();
       const itemRect = activeItem.getBoundingClientRect();
-      const headerHeight = sidebar.querySelector('.sidebar-header')?.offsetHeight || 0;
-      const nextTop = sidebar.scrollTop + (itemRect.top - sidebarRect.top) - headerHeight - 8;
+      const controlHeight = (sidebar.querySelector('.sidebar-header')?.offsetHeight || 0) + (sidebar.querySelector('.toc-track-control')?.offsetHeight || 0);
+      const visibleTrackItems = [...tocEl.querySelectorAll('.toc-track-visible')].filter(item => item.offsetParent !== null);
+      const lastTrackItem = visibleTrackItems[visibleTrackItems.length - 1];
+      const lastRect = lastTrackItem?.getBoundingClientRect();
+      const availableHeight = sidebarRect.height - controlHeight - 8;
+      const trackHeight = lastRect ? lastRect.bottom - itemRect.top : itemRect.height;
+      const alignBottom = trackHeight > availableHeight && lastRect;
+      const nextTop = alignBottom
+        ? sidebar.scrollTop + (lastRect.bottom - sidebarRect.bottom) + 8
+        : sidebar.scrollTop + (itemRect.top - sidebarRect.top) - controlHeight - 8;
       sidebar.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
       return;
     }
     activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
-  function applyTocCollapseState(alignTop) {
-    if (!tocEl || !tocToggle) return;
-    tocEl.classList.toggle('collapsed', tocCollapsed);
-    tocToggle.dataset.collapsed = tocCollapsed ? 'true' : 'false';
-    tocToggle.setAttribute('aria-pressed', tocCollapsed ? 'true' : 'false');
-    tocToggle.textContent = tocCollapsed ? '▸' : '▾';
+  function applyTocTrackState() {
+    if (!tocEl) return;
+    tocEl.querySelectorAll('.toc-track-visible').forEach(item => item.classList.remove('toc-track-visible'));
+    if (!tocTrackEnabled) return;
+    const rootItem = getTocCurrentItem();
+    const rootPath = rootItem?.dataset.path || '';
+    if (!rootPath) return;
+    rootItem.classList.add('toc-track-visible');
+    getTocAncestors(rootItem).forEach(item => item.classList.add('toc-track-visible'));
+    tocEl.querySelectorAll('.toc-item').forEach(item => {
+      const itemPath = item.dataset.path || '';
+      if (itemPath.startsWith(rootPath + '/')) item.classList.add('toc-track-visible');
+    });
+  }
+
+  function applyTocDepthState(alignTop) {
+    if (!tocEl || !tocDepthControl) return;
+    tocEl.dataset.depth = String(tocDepth);
+    tocEl.classList.toggle('track', tocTrackEnabled);
+    tocDepthControl.querySelectorAll('[data-toc-depth]').forEach(btn => {
+      const active = Number(btn.dataset.tocDepth) === tocDepth;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    if (tocTrackToggle) tocTrackToggle.checked = tocTrackEnabled;
+    applyTocTrackState();
     if (alignTop) requestAnimationFrame(() => scrollActiveTocItemIntoView(true));
   }
 
@@ -464,6 +528,7 @@
     if (!activeH2 && currentItem) activeH2 = getTocActiveH2(currentItem);
     if (activeH2) activeH2.classList.add('active');
     currentItem = currentItem || activeH2;
+    const ancestors = currentItem && currentItem !== activeH2 ? getTocAncestors(currentItem) : [];
     const currentIndex = items.indexOf(currentItem);
     if (currentIndex >= 0) {
       items.slice(0, currentIndex).forEach(item => {
@@ -471,10 +536,11 @@
       });
     }
     if (currentItem && currentItem !== activeH2) {
-      getTocAncestors(currentItem).forEach(item => item.classList.add('toc-ancestor'));
+      ancestors.forEach(item => item.classList.add('toc-ancestor'));
       currentItem.classList.add('active-sub', 'toc-current');
     }
-    return currentItem && currentItem !== activeH2 ? getTocAncestors(currentItem) : [];
+    applyTocTrackState();
+    return ancestors;
   }
 
   function setTocProgressByPath(path) {
@@ -855,7 +921,8 @@
   let observer = null;
   let updateTocSubHandler = null;
   let searchTimer = null;
-  let tocCollapsed = getSavedTocCollapsed();
+  let tocDepth = getSavedTocDepth();
+  let tocTrackEnabled = getSavedTocTrack();
   let sidebarScrollY = 0;
   let skipSidebarScrollRestore = false;
   let pendingPartSearchQuery = '';
@@ -1136,6 +1203,7 @@
     document.body.classList.add('sidebar-lock');
     sidebar.classList.add('open');
     overlay.classList.add('open');
+    applyTocDepthState(true);
   }
 
   function bindStaticEvents() {
@@ -1143,12 +1211,19 @@
     overlay.addEventListener('click', closeSidebar);
     $('#search-btn').addEventListener('click', openSearch);
     $('#search-close').addEventListener('click', closeSearch);
-    tocToggle.addEventListener('click', () => {
+    tocDepthControl.addEventListener('click', e => {
+      const btn = e.target.closest('[data-toc-depth]');
+      if (!btn) return;
       const keepTop = sidebar.scrollTop;
-      tocCollapsed = !tocCollapsed;
-      saveTocCollapsed(tocCollapsed);
-      applyTocCollapseState(false);
+      tocDepth = Math.min(3, Math.max(1, Number(btn.dataset.tocDepth) || 1));
+      saveTocDepth(tocDepth);
+      applyTocDepthState(false);
       requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
+    });
+    tocTrackToggle.addEventListener('change', () => {
+      tocTrackEnabled = tocTrackToggle.checked;
+      saveTocTrack(tocTrackEnabled);
+      applyTocDepthState(false);
     });
     searchPrevBtn.addEventListener('click', () => navigateMark(currentMarkIdx - 1));
     searchNextBtn.addEventListener('click', () => navigateMark(currentMarkIdx + 1));
@@ -1389,7 +1464,7 @@
     }
     enhanceScrollableTables(contentEl);
     enhanceCodeBlocks(contentEl);
-    applyTocCollapseState();
+    applyTocDepthState();
     setExternalLinks();
   }
 
