@@ -1959,11 +1959,12 @@
       return `<li><a class="${classes.join(' ')}" data-target="${escapeHtml(entry.target)}" data-level="${entry.level}" data-label="${escapeHtml(entry.label)}" data-line="${entry.lineIndex}" data-section-key="${escapeHtml(entry.sectionKey)}" data-segment-key="${escapeHtml(entry.segmentKey)}">${escapeHtml(entry.label)}</a></li>`;
     }).join('');
     applyAdminTocDepthState();
-    if (adminMode === 'part') {
-      const segment = ensureActiveSegment(doc);
-      setAdminTocProgress(doc, segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0]);
-    } else if (currentView === 'source') {
+    if (currentView === 'source') {
       setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
+    } else if (adminMode === 'part') {
+      const segment = ensureActiveSegment(doc);
+      const fallback = segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0];
+      setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || fallback);
     } else {
       setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
     }
@@ -1991,14 +1992,15 @@
   function refreshAdminTocProgressForCurrentView() {
     if (currentView === 'source') syncSourceEditorToBuffer();
     const doc = getAdminDoc();
-    if (adminMode === 'part') {
+    if (currentView === 'source') {
+      setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
+    } else if (adminMode === 'part') {
       const segment = ensureActiveSegment(doc);
-      if (currentView === 'source') setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
-      else setAdminTocProgress(doc, segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0]);
-      return;
+      const fallback = segment ? doc.entries.find(entry => entry.segmentKey === segment.key) : doc.entries[0];
+      setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || fallback);
+    } else {
+      setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
     }
-    if (currentView === 'source') setAdminTocProgressByLine(doc, getAdminSourceCaretDocLine(doc));
-    else setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
   }
 
   function initAdminSidebar() {
@@ -2096,7 +2098,6 @@
       });
 
       preview.addEventListener('scroll', () => {
-        if (adminMode === 'part') return;
         const doc = adminDoc || getAdminDoc();
         setAdminTocProgress(doc, getPreviewAnchorEntry(doc) || doc.entries[0]);
       });
