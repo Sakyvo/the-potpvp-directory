@@ -224,6 +224,16 @@
     });
   }
 
+  function enhanceScrollableTables(root = contentEl) {
+    root.querySelectorAll('.floor-body table').forEach(table => {
+      if (table.closest('.table-scroll-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'table-scroll-wrap';
+      table.parentNode.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
+  }
+
   let indexData;
   try {
     const res = await fetch('content/_index.json');
@@ -1360,6 +1370,7 @@
       renderAllPage(appState.sections);
       initAllModeInteraction(enableFlash);
     }
+    enhanceScrollableTables(contentEl);
     enhanceCodeBlocks(contentEl);
     applyTocCollapseState();
     setExternalLinks();

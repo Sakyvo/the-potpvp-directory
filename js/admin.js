@@ -1100,6 +1100,7 @@
       container.innerHTML = doc.sections.map(section => renderAdminSectionPreview(section, doc, false)).join('');
     }
     assignAdminPreviewAnchors(doc);
+    enhanceScrollableTables(container);
 
     container.querySelectorAll('a[href]').forEach(a => {
       const href = a.getAttribute('href');
@@ -1110,6 +1111,16 @@
     });
 
     buildAdminToc(doc);
+  }
+
+  function enhanceScrollableTables(root) {
+    root.querySelectorAll('.floor-body table').forEach(table => {
+      if (table.closest('.table-scroll-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'table-scroll-wrap';
+      table.parentNode.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
   }
 
   function renderAdminSectionPreview(section, doc, partMode) {

@@ -474,7 +474,18 @@ body.sidebar-lock {
   display: block; width: 16px; height: 16px; margin: 0;
   fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
+.floor-body .table-scroll-wrap {
+  max-width: 100%;
+  margin: 0 0 .8em;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .floor-body table { width: 100%; border-collapse: collapse; margin: 0 0 .8em; }
+.floor-body .table-scroll-wrap table {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+}
 .floor-body th, .floor-body td {
   border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 14px;
 }

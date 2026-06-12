@@ -97,6 +97,22 @@ Tighten nested list indentation so child bullets sit under the parent item text 
 
 This keeps article markdown readable without widening all list spacing or changing line-height.
 
+### Pattern: Wrap rendered markdown tables for mobile scrolling
+
+**What**
+
+After rendering markdown, wrap `.floor-body table` elements in `.table-scroll-wrap`.
+
+**Why**
+
+Wide tables need a local horizontal scroll container on mobile. The document body must not become horizontally scrollable.
+
+**Example**
+
+```js
+wrap.appendChild(table);
+```
+
 ---
 
 ## Testing Requirements
@@ -106,6 +122,7 @@ This keeps article markdown readable without widening all list spacing or changi
 - Keep validation focused on the touched flow.
 - For markdown spacing changes, verify both public content and admin preview and confirm global line-height did not change.
 - For nested list alignment, verify a numbered list with child bullets aligns visually with the parent item text start.
+- For table scrolling changes, verify public content and admin preview both wrap tables and keep table cell styling intact.
 
 ---
 
