@@ -890,19 +890,18 @@
     const activeItem = getAdminTocScrollAnchorItem();
     if (!activeItem) return;
     if (alignTop) {
-      const sidebarRect = sidebar.getBoundingClientRect();
+      const tocRect = tocEl.getBoundingClientRect();
       const itemRect = activeItem.getBoundingClientRect();
-      const controlHeight = (sidebar.querySelector('.sidebar-header')?.offsetHeight || 0) + (sidebar.querySelector('.toc-track-control')?.offsetHeight || 0);
       const visibleTrackItems = [...tocEl.querySelectorAll('.toc-track-visible')].filter(item => item.offsetParent !== null);
       const lastTrackItem = visibleTrackItems[visibleTrackItems.length - 1];
       const lastRect = lastTrackItem?.getBoundingClientRect();
-      const availableHeight = sidebarRect.height - controlHeight - 8;
+      const availableHeight = tocRect.height - 8;
       const trackHeight = lastRect ? lastRect.bottom - itemRect.top : itemRect.height;
       const alignBottom = trackHeight > availableHeight && lastRect;
       const nextTop = alignBottom
-        ? sidebar.scrollTop + (lastRect.bottom - sidebarRect.bottom) + 8
-        : sidebar.scrollTop + (itemRect.top - sidebarRect.top) - controlHeight - 8;
-      sidebar.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
+        ? tocEl.scrollTop + (lastRect.bottom - tocRect.bottom) + 8
+        : tocEl.scrollTop + (itemRect.top - tocRect.top) - 8;
+      tocEl.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
       return;
     }
     activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -2068,11 +2067,11 @@
       depthControl.addEventListener('click', e => {
         const btn = e.target.closest('[data-toc-depth]');
         if (!btn) return;
-        const keepTop = sidebar.scrollTop;
+        const keepTop = tocEl?.scrollTop || 0;
         adminTocDepth = Math.min(3, Math.max(1, Number(btn.dataset.tocDepth) || 1));
         saveAdminTocDepth(adminTocDepth);
         applyAdminTocDepthState();
-        requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
+        requestAnimationFrame(() => { if (tocEl) tocEl.scrollTop = keepTop; });
       });
     }
 

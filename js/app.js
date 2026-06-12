@@ -385,19 +385,18 @@
     const activeItem = getTocScrollAnchorItem();
     if (!activeItem) return;
     if (alignTop) {
-      const sidebarRect = sidebar.getBoundingClientRect();
+      const tocRect = tocEl.getBoundingClientRect();
       const itemRect = activeItem.getBoundingClientRect();
-      const controlHeight = (sidebar.querySelector('.sidebar-header')?.offsetHeight || 0) + (sidebar.querySelector('.toc-track-control')?.offsetHeight || 0);
       const visibleTrackItems = [...tocEl.querySelectorAll('.toc-track-visible')].filter(item => item.offsetParent !== null);
       const lastTrackItem = visibleTrackItems[visibleTrackItems.length - 1];
       const lastRect = lastTrackItem?.getBoundingClientRect();
-      const availableHeight = sidebarRect.height - controlHeight - 8;
+      const availableHeight = tocRect.height - 8;
       const trackHeight = lastRect ? lastRect.bottom - itemRect.top : itemRect.height;
       const alignBottom = trackHeight > availableHeight && lastRect;
       const nextTop = alignBottom
-        ? sidebar.scrollTop + (lastRect.bottom - sidebarRect.bottom) + 8
-        : sidebar.scrollTop + (itemRect.top - sidebarRect.top) - controlHeight - 8;
-      sidebar.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
+        ? tocEl.scrollTop + (lastRect.bottom - tocRect.bottom) + 8
+        : tocEl.scrollTop + (itemRect.top - tocRect.top) - 8;
+      tocEl.scrollTo({ top: Math.max(nextTop, 0), behavior: 'auto' });
       return;
     }
     activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -1214,11 +1213,11 @@
     tocDepthControl.addEventListener('click', e => {
       const btn = e.target.closest('[data-toc-depth]');
       if (!btn) return;
-      const keepTop = sidebar.scrollTop;
+      const keepTop = tocEl.scrollTop;
       tocDepth = Math.min(3, Math.max(1, Number(btn.dataset.tocDepth) || 1));
       saveTocDepth(tocDepth);
       applyTocDepthState(false);
-      requestAnimationFrame(() => { sidebar.scrollTop = keepTop; });
+      requestAnimationFrame(() => { tocEl.scrollTop = keepTop; });
     });
     tocTrackToggle.addEventListener('change', () => {
       tocTrackEnabled = tocTrackToggle.checked;
@@ -1242,6 +1241,11 @@
         if (activeMode === 'part') doPartModeSearch(searchInput.value, appState.searchIndex);
         else doAllModeSearch(searchInput.value);
       }, 200);
+    });
+    document.addEventListener('pointerdown', e => {
+      if (!searchPanel.classList.contains('open')) return;
+      if (searchPanel.contains(e.target) || e.target.closest('#search-btn')) return;
+      closeSearch();
     });
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
