@@ -384,10 +384,10 @@
     return Date.now() < hashSyncLockUntil;
   }
 
-  function scrollToElement(target, smooth) {
+  function scrollToElement(target, smooth, extraOffset = 0) {
     if (!target) return;
     const topbarH = getTopbarHeight();
-    const top = window.scrollY + target.getBoundingClientRect().top - topbarH - 8;
+    const top = window.scrollY + target.getBoundingClientRect().top - topbarH - extraOffset - 8;
     window.scrollTo({ top: Math.max(top, 0), behavior: smooth ? 'smooth' : 'auto' });
   }
 
@@ -859,6 +859,8 @@
   let sidebarScrollY = 0;
   let skipSidebarScrollRestore = false;
   let pendingPartSearchQuery = '';
+  let fullModeSearchQuery = '';
+  let searchOpenMode = activeMode;
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -978,6 +980,14 @@
     searchNextBtn.disabled = activeMode === 'part';
   }
 
+  function getOpenSearchPanelHeight() {
+    return searchPanel.classList.contains('open') ? searchPanel.getBoundingClientRect().height : 0;
+  }
+
+  function restoreSearchInputForMode() {
+    searchInput.value = activeMode === 'full' ? fullModeSearchQuery : '';
+  }
+
   function renderPartSearchResults(results, query) {
     if (!query.trim()) {
       searchResultsEl.hidden = true;
@@ -1032,6 +1042,7 @@
   }
 
   function doAllModeSearch(query) {
+    fullModeSearchQuery = query;
     clearAllModeSearch();
     searchResultsEl.hidden = true;
     searchResultsEl.innerHTML = '';
@@ -1085,20 +1096,25 @@
     currentMarkIdx = ((idx % searchMarks.length) + searchMarks.length) % searchMarks.length;
     const mark = searchMarks[currentMarkIdx];
     mark.classList.add('current');
-    scrollToElement(mark, true);
+    scrollToElement(mark, true, getOpenSearchPanelHeight());
     searchCount.textContent = `${currentMarkIdx + 1} / ${searchMarks.length}`;
   }
 
   function openSearch() {
+    const wasOpen = searchPanel.classList.contains('open');
+    searchOpenMode = activeMode;
+    if (!wasOpen) restoreSearchInputForMode();
     searchPanel.classList.add('open');
+    if (activeMode === 'full' && searchInput.value.trim() && (!wasOpen || !searchMarks.length)) doAllModeSearch(searchInput.value);
     searchInput.focus();
     searchInput.select();
   }
 
   function closeSearch() {
+    if (searchPanel.classList.contains('open') && searchOpenMode === 'full') fullModeSearchQuery = searchInput.value;
     searchPanel.classList.remove('open');
-    searchInput.value = '';
     clearSearchUi();
+    restoreSearchInputForMode();
   }
 
   function closeSidebar() {
@@ -1145,6 +1161,7 @@
       renderApp(true);
     });
     searchInput.addEventListener('input', () => {
+      if (activeMode === 'full') fullModeSearchQuery = searchInput.value;
       clearTimeout(searchTimer);
       searchTimer = setTimeout(() => {
         if (activeMode === 'part') doPartModeSearch(searchInput.value, appState.searchIndex);
