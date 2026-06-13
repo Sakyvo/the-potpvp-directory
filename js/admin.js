@@ -5,6 +5,7 @@
   const DRAFT_KEY = 'ppd_global_draft';
   const ADMIN_MODE_KEY = 'ppdir-admin-view-mode';
   const ADMIN_WORK_MODE_KEY = 'ppdir-admin-work-mode';
+  const ADMIN_EDIT_MODULE_KEY = 'ppdir-admin-edit-module';
   const ADMIN_TOC_DEPTH_KEY = 'ppdir-admin-toc-depth';
   const ADMIN_TOC_TRACK_KEY = 'ppdir-admin-toc-track';
   const ADMIN_TOC_LEGACY_COLLAPSED_KEY = 'ppdir-admin-toc-collapsed';
@@ -18,7 +19,7 @@
   let currentView = adminWorkMode === 'edit' ? 'source' : 'rendered';
   let adminMode = getSavedAdminMode();
   let activeSegmentKey = '';
-  let activeEditModuleKey = '';
+  let activeEditModuleKey = getSavedEditModuleKey();
   let activeEditRange = null;
   let adminDoc = null;
   let maintSha = null;
@@ -97,6 +98,21 @@
   function saveAdminWorkMode(mode) {
     try {
       localStorage.setItem(ADMIN_WORK_MODE_KEY, mode);
+    } catch {}
+  }
+
+  function getSavedEditModuleKey() {
+    try {
+      return localStorage.getItem(ADMIN_EDIT_MODULE_KEY) || 'all-in-one';
+    } catch {
+      return 'all-in-one';
+    }
+  }
+
+  function saveEditModuleKey(key) {
+    if (!key) return;
+    try {
+      localStorage.setItem(ADMIN_EDIT_MODULE_KEY, key);
     } catch {}
   }
 
@@ -902,7 +918,10 @@
       || modules.find(module => module.startLine >= result.line)
       || modules.find(module => module.label === label)
       || modules[0];
-    if (nextModule) activeEditModuleKey = nextModule.key;
+    if (nextModule) {
+      activeEditModuleKey = nextModule.key;
+      saveEditModuleKey(activeEditModuleKey);
+    }
     activeEditRange = null;
     return { ok: true };
   }
@@ -915,6 +934,7 @@
     }
     if (!module) module = modules[0] || null;
     activeEditModuleKey = module?.key || '';
+    if (activeEditModuleKey) saveEditModuleKey(activeEditModuleKey);
     return module;
   }
 
@@ -936,6 +956,7 @@
     const module = findEditModuleForDocLine(lineIndex, doc);
     if (module) {
       activeEditModuleKey = module.key;
+      saveEditModuleKey(activeEditModuleKey);
       activeEditRange = null;
     }
     return module;
@@ -969,6 +990,7 @@
         || modules[0];
       if (nextModule) {
         activeEditModuleKey = nextModule.key;
+        saveEditModuleKey(activeEditModuleKey);
         activeEditRange = {
           key: nextModule.key,
           startLine: nextModule.startLine,
@@ -1277,7 +1299,7 @@
       currentView = adminWorkMode === 'edit' ? 'source' : 'rendered';
       activeEditRange = null;
       saveAdminWorkMode(adminWorkMode);
-      if (adminWorkMode === 'edit') setActiveEditModuleFromLine(anchorLine, getAdminDoc());
+      if (adminWorkMode === 'edit') ensureActiveEditModule(getAdminDoc());
       else if (adminMode === 'part') {
         const doc = getAdminDoc();
         const segment = [...doc.segmentMap.values()].find(item => anchorLine >= item.startLine && anchorLine < item.endLine);
@@ -1340,6 +1362,7 @@
       pushUndo();
       syncSourceEditorToBuffer();
       activeEditModuleKey = select.value;
+      saveEditModuleKey(activeEditModuleKey);
       activeEditRange = null;
       updateView();
     });
