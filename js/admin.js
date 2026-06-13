@@ -4,17 +4,21 @@
   const $ = s => document.querySelector(s);
   const DRAFT_KEY = 'ppd_global_draft';
   const ADMIN_MODE_KEY = 'ppdir-admin-view-mode';
+  const ADMIN_WORK_MODE_KEY = 'ppdir-admin-work-mode';
   const ADMIN_TOC_DEPTH_KEY = 'ppdir-admin-toc-depth';
   const ADMIN_TOC_TRACK_KEY = 'ppdir-admin-toc-track';
   const ADMIN_TOC_LEGACY_COLLAPSED_KEY = 'ppdir-admin-toc-collapsed';
+  const EDIT_BOUNDARY_TITLE = 'Part 3. Video';
 
   let indexData = null;
   let indexSha = null;
   let fileShas = {};
   let sourceBuffer = '';
-  let currentView = 'rendered';
+  let adminWorkMode = getSavedAdminWorkMode();
+  let currentView = adminWorkMode === 'edit' ? 'source' : 'rendered';
   let adminMode = getSavedAdminMode();
   let activeSegmentKey = '';
+  let activeEditModuleKey = '';
   let activeEditRange = null;
   let adminDoc = null;
   let maintSha = null;
@@ -24,6 +28,7 @@
   let publishedBuffer = '';
   let adminTocDepth = getSavedAdminTocDepth();
   let adminTocTrackEnabled = getSavedAdminTocTrack();
+  let pendingAddModuleLevel = 1;
   const publishedImageCache = new Map();
 
   function setStatus(t) { $('#footer-status').textContent = t; }
@@ -51,9 +56,11 @@
 
   function getSavedAdminMode() {
     try {
-      return localStorage.getItem(ADMIN_MODE_KEY) === 'part' ? 'part' : 'all';
+      const saved = localStorage.getItem(ADMIN_MODE_KEY);
+      if (saved === 'all') localStorage.setItem(ADMIN_MODE_KEY, 'full');
+      return saved === 'part' ? 'part' : 'full';
     } catch {
-      return 'all';
+      return 'full';
     }
   }
 
@@ -76,6 +83,20 @@
   function saveAdminTocDepth(depth) {
     try {
       localStorage.setItem(ADMIN_TOC_DEPTH_KEY, String(depth));
+    } catch {}
+  }
+
+  function getSavedAdminWorkMode() {
+    try {
+      return localStorage.getItem(ADMIN_WORK_MODE_KEY) === 'edit' ? 'edit' : 'preview';
+    } catch {
+      return 'preview';
+    }
+  }
+
+  function saveAdminWorkMode(mode) {
+    try {
+      localStorage.setItem(ADMIN_WORK_MODE_KEY, mode);
     } catch {}
   }
 
@@ -483,8 +504,11 @@
     setStatus('就绪');
 
     initAdminModeToggle();
+    renderContextControl();
     updateView();
     initViewToggle();
+    initManageModal();
+    initAddModuleModal();
     initPasteHandler();
     initAdminSidebar();
     await loadMaintenance();
@@ -718,10 +742,234 @@
     lines.splice(startLine, Math.max(endLine - startLine, 0), ...nextLines);
   }
 
+  function normalizeModuleKeyText(text) {
+    return (stripHeadingMarkup(text) || 'module')
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\u4e00-\u9fff.-]+/g, '')
+      .slice(0, 80) || 'module';
+  }
+
+  function makeEditModuleKey(prefix, title, seen) {
+    const base = `${prefix}-${normalizeModuleKeyText(title)}`;
+    const count = (seen.get(base) || 0) + 1;
+    seen.set(base, count);
+    return count > 1 ? `${base}-${count}` : base;
+  }
+
+  function findEditBoundarySection(doc = getAdminDoc()) {
+    return doc.sections.find(section => section.title === EDIT_BOUNDARY_TITLE) || null;
+  }
+
+  function buildEditModules(doc = getAdminDoc()) {
+    const boundary = findEditBoundarySection(doc);
+    const boundaryStart = boundary ? boundary.startLine : doc.lines.length;
+    const modules = [{
+      key: 'main',
+      type: 'main',
+      level: 1,
+      label: 'main',
+      startLine: 0,
+      endLine: boundaryStart
+    }];
+    if (!boundary) return modules;
+
+    const seen = new Map();
+    const candidates = [];
+    doc.sections.forEach(section => {
+      if (section.startLine <= boundary.startLine) return;
+      const firstH3 = section.entries.find(entry => entry.level === 3);
+      candidates.push({
+        key: makeEditModuleKey('h2', section.rawTitle || section.title, seen),
+        type: 'h2',
+        level: 1,
+        label: section.title,
+        startLine: section.startLine,
+        endLine: firstH3 ? firstH3.lineIndex : section.endLine
+      });
+    });
+
+    const majorEntries = doc.entries
+      .filter(entry => entry.level === 2 || entry.level === 3)
+      .sort((a, b) => a.lineIndex - b.lineIndex);
+    doc.entries
+      .filter(entry => entry.level === 3 && entry.lineIndex > boundary.startLine)
+      .sort((a, b) => a.lineIndex - b.lineIndex)
+      .forEach(entry => {
+        const next = majorEntries.find(item => item.lineIndex > entry.lineIndex);
+        candidates.push({
+          key: makeEditModuleKey('h3', entry.rawTitle || entry.label, seen),
+          type: 'h3',
+          level: 2,
+          label: entry.label,
+          startLine: entry.lineIndex,
+          endLine: next ? next.lineIndex : doc.lines.length,
+          sectionKey: entry.sectionKey,
+          target: entry.target
+        });
+      });
+
+    candidates.sort((a, b) => a.startLine - b.startLine || a.level - b.level);
+    return modules.concat(candidates);
+  }
+
+  function getAddModuleOptions(level, doc = getAdminDoc()) {
+    if (level === 1) {
+      return doc.sections.map(section => ({
+        key: section.key,
+        label: section.title,
+        startLine: section.startLine,
+        endLine: section.endLine
+      }));
+    }
+    const boundary = findEditBoundarySection(doc);
+    if (!boundary) return [];
+    return buildEditModules(doc)
+      .filter(module => module.type === 'h2' || module.type === 'h3')
+      .map(module => ({
+        key: `${module.type}:${module.startLine}`,
+        label: module.label,
+        startLine: module.startLine,
+        endLine: module.endLine
+      }));
+  }
+
+  function populateBoundarySelect(select, options, value) {
+    if (!select) return;
+    select.innerHTML = [
+      '<option value="start">文档开头</option>',
+      ...options.map(option => `<option value="${escapeHtml(option.key)}">${escapeHtml(option.label)}</option>`),
+      '<option value="end">文档末尾</option>'
+    ].join('');
+    select.value = value;
+  }
+
+  function getAddInsertionLine(level, beforeValue, afterValue, doc = getAdminDoc()) {
+    const options = getAddModuleOptions(level, doc);
+    const boundaryIndex = value => {
+      if (value === 'start') return -1;
+      if (value === 'end') return options.length;
+      return options.findIndex(option => option.key === value);
+    };
+    const beforeIndex = boundaryIndex(beforeValue);
+    const afterIndex = boundaryIndex(afterValue);
+    if (beforeIndex < -1 || afterIndex < 0) {
+      return { ok: false, error: '请选择有效的前后片段。' };
+    }
+    if (afterIndex !== beforeIndex + 1) {
+      return { ok: false, error: '前后片段必须相邻。' };
+    }
+    if (level === 2 && !findEditBoundarySection(doc)) {
+      return { ok: false, error: `没有找到 ${EDIT_BOUNDARY_TITLE}，无法添加二级片段。` };
+    }
+    let line;
+    if (beforeIndex === -1) {
+      line = level === 2
+        ? (options[0]?.startLine ?? findEditBoundarySection(doc).contentStartLine)
+        : (options[0]?.startLine ?? 0);
+    } else {
+      line = options[beforeIndex].endLine;
+    }
+    return { ok: true, line };
+  }
+
+  function insertHeadingModule(level, title, beforeValue, afterValue) {
+    const trimmed = (title || '').trim();
+    if (!trimmed) return { ok: false, error: '请输入标题。' };
+    const doc = getAdminDoc();
+    const result = getAddInsertionLine(level, beforeValue, afterValue, doc);
+    if (!result.ok) return result;
+
+    const lines = sourceBuffer.replace(/\r\n/g, '\n').split('\n');
+    const heading = `${level === 1 ? '##' : '###'} ${trimmed}`;
+    const block = [];
+    if (result.line > 0 && lines[result.line - 1]?.trim()) block.push('');
+    block.push(heading, '');
+    if (result.line < lines.length && lines[result.line]?.trim()) block.push('');
+    lines.splice(result.line, 0, ...block);
+    sourceBuffer = lines.join('\n');
+    const nextDoc = getAdminDoc();
+    const modules = buildEditModules(nextDoc);
+    const label = stripHeadingMarkup(trimmed);
+    const nextModule = modules.find(module => module.startLine >= result.line && module.label === label)
+      || modules.find(module => module.startLine >= result.line)
+      || modules.find(module => module.label === label)
+      || modules[0];
+    if (nextModule) activeEditModuleKey = nextModule.key;
+    activeEditRange = null;
+    return { ok: true };
+  }
+
+  function ensureActiveEditModule(doc = getAdminDoc()) {
+    const modules = buildEditModules(doc);
+    let module = modules.find(item => item.key === activeEditModuleKey);
+    if (!module && activeEditRange) {
+      module = modules.find(item => activeEditRange.startLine >= item.startLine && activeEditRange.startLine < item.endLine);
+    }
+    if (!module) module = modules[0] || null;
+    activeEditModuleKey = module?.key || '';
+    return module;
+  }
+
+  function getEditModuleMarkdown(module, doc = getAdminDoc()) {
+    if (!module) return '';
+    return doc.lines.slice(module.startLine, module.endLine).join('\n');
+  }
+
+  function findEditModuleForDocLine(lineIndex, doc = getAdminDoc()) {
+    const modules = buildEditModules(doc);
+    return modules.find(module => lineIndex >= module.startLine && lineIndex < module.endLine)
+      || modules.find(module => module.startLine > lineIndex)
+      || modules[modules.length - 1]
+      || null;
+  }
+
+  function setActiveEditModuleFromLine(lineIndex, doc = getAdminDoc()) {
+    const module = findEditModuleForDocLine(lineIndex, doc);
+    if (module) {
+      activeEditModuleKey = module.key;
+      activeEditRange = null;
+    }
+    return module;
+  }
+
   function syncSourceEditorToBuffer() {
     if (currentView !== 'source') return;
     const source = $('#source-editor');
     if (!source) return;
+    if (adminWorkMode === 'edit') {
+      const doc = adminDoc || getAdminDoc();
+      const module = ensureActiveEditModule(doc);
+      if (!activeEditRange && module) {
+        activeEditRange = {
+          key: module.key,
+          startLine: module.startLine,
+          endLine: module.endLine
+        };
+      }
+      const range = activeEditRange || module;
+      if (!range) return;
+      const startLine = range.startLine || 0;
+      const oldKey = range.key || activeEditModuleKey;
+      const lines = sourceBuffer.replace(/\r\n/g, '\n').split('\n');
+      replaceLineRange(lines, range.startLine, range.endLine, source.value);
+      sourceBuffer = lines.join('\n');
+      const nextDoc = getAdminDoc();
+      const modules = buildEditModules(nextDoc);
+      const nextModule = modules.find(item => item.key === oldKey)
+        || modules.find(item => startLine >= item.startLine && startLine < item.endLine)
+        || modules[0];
+      if (nextModule) {
+        activeEditModuleKey = nextModule.key;
+        activeEditRange = {
+          key: nextModule.key,
+          startLine: nextModule.startLine,
+          endLine: nextModule.endLine
+        };
+      }
+      renderContextControl();
+      return;
+    }
     if (adminMode === 'part') {
       const doc = adminDoc || getAdminDoc();
       const segment = ensureActiveSegment(doc);
@@ -763,7 +1011,11 @@
     el.selectionStart = el.selectionEnd = Math.min(pos, el.value.length);
     el.focus();
     const doc = getAdminDoc();
-    const segmentOffset = adminMode === 'part' ? (activeEditRange?.startLine ?? ensureActiveSegment(doc)?.startLine ?? 0) : 0;
+    const segmentOffset = adminWorkMode === 'edit'
+      ? (activeEditRange?.startLine ?? ensureActiveEditModule(doc)?.startLine ?? 0)
+      : adminMode === 'part'
+        ? (activeEditRange?.startLine ?? ensureActiveSegment(doc)?.startLine ?? 0)
+        : 0;
     const entry = findEntryAtLine(doc, segmentOffset + lineIndex);
     setAdminTocProgress(doc, entry || doc.entries[0]);
   }
@@ -842,6 +1094,10 @@
   function getAdminSourceCaretDocLine(doc = getAdminDoc()) {
     const source = $('#source-editor');
     const line = source ? getTextareaCaretLine(source) : 0;
+    if (adminWorkMode === 'edit') {
+      const moduleOffset = activeEditRange?.startLine ?? ensureActiveEditModule(doc)?.startLine ?? 0;
+      return moduleOffset + line;
+    }
     if (adminMode !== 'part') return line;
     const segmentOffset = activeEditRange?.startLine ?? ensureActiveSegment(doc)?.startLine ?? 0;
     return segmentOffset + line;
@@ -980,129 +1236,127 @@
   }
 
   function updateAdminModeButton() {
-    const btn = $('#admin-mode-toggle');
-    if (!btn) return;
-    btn.textContent = adminMode;
-    btn.dataset.mode = adminMode;
-    btn.setAttribute('aria-pressed', adminMode === 'part' ? 'true' : 'false');
+    const group = $('#admin-mode-toggle');
+    if (!group) return;
+    group.dataset.mode = adminWorkMode;
+    group.querySelectorAll('[data-work-mode]').forEach(btn => {
+      const active = btn.dataset.workMode === adminWorkMode;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  function getCurrentAdminAnchorLine() {
+    const doc = getAdminDoc();
+    if (currentView === 'source') return getAdminSourceCaretDocLine(doc);
+    const entry = getPreviewAnchorEntry(doc);
+    return entry?.lineIndex || 0;
   }
 
   function initAdminModeToggle() {
-    const btn = $('#admin-mode-toggle');
-    if (!btn) return;
+    const group = $('#admin-mode-toggle');
+    if (!group) return;
     updateAdminModeButton();
-    btn.addEventListener('click', () => {
+    group.addEventListener('click', e => {
+      const btn = e.target.closest('[data-work-mode]');
+      if (!btn) return;
+      const mode = btn.dataset.workMode === 'edit' ? 'edit' : 'preview';
+      if (mode === adminWorkMode) return;
+      const anchorLine = getCurrentAdminAnchorLine();
+      if (currentView === 'source') pushUndo();
       syncSourceEditorToBuffer();
-      adminMode = adminMode === 'all' ? 'part' : 'all';
+      adminWorkMode = mode;
+      currentView = adminWorkMode === 'edit' ? 'source' : 'rendered';
       activeEditRange = null;
-      saveAdminMode(adminMode);
-      updateAdminModeButton();
-      const doc = getAdminDoc();
-      if (adminMode === 'part') {
-        const floorLines = getFloorLines(sourceBuffer);
-        let firstLine = 0;
-        if (currentView === 'source') {
-          const source = $('#source-editor');
-          firstLine = source ? getTextareaCaretLine(source) : 0;
-        } else {
-          const preview = $('#rendered-preview');
-          const floors = preview ? [...preview.querySelectorAll('.floor')] : [];
-          floors.forEach((floor, idx) => {
-            if (preview && floor.offsetTop - 60 <= preview.scrollTop) firstLine = floorLines[idx] || 0;
-          });
-        }
-        let sectionIdx = 0;
-        for (let i = floorLines.length - 1; i >= 0; i--) {
-          if (floorLines[i] <= firstLine) { sectionIdx = i; break; }
-        }
-        activeSegmentKey = doc.sections[Math.max(sectionIdx, 0)]?.key || doc.firstSegmentKey;
+      saveAdminWorkMode(adminWorkMode);
+      if (adminWorkMode === 'edit') setActiveEditModuleFromLine(anchorLine, getAdminDoc());
+      else if (adminMode === 'part') {
+        const doc = getAdminDoc();
+        const segment = [...doc.segmentMap.values()].find(item => anchorLine >= item.startLine && anchorLine < item.endLine);
+        activeSegmentKey = segment?.key || doc.firstSegmentKey;
       }
-      ensureActiveSegment(doc);
+      renderContextControl();
+      updateAdminModeButton();
       updateView();
     });
   }
 
+  function updatePreviewModeFromAnchor(nextMode) {
+    if (nextMode === adminMode) return;
+    const doc = getAdminDoc();
+    const entry = getPreviewAnchorEntry(doc);
+    const anchorLine = entry?.lineIndex || 0;
+    adminMode = nextMode;
+    activeEditRange = null;
+    saveAdminMode(adminMode);
+    if (adminMode === 'part') {
+      const segment = [...doc.segmentMap.values()].find(item => anchorLine >= item.startLine && anchorLine < item.endLine);
+      activeSegmentKey = segment?.key || doc.firstSegmentKey;
+    }
+    renderContextControl();
+    updateView();
+    if (entry?.target) scrollPreviewToTarget(entry.target);
+  }
+
+  function renderContextControl() {
+    const wrap = $('#view-toggle');
+    if (!wrap) return;
+    if (adminWorkMode === 'edit') {
+      const doc = getAdminDoc();
+      const modules = buildEditModules(doc);
+      ensureActiveEditModule(doc);
+      wrap.classList.add('module-control');
+      wrap.innerHTML = `<select class="edit-module-select" id="edit-module-select" aria-label="编辑片段">
+        ${modules.map(module => `<option value="${escapeHtml(module.key)}"${module.key === activeEditModuleKey ? ' selected' : ''}>${escapeHtml(module.label)}</option>`).join('')}
+      </select>`;
+      return;
+    }
+    wrap.classList.remove('module-control');
+    wrap.innerHTML = `
+      <button class="toggle-btn${adminMode === 'full' ? ' active' : ''}" type="button" data-preview-mode="full" aria-pressed="${adminMode === 'full' ? 'true' : 'false'}">full</button>
+      <button class="toggle-btn${adminMode === 'part' ? ' active' : ''}" type="button" data-preview-mode="part" aria-pressed="${adminMode === 'part' ? 'true' : 'false'}">part</button>
+    `;
+  }
+
   function initViewToggle() {
-    $('#view-toggle').addEventListener('click', e => {
-      const btn = e.target.closest('.toggle-btn');
-      if (!btn) return;
-      const view = btn.dataset.view;
-      if (view === currentView) return;
-
-      let anchorIdx = 0;
-      let anchorLine = 0;
-      let anchorTarget = '';
-      if (currentView === 'source') {
-        const el = $('#source-editor');
-        pushUndo();
-        syncSourceEditorToBuffer();
-        const doc = getAdminDoc();
-        const segment = adminMode === 'part' ? (activeEditRange || ensureActiveSegment(doc)) : null;
-        const firstLine = (segment?.startLine || 0) + getTextareaCaretLine(el);
-        const entry = findEntryAtLine(doc, firstLine);
-        anchorLine = entry ? entry.lineIndex : firstLine;
-        anchorTarget = entry?.target || '';
-        const floorLines = doc.sections.map(section => section.startLine);
-        for (let k = floorLines.length - 1; k >= 0; k--) {
-          if (floorLines[k] <= firstLine) { anchorIdx = k; break; }
-        }
-      } else {
-        const doc = getAdminDoc();
-        const entry = getPreviewAnchorEntry(doc);
-        if (entry) {
-          anchorLine = entry.lineIndex;
-          anchorTarget = entry.target;
-        }
-        const preview = $('#rendered-preview');
-        const floors = preview.querySelectorAll('.floor');
-        const scrollTop = preview.scrollTop;
-        floors.forEach((floor, i) => {
-          if (floor.offsetTop - 60 <= scrollTop) anchorIdx = i;
-        });
-      }
-
-      currentView = view;
-      $('#view-toggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    const wrap = $('#view-toggle');
+    if (!wrap) return;
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('[data-preview-mode]');
+      if (!btn || adminWorkMode !== 'preview') return;
+      updatePreviewModeFromAnchor(btn.dataset.previewMode === 'part' ? 'part' : 'full');
+    });
+    wrap.addEventListener('change', e => {
+      const select = e.target.closest('#edit-module-select');
+      if (!select || adminWorkMode !== 'edit') return;
+      pushUndo();
+      syncSourceEditorToBuffer();
+      activeEditModuleKey = select.value;
+      activeEditRange = null;
       updateView();
-
-      setTimeout(() => {
-        if (currentView === 'source') {
-          if (adminMode === 'part') {
-            const doc = getAdminDoc();
-            const segment = ensureActiveSegment(doc);
-            scrollSourceToLine(segment ? Math.max(0, anchorLine - segment.startLine) : 0);
-            return;
-          }
-          scrollSourceToLine(anchorLine);
-        } else {
-          const target = anchorTarget ? document.getElementById(anchorTarget) : null;
-          if (target) target.scrollIntoView({ block: 'start' });
-          else {
-            const floors = document.querySelectorAll('#rendered-preview .floor');
-            if (floors[anchorIdx]) floors[anchorIdx].scrollIntoView({ block: 'start' });
-          }
-        }
-      }, 50);
     });
   }
 
   function updateView() {
     const source = $('#source-editor');
     const rendered = $('#rendered-preview');
+    currentView = adminWorkMode === 'edit' ? 'source' : 'rendered';
+    renderContextControl();
+    updateAdminModeButton();
 
-    if (currentView === 'source') {
+    if (adminWorkMode === 'edit') {
       source.style.display = '';
       rendered.style.display = 'none';
       const doc = getAdminDoc();
-      const segment = ensureActiveSegment(doc);
-      activeEditRange = adminMode === 'part' && segment ? {
-        key: segment.key,
-        startLine: segment.startLine,
-        endLine: segment.endLine
+      const module = ensureActiveEditModule(doc);
+      activeEditRange = module ? {
+        key: module.key,
+        startLine: module.startLine,
+        endLine: module.endLine
       } : null;
-      source.value = adminMode === 'part' && segment ? getSegmentMarkdown(segment, doc) : sourceBuffer;
+      source.value = module ? getEditModuleMarkdown(module, doc) : sourceBuffer;
       source.focus();
+      buildAdminToc(doc);
     } else {
       activeEditRange = null;
       source.style.display = 'none';
@@ -1736,6 +1990,97 @@
     return result;
   }
 
+  // ═══ Admin Management ═══
+
+  function openModal(modal) {
+    if (modal) modal.style.display = '';
+  }
+
+  function closeModal(modal) {
+    if (modal) modal.style.display = 'none';
+  }
+
+  function updateAddModulePreview(level = pendingAddModuleLevel) {
+    const doc = getAdminDoc();
+    const options = getAddModuleOptions(level, doc);
+    const before = $('#add-module-before');
+    const after = $('#add-module-after');
+    populateBoundarySelect(before, options, options.length ? options[options.length - 1].key : 'start');
+    populateBoundarySelect(after, options, 'end');
+    const title = $('#add-module-title');
+    if (title) title.textContent = level === 1 ? '添加一级片段' : '添加二级片段';
+    const error = $('#add-module-error');
+    if (error) error.textContent = level === 2 && !findEditBoundarySection(doc)
+      ? `没有找到 ${EDIT_BOUNDARY_TITLE}，无法添加二级片段。`
+      : '';
+  }
+
+  function openAddModuleModal(level) {
+    pendingAddModuleLevel = level === 2 ? 2 : 1;
+    const input = $('#add-module-name');
+    if (input) input.value = '';
+    updateAddModulePreview(pendingAddModuleLevel);
+    closeModal($('#manage-modal'));
+    openModal($('#add-module-modal'));
+    setTimeout(() => input?.focus(), 0);
+  }
+
+  function initManageModal() {
+    const manage = $('#manage-modal');
+    const addModal = $('#add-module-modal');
+    $('#manage-btn')?.addEventListener('click', () => openModal(manage));
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        closeModal(manage);
+        closeModal(addModal);
+      });
+    });
+    [manage, addModal].forEach(modal => {
+      modal?.addEventListener('click', e => {
+        if (e.target === modal) closeModal(modal);
+      });
+    });
+    $('#add-level-1-btn')?.addEventListener('click', () => openAddModuleModal(1));
+    $('#add-level-2-btn')?.addEventListener('click', () => openAddModuleModal(2));
+    $('#publish-btn')?.addEventListener('click', () => {
+      closeModal(manage);
+      publish();
+    });
+  }
+
+  function initAddModuleModal() {
+    const form = $('#add-module-form');
+    if (!form) return;
+    const updateError = () => {
+      const result = getAddInsertionLine(pendingAddModuleLevel, $('#add-module-before').value, $('#add-module-after').value, getAdminDoc());
+      const error = $('#add-module-error');
+      if (error) error.textContent = result.ok ? '' : result.error;
+    };
+    $('#add-module-before')?.addEventListener('change', updateError);
+    $('#add-module-after')?.addEventListener('change', updateError);
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('#add-module-name').value;
+      const before = $('#add-module-before').value;
+      const after = $('#add-module-after').value;
+      const result = insertHeadingModule(pendingAddModuleLevel, name, before, after);
+      const error = $('#add-module-error');
+      if (!result.ok) {
+        if (error) error.textContent = result.error;
+        return;
+      }
+      adminWorkMode = 'edit';
+      currentView = 'source';
+      saveAdminWorkMode(adminWorkMode);
+      closeModal($('#add-module-modal'));
+      renderContextControl();
+      updateView();
+      buildAdminToc(getAdminDoc());
+      saveDraft();
+      setStatus('已添加片段');
+    });
+  }
+
   // ═══ Publish ═══
 
   const publishModal = $('#publish-modal');
@@ -1775,13 +2120,11 @@
     updatePublishProgress();
   }
 
-  $('#publish-btn').addEventListener('click', publish);
-
   async function publish() {
     syncSourceEditorToBuffer();
 
     const btn = $('#publish-btn');
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
 
     let md = expandImages(sourceBuffer);
     const images = extractMarkdownImages(md);
@@ -1895,7 +2238,7 @@
       if (publishTitle) publishTitle.textContent = '发布失败';
       setStatus(`发布失败: ${e.message}`);
     } finally {
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
       publishFooter.style.display = '';
     }
   }
@@ -1918,20 +2261,24 @@
     const btn = $('#maint-toggle');
     if (!btn) return;
     btn.classList.toggle('active', maintActive);
-    btn.textContent = maintActive ? '维护中' : '维护';
     btn.title = maintActive ? '关闭维护模式' : '开启维护模式';
+    const label = btn.querySelector('span');
+    const desc = $('#maint-action-desc') || btn.querySelector('small');
+    if (label) label.textContent = maintActive ? '维护中' : '维护';
+    else btn.textContent = maintActive ? '维护中' : '维护';
+    if (desc) desc.textContent = maintActive ? '关闭维护模式' : '开启维护模式';
     const badge = $('#admin-maint-badge');
     if (badge) badge.hidden = !maintActive;
   }
 
-  $('#maint-toggle').addEventListener('click', async () => {
+  async function toggleMaintenance() {
     const newState = !maintActive;
     const msg = newState
       ? '确定开启维护模式？\n开启后用户将无法访问文档主页。'
       : '确定关闭维护模式？\n关闭后文档主页将恢复正常访问。';
     if (!confirm(msg)) return;
     const btn = $('#maint-toggle');
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     try {
       maintActive = !maintActive;
       const content = JSON.stringify({ active: maintActive });
@@ -1944,9 +2291,11 @@
       console.error('Toggle maintenance failed:', e);
       setStatus('维护模式切换失败: ' + e.message);
     } finally {
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
     }
-  });
+  }
+
+  $('#maint-toggle')?.addEventListener('click', toggleMaintenance);
 
   // ═══ Admin Sidebar & TOC ═══
 
@@ -2031,6 +2380,13 @@
           const freshEntry = findEntryForItem(doc, item);
           const lineIndex = freshEntry ? freshEntry.lineIndex : oldLine;
           setAdminTocProgress(doc, freshEntry || findEntryAtLine(doc, lineIndex));
+          if (adminWorkMode === 'edit') {
+            const module = setActiveEditModuleFromLine(lineIndex, doc);
+            updateView();
+            setTimeout(() => scrollSourceToLine(module ? Math.max(0, lineIndex - module.startLine) : 0), 0);
+            closeAdminSidebar();
+            return;
+          }
           if (adminMode === 'part') {
             if (freshEntry) activeSegmentKey = freshEntry.segmentKey;
             else setActiveSegmentFromItem(item);

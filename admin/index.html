@@ -6,7 +6,7 @@
 <title>Admin - The PotPvP Directory</title>
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="stylesheet" href="../css/main.css?v=26">
-<link rel="stylesheet" href="../css/admin.css?v=16">
+<link rel="stylesheet" href="../css/admin.css?v=17">
 </head>
 <body>
 
@@ -31,17 +31,16 @@
     </button>
     <span class="admin-title">Admin</span>
     <div class="admin-actions">
-      <div class="view-toggle" id="view-toggle">
-        <button class="toggle-btn active" id="btn-rendered" data-view="rendered">预览</button>
-        <button class="toggle-btn" id="btn-source" data-view="source">源码</button>
+      <div class="view-toggle" id="view-toggle"></div>
+      <div class="admin-mode-toggle" id="admin-mode-toggle" role="group" aria-label="切换管理模式">
+        <button type="button" data-work-mode="preview">预览</button>
+        <button type="button" data-work-mode="edit">编辑</button>
       </div>
-      <button class="admin-mode-toggle" id="admin-mode-toggle" type="button" aria-label="切换编辑模式">all</button>
       <button class="undo-redo-btn" id="undo-btn" title="撤销 Ctrl+Z">&#x21B6;</button>
       <button class="undo-redo-btn" id="redo-btn" title="重做 Ctrl+Y">&#x21B7;</button>
       <span class="status-text" id="status-text"></span>
       <span class="maint-badge" id="admin-maint-badge" hidden>维护中</span>
-      <button class="maint-toggle" id="maint-toggle" title="维护模式">维护</button>
-      <button class="btn-publish" id="publish-btn">发布</button>
+      <button class="btn-manage" id="manage-btn" type="button">管理</button>
     </div>
   </header>
 
@@ -72,6 +71,61 @@
   </footer>
 </div>
 
+<!-- Manage Modal -->
+<div class="admin-modal" id="manage-modal" style="display:none;">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">管理</div>
+      <button class="admin-modal-close" type="button" data-close-modal aria-label="关闭">&times;</button>
+    </div>
+    <div class="manage-actions">
+      <button class="manage-action" type="button" id="add-level-1-btn">
+        <span>添加一级片段</span>
+        <small>插入 h2 模块</small>
+      </button>
+      <button class="manage-action" type="button" id="add-level-2-btn">
+        <span>添加二级片段</span>
+        <small>插入 h3 模块</small>
+      </button>
+      <button class="manage-action" type="button" id="maint-toggle">
+        <span>维护</span>
+        <small id="maint-action-desc">开启维护模式</small>
+      </button>
+      <button class="manage-action primary" type="button" id="publish-btn">
+        <span>发布</span>
+        <small>上传当前 Markdown</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Module Modal -->
+<div class="admin-modal" id="add-module-modal" style="display:none;">
+  <form class="admin-modal-card" id="add-module-form">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title" id="add-module-title">添加片段</div>
+      <button class="admin-modal-close" type="button" data-close-modal aria-label="关闭">&times;</button>
+    </div>
+    <label class="form-field">
+      <span>标题</span>
+      <input type="text" id="add-module-name" autocomplete="off" required>
+    </label>
+    <label class="form-field">
+      <span>它前面的片段</span>
+      <select id="add-module-before"></select>
+    </label>
+    <label class="form-field">
+      <span>它后面的片段</span>
+      <select id="add-module-after"></select>
+    </label>
+    <div class="modal-error" id="add-module-error"></div>
+    <div class="admin-modal-footer">
+      <button class="modal-secondary" type="button" data-close-modal>取消</button>
+      <button class="btn-publish" type="submit">添加</button>
+    </div>
+  </form>
+</div>
+
 <!-- Publish Progress Modal -->
 <div class="publish-modal" id="publish-modal" style="display:none;">
   <div class="publish-modal-card">
@@ -97,6 +151,6 @@
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/json.min.js"></script>
 <script src="../js/codeberg-api.js?v=11"></script>
-<script src="../js/admin.js?v=26"></script>
+<script src="../js/admin.js?v=27"></script>
 </body>
 </html>

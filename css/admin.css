@@ -56,10 +56,16 @@ body {
 }
 .btn-publish:hover { opacity: .85; }
 .btn-publish:disabled { opacity: .4; cursor: not-allowed; }
+.btn-manage {
+  height: 32px; padding: 0 14px; background: var(--accent); color: #fff;
+  border: none; font-size: 13px; cursor: pointer; font-weight: 600;
+}
+.btn-manage:hover { opacity: .85; }
 
 /* ── View Toggle ── */
 .view-toggle {
   display: flex; border: 1px solid var(--border); overflow: hidden;
+  min-width: 104px; height: 30px; background: var(--bg);
 }
 .toggle-btn {
   padding: 4px 14px; font-size: 12px; border: none; background: var(--bg);
@@ -70,14 +76,24 @@ body {
 .toggle-btn:hover { background: var(--bg-alt); }
 .toggle-btn.active { background: var(--accent); color: #fff; }
 .admin-mode-toggle {
-  min-width: 48px; height: 28px; padding: 0 10px;
-  border: 1px solid var(--border); background: var(--bg);
-  color: var(--text); cursor: pointer; font-size: 12px;
-  font-weight: 600; letter-spacing: .5px; text-transform: lowercase;
+  height: 30px; border: 1px solid var(--border); background: var(--bg);
+  display: flex; overflow: hidden; flex-shrink: 0;
 }
-.admin-mode-toggle:hover { background: var(--bg-alt); }
-.admin-mode-toggle[data-mode="part"] {
+.admin-mode-toggle button {
+  height: 100%; padding: 0 12px; border: none; border-right: 1px solid var(--border);
+  background: var(--bg); color: var(--text-sec); cursor: pointer; font-size: 12px; font-weight: 600;
+}
+.admin-mode-toggle button:last-child { border-right: none; }
+.admin-mode-toggle button:hover { background: var(--bg-alt); }
+.admin-mode-toggle button.active {
   background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.view-toggle.module-control {
+  width: 180px; min-width: 140px; overflow: visible;
+}
+.edit-module-select {
+  width: 100%; height: 100%; border: none; background: var(--bg);
+  color: var(--text); font-size: 12px; font-weight: 600; padding: 0 8px; outline: none;
 }
 
 /* ── Editor Main ── */
@@ -168,6 +184,71 @@ body {
 .maint-toggle.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 .maint-toggle:disabled { opacity: .4; cursor: not-allowed; }
 
+/* ── Admin Modals ── */
+.admin-modal {
+  position: fixed; inset: 0; z-index: 280;
+  background: rgba(0,0,0,.36);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px 12px;
+}
+.admin-modal-card {
+  background: var(--bg); border: 1px solid var(--border);
+  width: 420px; max-width: 100%;
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.admin-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.admin-modal-title { font-size: 15px; font-weight: 700; }
+.admin-modal-close {
+  width: 28px; height: 28px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); cursor: pointer;
+  font-size: 20px; line-height: 1;
+}
+.admin-modal-close:hover { background: var(--bg-alt); }
+.manage-actions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.manage-action {
+  min-height: 72px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); cursor: pointer; padding: 12px;
+  text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+}
+.manage-action:hover { background: var(--bg-alt); }
+.manage-action.primary {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.manage-action.active {
+  background: #1a1a1a; color: #fff; border-color: #1a1a1a;
+}
+.manage-action:disabled { opacity: .45; cursor: not-allowed; }
+.manage-action span { font-size: 14px; font-weight: 700; }
+.manage-action small { font-size: 12px; color: inherit; opacity: .72; }
+.form-field {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 12px; color: var(--text-sec); font-weight: 600;
+}
+.form-field input,
+.form-field select {
+  height: 36px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); padding: 0 10px; font-size: 13px; outline: none;
+}
+.form-field input:focus,
+.form-field select:focus { border-color: var(--accent); }
+.modal-error {
+  min-height: 18px; color: var(--danger); font-size: 12px; line-height: 1.5;
+}
+.admin-modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.modal-secondary {
+  height: 32px; padding: 0 14px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); cursor: pointer; font-size: 13px;
+}
+.modal-secondary:hover { background: var(--bg-alt); }
+
 /* ── Publish Progress Modal ── */
 .publish-modal {
   position: fixed; inset: 0; z-index: 300;
@@ -242,16 +323,23 @@ body {
   .admin-mode-toggle { flex-shrink: 0; }
   .toggle-btn,
   .admin-mode-toggle,
-  .maint-toggle,
+  .btn-manage,
   .btn-publish {
     white-space: nowrap;
     flex-shrink: 0;
   }
   .toggle-btn,
   .admin-mode-toggle,
-  .maint-toggle { padding-left: 8px; padding-right: 8px; }
+  .btn-manage { padding-left: 8px; padding-right: 8px; }
+  .admin-mode-toggle button { padding: 0 8px; }
+  .view-toggle { min-width: 88px; }
+  .view-toggle.module-control {
+    width: min(42vw, 168px);
+    min-width: 96px;
+  }
   .btn-publish { padding: 0 10px; }
   .undo-redo-btn { width: 26px; height: 26px; }
+  .manage-actions { grid-template-columns: 1fr; }
   .publish-modal-card {
     width: 100%;
     max-height: 88vh;
