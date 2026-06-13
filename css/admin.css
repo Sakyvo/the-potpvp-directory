@@ -65,7 +65,7 @@ body {
 /* ── View Toggle ── */
 .view-toggle {
   display: flex; border: 1px solid var(--border); overflow: hidden;
-  min-width: 104px; height: 30px; background: var(--bg);
+  width: max-content; min-width: 0; height: 30px; background: var(--bg);
 }
 .toggle-btn {
   padding: 4px 14px; font-size: 12px; border: none; background: var(--bg);
@@ -332,7 +332,7 @@ body {
   .admin-mode-toggle,
   .btn-manage { padding-left: 8px; padding-right: 8px; }
   .admin-mode-toggle button { padding: 0 8px; }
-  .view-toggle { min-width: 88px; }
+  .view-toggle { min-width: 0; }
   .view-toggle.module-control {
     width: min(42vw, 168px);
     min-width: 96px;

@@ -765,6 +765,13 @@
     const boundary = findEditBoundarySection(doc);
     const boundaryStart = boundary ? boundary.startLine : doc.lines.length;
     const modules = [{
+      key: 'all-in-one',
+      type: 'all',
+      level: 0,
+      label: 'ALL IN ONE',
+      startLine: 0,
+      endLine: doc.lines.length
+    }, {
       key: 'main',
       type: 'main',
       level: 1,
@@ -889,7 +896,7 @@
     lines.splice(result.line, 0, ...block);
     sourceBuffer = lines.join('\n');
     const nextDoc = getAdminDoc();
-    const modules = buildEditModules(nextDoc);
+    const modules = buildEditModules(nextDoc).filter(module => module.type !== 'all');
     const label = stripHeadingMarkup(trimmed);
     const nextModule = modules.find(module => module.startLine >= result.line && module.label === label)
       || modules.find(module => module.startLine >= result.line)
@@ -917,10 +924,11 @@
   }
 
   function findEditModuleForDocLine(lineIndex, doc = getAdminDoc()) {
-    const modules = buildEditModules(doc);
+    const modules = buildEditModules(doc).filter(module => module.type !== 'all');
     return modules.find(module => lineIndex >= module.startLine && lineIndex < module.endLine)
       || modules.find(module => module.startLine > lineIndex)
       || modules[modules.length - 1]
+      || buildEditModules(doc)[0]
       || null;
   }
 
