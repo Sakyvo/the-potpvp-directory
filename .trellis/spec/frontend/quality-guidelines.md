@@ -113,6 +113,23 @@ Wide tables need a local horizontal scroll container on mobile. The document bod
 wrap.appendChild(table);
 ```
 
+### Pattern: Mirror public render enhancements in admin preview
+
+**What**
+
+When adding a post-render enhancement to public markdown content, add the matching enhancement to admin rendered preview in the same change.
+
+**Why**
+
+Admin preview is the editing verification surface for the same Markdown. If public-only helpers such as code-copy buttons, table wrappers, anchors, or link normalization are not mirrored, authors see different behavior before publishing.
+
+**Example**
+
+```js
+enhanceScrollableTables(container);
+enhanceCodeBlocks(container);
+```
+
 ---
 
 ## Testing Requirements
@@ -123,6 +140,7 @@ wrap.appendChild(table);
 - For markdown spacing changes, verify both public content and admin preview and confirm global line-height did not change.
 - For nested list alignment, verify a numbered list with child bullets aligns visually with the parent item text start.
 - For table scrolling changes, verify public content and admin preview both wrap tables and keep table cell styling intact.
+- For post-render markdown enhancements, verify the public page and admin preview both apply the enhancement to the same `.floor-body` elements.
 
 ---
 
@@ -131,3 +149,4 @@ wrap.appendChild(table);
 - Confirm the host scope is narrow.
 - Confirm non-Shimo remote images still use the existing path.
 - Confirm primary fetch and fallback image load use the same referrer policy.
+- Confirm public markdown render enhancements are mirrored in admin preview unless the task explicitly scopes them out.
