@@ -1727,7 +1727,7 @@ aigc已截图:
 Q: 为什么要upscaling?
 A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选项黑盒不可控，徒增渲染时间。因此vv的渲染设置中导入分辨率与素材一致即可，接下来交给——
 
-![Image_11](/images/88.png)
+![](/images/88.png)
 
 ---
 ##### A. ffmpeg
@@ -1735,38 +1735,50 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 [https://www.bilibili.com/video/av116463977371129/](https://www.bilibili.com/video/av116463977371129/)
 
 ###### 测试算法
-p2 - **Aime4K**: 通过轻量级卷积神经网络和定向边缘锐化技术，针对二维动画特有的高对比度线条，和大面积平滑色块进行专门优化的实时放大算法，对方块人对砍有意外之效。依赖外部glsl
-p3 - **FSRCNNX**: 使用浅层卷积神经网络提取图像特征，基于深度学习的快速超分辨率算法；能通过模型「无中生有」地仿造真实的纹理细节。依赖外部glsl
-p4 - **FSR**: 边缘自适应空间放大算法过分析局部像素的梯度以识别边缘方向，沿边缘走向定向插值，随后进行高频细节锐化，保持边缘清晰的同时避免锯齿。依赖外部glsl
-p5 - **ewa_lanczos**: 椭圆加权平均 (aka. ewa) Lanczos滤波；将传统的正交Lanczos插值转换为极坐标系下的径向插值，消除传统lanczos常见的对角线锯齿和方向性伪影。需要libplacebo库
-p6 - **ewa_lanczossharp**: 锐化版ewa_lanczos，微调了模糊半径和窗口参数；通过收紧采样权重，牺牲少量平滑度来换取更高锐度。需要libplacebo库
-p7 - **ewa_lanczos4sharpest**: 更锐的ewa_lanczos；采用更大的采样半径和最激进的锐化参数，纹理细节更极限，但在强对比度边缘易产生明显的光晕(振铃效应)。需要libplacebo库
-p8 - **lanczos**: 传统高阶正交插值算法；一维插值易产生光晕。ffmpeg原生 (社区里大多数都是这个，拉完了只能说)
-p9 - **spline**: 样条插值算法；使用分段多项式平滑拟合像素点间的过渡，相比lanczos画面过渡更自然，光晕感显著减弱，但整体画面相对偏“软”。ffmpeg原生
-p10 - **spline_catmull-rom**: Catmull-Rom三次样条插值；通过相邻控制点计算切线，强制插值曲线精确穿过所有原始像素点。在锐度和抗锯齿之间取得平衡，锐度明显高于普通spline，而振铃效应又弱于lanczos。ffmpeg原生
+- p2 - Anime4K: 通过轻量级卷积神经网络和定向边缘锐化技术，针对二维动画特有的高对比度线条，和大面积平滑色块进行专门优化的实时放大算法，对方块人对砍有意外之效。依赖外部glsl
+- p3 - FSRCNNX: 使用浅层卷积神经网络提取图像特征，基于深度学习的快速超分辨率算法；能通过模型「无中生有」地仿造真实的纹理细节。依赖外部glsl
+- p4 - FSR: 边缘自适应空间放大算法过分析局部像素的梯度以识别边缘方向，沿边缘走向定向插值，随后进行高频细节锐化，保持边缘清晰的同时避免锯齿。依赖外部glsl
+- p5 - ewa_lanczos: 椭圆加权平均 (aka. ewa) Lanczos滤波；将传统的正交Lanczos插值转换为极坐标系下的径向插值，消除传统lanczos常见的对角线锯齿和方向性伪影。需要libplacebo库
+- p6 - ewa_lanczossharp: 锐化版ewa_lanczos，微调了模糊半径和窗口参数；通过收紧采样权重，牺牲少量平滑度来换取更高锐度。需要libplacebo库
+- p7 - ewa_lanczos4sharpest: 更锐的ewa_lanczos；采用更大的采样半径和最激进的锐化参数，纹理细节更极限，但在强对比度边缘易产生明显的光晕(振铃效应)。需要libplacebo库
+- p8 - lanczos: 传统高阶正交插值算法；一维插值易产生光晕。ffmpeg原生 (社区里大多数都是这个，拉完了只能说)
+- p9 - spline: 样条插值算法；使用分段多项式平滑拟合像素点间的过渡，相比lanczos画面过渡更自然，光晕感显著减弱，但整体画面相对偏“软”。ffmpeg原生
+- p10 - spline_catmull-rom: Catmull-Rom三次样条插值；通过相邻控制点计算切线，强制插值曲线精确穿过所有原始像素点。在锐度和抗锯齿之间取得平衡，锐度明显高于普通spline，而振铃效应又弱于lanczos。ffmpeg原生
 
+---
 ###### 总结
-Anime4K: 后二者的平衡FSRCNNX: 较锐利，界限明显FSR: 较圆滑，边缘略柔ewa*3: 都差不多，机器放大天花板，sharp最好原生*3: 拉了，catmull-rom勉强能看
+
+- Anime4K: 后二者的平衡
+- FSRCNNX: 较锐利，界限明显
+- FSR: 较圆滑，边缘略柔
+- ewa*3: 都差不多，机器放大天花板，sharp最好
+- 原生*3: 拉了，catmull-rom勉强能看
 
 ---
 ###### 获取
-ffmpeg (包含libplacebo库): [https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z)
-官网是精简版，第三方库需在gyan.dev下载脚本: [https://sakyvo.lanzouu.com/iFZa43o31o7i](https://sakyvo.lanzouu.com/iFZa43o31o7i)
-包含测试视频中所有脚本和对应的glsl文件，但个人只推荐3个超分(Anime4K, FSR, FSRCNNX)和ewa_lanczossharp
+- ffmpeg (包含libplacebo库): [https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z)
+官网是精简版，第三方库需在gyan.dev下载
+
+- 脚本: [https://sakyvo.lanzouu.com/i17613rwztfc](https://sakyvo.lanzouu.com/i17613rwztfc)
+包含测试视频中所有脚本和对应的glsl文件，但个人只推荐3个超分 (Anime4K, FSR, FSRCNNX) 和 ewa_lanczossharp
 
 ---
 ###### 使用
 没有做双击直接upscale，因为那样会把文件夹里所有视频全部加入任务队列，很烦。脚本含两种方案，其一为拖拽，不多赘述；其二为Windows发送到aka. Send to，配置方法如下
 
 1. 解压ffmpeg，更改文件夹名称`ffmpeg-date-git-num-full_build`为`ffmpeg` ，移动到 C:\ 根目录下
-![Image_12](/images/89.png)
+![](/images/89.png)
+
 2. 安置脚本，将glsl文件与脚本放在同一文件夹
-![Image_13](/images/90.png)
-3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![Image_14](/images/91.png)
+![](/images/90.png)
+
+3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![](/images/91.png)
+
 4. 按住alt拖动鼠标，将脚本的快捷方式移动至Sendto文件夹
-![Image_15](/images/92.png)
+![](/images/92.png)
+
 5. 随后即可通过发送到快捷调用
-![Image_16](/images/93.png)
+![](/images/93.png)
 
 ---
 ###### extra
@@ -1776,13 +1788,13 @@ ffmpeg (包含libplacebo库): [https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-ful
 chcp 65001 >nul
 setlocal EnableExtensions EnableDelayedExpansion
 set "FFMPEG=C:\ffmpeg\bin\ffmpeg.exe"
-set "FFPROBE=C:\ffmpeg\bin\ffprobe.exe"
 rem ====================== 画质参数 ======================
-set "CQ=15"
+set "CQ=12"
+set "VBR=80M"
 set "LOOKAHEAD=32"
 echo.
 echo ================================================
-echo ewa_lanczossharp 4K Upscale (libplacebo + NVENC)
+echo ewa_lanczossharp 4K Upscale (NVIDIA NVENC)
 echo 右键 Send To / 拖拽 时仅处理选中的视频
 echo ================================================
 echo.
@@ -1790,18 +1802,18 @@ rem ====================== 处理 Send To / 拖拽文件 ======================
 set "FILES_PROCESSED=0"
 
 if "%~1"=="" (
-echo 未检测到 Send To / 拖拽 的文件
-echo 请右键视频 - 发送到 - 本脚本
-echo 或直接拖拽视频到 bat 上
-pause
-exit /b 0
+    echo 未检测到 Send To / 拖拽 的文件
+    echo 请右键视频 - 发送到 - 本脚本
+    echo 或直接拖拽视频到 bat 上
+    pause
+    exit /b 0
 ) else (
-for %%a in (%*) do call :ProcessFile "%%~a"
+    for %%a in (%*) do call :ProcessFile "%%~a"
 )
 
 if %FILES_PROCESSED%==0 (
-echo.
-echo 【WARNING】未处理任何文件
+    echo.
+    echo 【WARNING】未处理任何文件
 )
 
 echo.
@@ -1814,75 +1826,33 @@ set "INPUT=%~1"
 set /a FILES_PROCESSED+=1
 echo.
 echo ===== Processing: %~nx1 =====
-set "SRC_VBR="
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=bit_rate -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do (
-if not "%%i"=="N/A" set "SRC_VBR=%%i"
-)
-if not defined SRC_VBR set "SRC_VBR=0"
-if !SRC_VBR! LEQ 0 set "SRC_VBR=90000000"
-set /a TARGET_VBR=SRC_VBR
-set /a MAXRATE=TARGET_VBR*2
-set /a BUFSIZE=TARGET_VBR*4
 
-rem --- 获取原视频色彩空间与格式 ---
-set "SRC_PIX_FMT="
-set "SRC_RANGE="
-set "SRC_SPACE="
-set "SRC_PRI="
-set "SRC_TRC="
-
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=pix_fmt -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_PIX_FMT=%%i"
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=color_range -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_RANGE=%%i"
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=color_space -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_SPACE=%%i"
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=color_primaries -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_PRI=%%i"
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=color_transfer -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_TRC=%%i"
-
-if not defined SRC_PIX_FMT set "SRC_PIX_FMT=yuv420p"
-if "!SRC_PIX_FMT!"=="N/A" set "SRC_PIX_FMT=yuv420p"
-
-rem --- 获取原视频帧率 ---
-set "SRC_FPS="
-for /f "usebackq delims=" %%i in (`"%FFPROBE%" -v error -select_streams v:0 -show_entries stream^=r_frame_rate -of default^=noprint_wrappers^=1:nokey^=1 "%INPUT%" 2^>nul`) do set "SRC_FPS=%%i"
-if not defined SRC_FPS set "SRC_FPS=30"
-if "!SRC_FPS!"=="N/A" set "SRC_FPS=30"
-if "!SRC_FPS!"=="0/0" set "SRC_FPS=30"
-
-rem --- 组装色彩参数 ---
-set "COLOR_ARGS="
-if defined SRC_RANGE if not "!SRC_RANGE!"=="N/A" if not "!SRC_RANGE!"=="unknown" set "COLOR_ARGS=!COLOR_ARGS! -color_range !SRC_RANGE!"
-if defined SRC_SPACE if not "!SRC_SPACE!"=="N/A" if not "!SRC_SPACE!"=="unknown" set "COLOR_ARGS=!COLOR_ARGS! -colorspace !SRC_SPACE!"
-if defined SRC_PRI if not "!SRC_PRI!"=="N/A" if not "!SRC_PRI!"=="unknown" set "COLOR_ARGS=!COLOR_ARGS! -color_primaries !SRC_PRI!"
-if defined SRC_TRC if not "!SRC_TRC!"=="N/A" if not "!SRC_TRC!"=="unknown" set "COLOR_ARGS=!COLOR_ARGS! -color_trc !SRC_TRC!"
-
-rem --- 组装多行滤镜参数 ---
-set "VF_ARGS=format=!SRC_PIX_FMT!"
-set "VF_ARGS=!VF_ARGS!,libplacebo=w=3840:h=2160:upscaler=ewa_lanczossharp"
-set "VF_ARGS=!VF_ARGS!,fps=!SRC_FPS!"
-
+rem --- 内置 upscaler=ewa_lanczossharp; 已移除探测; 色彩/像素格式/帧率由 libplacebo 默认保留 ---
+rem --- 10系(Pascal)及更旧显卡: 删除下方 -multipass / -temporal_aq / -bf / -b_ref_mode 四行 ---
 "%FFMPEG%" -y -init_hw_device vulkan=vk ^
 -i "%INPUT%" ^
--vf "!VF_ARGS!" ^
--pix_fmt !SRC_PIX_FMT! ^
-!COLOR_ARGS! ^
+-vf "libplacebo=w=3840:h=2160:upscaler=ewa_lanczossharp" ^
 -c:v hevc_nvenc ^
 -preset:v p7 ^
 -tune:v hq ^
 -rc:v vbr ^
 -multipass:v fullres ^
 -cq:v %CQ% ^
--b:v !TARGET_VBR! ^
--maxrate:v !MAXRATE! ^
--bufsize:v !BUFSIZE! ^
+-b:v %VBR% ^
+-maxrate:v 120M ^
+-bufsize:v 240M ^
 -rc-lookahead:v %LOOKAHEAD% ^
 -spatial_aq:v 1 ^
 -temporal_aq:v 1 ^
 -aq-strength:v 12 ^
+-bf:v 4 ^
+-b_ref_mode:v middle ^
 -c:a copy ^
-"%~dpn1-4k-ewa_lanczossharp.mp4"
+"%~dpn1-4K-ewa_lanczossharp.mp4"
 if %ERRORLEVEL%==0 (
-echo ✓ 成功: %~nx1
+    echo ✓ 成功: %~nx1
 ) else (
-echo ❌ 失败: %~nx1
+    echo ❌ 失败: %~nx1
 )
 goto :eof
 ```
@@ -1890,37 +1860,46 @@ goto :eof
 
 ---
 ##### B. Topaz
-! ! ! 渣机止步 ! ! !
-
+**! ! ! 渣机止步 ! ! !**
 dl: [https://filecr.com/windows/topaz-video-enhance-ai/](https://filecr.com/windows/topaz-video-enhance-ai/)
 
 ###### 效果对比
-origin 1080p
-![Image_17](/images/94.png)
-Topaz Proteus
-![Image_18](/images/95.png)
+
+- origin 1080p
+![](/images/94.png)
+- Topaz Proteus
+![](/images/95.png)
+
 贴图边缘改善非常明显，锐度降低的同时保留画质，比机器超分还强
 
+---
 ###### 代价
-![Image_19](/images/96.png)
+
+![](/images/96.png)
+
 无敌死慢，本人i5 10400 + RTX 3060一个2min视频得处理2小时，现在还在用GTX的还是算了吧
 
+---
 ###### 模型
-- Starlight: 扩散模型，擅长生成式放大和修复极低质量/老旧视频，细节丰
-- Starlight Mini: Starlight轻量版，相比更快(依然比传统模型慢的多
-- Proteus: 最通用全能模型，支持参数微调，适合大多数视频的去噪、锐化和增
-- Iris: 专精面部恢复和压缩伪影去除，适合人脸特写或采访视
-- Nyx: 专注强力去噪，适合噪点/颗粒严重的视频，先去噪再增
-- Rhea: 细节保留准确，适合低运动场景，大倍数放大
-- Artemis: 自动增强能力强，适合质量差、噪点多的视频，速度较
-- Gaia: 温和自然增强，破坏最小，适合动画、CG 和原质量较高的视
+
+- Starlight: 扩散模型，擅长生成式放大和修复极低质量/老旧视频，细节丰富
+- Starlight Mini: Starlight轻量版，相比更快(依然比传统模型慢的多)
+- Proteus: 最通用全能模型，支持参数微调，适合大多数视频的去噪、锐化和增强
+- Iris: 专精面部恢复和压缩伪影去除，适合人脸特写或采访视频
+- Nyx: 专注强力去噪，适合噪点/颗粒严重的视频，先去噪再增强
+- Rhea: 细节保留准确，适合低运动场景，大倍数放大强
+- Artemis: 自动增强能力强，适合质量差、噪点多的视频，速度较快
+- Gaia: 温和自然增强，破坏最小，适合动画、CG 和原质量较高的视频
 - Theia: 类似 Gaia 的温和模型，速度稍快，适合高质量源视频的轻度锐化和提升
 
 方块人对砍能用的也就Proteus和Gaia；扩散模型即使是mini也超级慢，且会凭空造帧还原素材，可能会很诡异。一般还是用Proteus
 
+---
 ###### 参考设置
-![Image_20](/images/97.png)
+![](/images/97.png)
+
 更细的yt搜吧这玩意我带不动也懒得折腾，性价比不是很高差不多得了
+
 其实这玩意还能补帧，但感觉不如Smoothie
 
 ---
