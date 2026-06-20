@@ -846,6 +846,15 @@
       endLine: doc.lines.length
     }];
 
+    modules.push({
+      key: 'main',
+      type: 'main',
+      level: 1,
+      label: 'main',
+      startLine: 0,
+      endLine: boundaryStart
+    });
+
     doc.sections
       .filter(section => section.hasHeading && section.startLine < boundaryStart)
       .forEach(section => {
@@ -858,15 +867,6 @@
           endLine: section.endLine
         });
       });
-
-    modules.push({
-      key: 'main',
-      type: 'main',
-      level: 1,
-      label: 'main',
-      startLine: 0,
-      endLine: boundaryStart
-    });
 
     if (!boundary) return modules;
 

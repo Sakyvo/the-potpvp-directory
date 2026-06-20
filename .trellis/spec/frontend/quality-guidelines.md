@@ -134,7 +134,7 @@ enhanceCodeBlocks(container);
 
 **What**
 
-In admin edit mode, keep `main` as an aggregate range from document start to the `Part 3. Video` boundary, but still expose every h2 section before that boundary as its own level-1 edit module.
+In admin edit mode, keep `main` as an aggregate range from document start to the `Part 3. Video` boundary, place it directly after `ALL IN ONE`, and still expose every h2 section before that boundary as its own level-1 edit module.
 
 **Why**
 
@@ -143,10 +143,10 @@ Authors can manually add h2 sections such as `Update Log` before the Video bound
 **Example**
 
 ```js
+modules.push(mainAggregateModule);
 doc.sections
   .filter(section => section.hasHeading && section.startLine < boundaryStart)
   .forEach(section => modules.push(toEditModule(section)));
-modules.push(mainAggregateModule);
 ```
 
 ---
@@ -160,7 +160,7 @@ modules.push(mainAggregateModule);
 - For nested list alignment, verify a numbered list with child bullets aligns visually with the parent item text start.
 - For table scrolling changes, verify public content and admin preview both wrap tables and keep table cell styling intact.
 - For post-render markdown enhancements, verify the public page and admin preview both apply the enhancement to the same `.floor-body` elements.
-- For admin edit module parsing, verify a manually added h2 before `Part 3. Video` appears in the edit dropdown while `main` remains available.
+- For admin edit module parsing, verify `main` appears directly below `ALL IN ONE`, and a manually added h2 before `Part 3. Video` also appears in the edit dropdown.
 
 ---
 
