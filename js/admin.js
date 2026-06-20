@@ -836,6 +836,7 @@
   function buildEditModules(doc = getAdminDoc()) {
     const boundary = findEditBoundarySection(doc);
     const boundaryStart = boundary ? boundary.startLine : doc.lines.length;
+    const seen = new Map();
     const modules = [{
       key: 'all-in-one',
       type: 'all',
@@ -843,17 +844,32 @@
       label: 'ALL IN ONE',
       startLine: 0,
       endLine: doc.lines.length
-    }, {
+    }];
+
+    doc.sections
+      .filter(section => section.hasHeading && section.startLine < boundaryStart)
+      .forEach(section => {
+        modules.push({
+          key: makeEditModuleKey('h2', section.rawTitle || section.title, seen),
+          type: 'h2',
+          level: 1,
+          label: section.title,
+          startLine: section.startLine,
+          endLine: section.endLine
+        });
+      });
+
+    modules.push({
       key: 'main',
       type: 'main',
       level: 1,
       label: 'main',
       startLine: 0,
       endLine: boundaryStart
-    }];
+    });
+
     if (!boundary) return modules;
 
-    const seen = new Map();
     const candidates = [];
     doc.sections.forEach(section => {
       if (section.startLine <= boundary.startLine) return;
@@ -904,7 +920,7 @@
     const boundary = findEditBoundarySection(doc);
     if (!boundary) return [];
     return buildEditModules(doc)
-      .filter(module => module.type === 'h2' || module.type === 'h3')
+      .filter(module => (module.type === 'h2' || module.type === 'h3') && module.startLine > boundary.startLine)
       .map(module => ({
         key: `${module.type}:${module.startLine}`,
         label: module.label,

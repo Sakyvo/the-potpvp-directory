@@ -130,6 +130,25 @@ enhanceScrollableTables(container);
 enhanceCodeBlocks(container);
 ```
 
+### Pattern: Treat admin `main` as an aggregate edit module
+
+**What**
+
+In admin edit mode, keep `main` as an aggregate range from document start to the `Part 3. Video` boundary, but still expose every h2 section before that boundary as its own level-1 edit module.
+
+**Why**
+
+Authors can manually add h2 sections such as `Update Log` before the Video boundary. Those sections must appear in the edit dropdown instead of being editable only through the broad `main` range.
+
+**Example**
+
+```js
+doc.sections
+  .filter(section => section.hasHeading && section.startLine < boundaryStart)
+  .forEach(section => modules.push(toEditModule(section)));
+modules.push(mainAggregateModule);
+```
+
 ---
 
 ## Testing Requirements
@@ -141,6 +160,7 @@ enhanceCodeBlocks(container);
 - For nested list alignment, verify a numbered list with child bullets aligns visually with the parent item text start.
 - For table scrolling changes, verify public content and admin preview both wrap tables and keep table cell styling intact.
 - For post-render markdown enhancements, verify the public page and admin preview both apply the enhancement to the same `.floor-body` elements.
+- For admin edit module parsing, verify a manually added h2 before `Part 3. Video` appears in the edit dropdown while `main` remains available.
 
 ---
 
@@ -150,3 +170,4 @@ enhanceCodeBlocks(container);
 - Confirm non-Shimo remote images still use the existing path.
 - Confirm primary fetch and fallback image load use the same referrer policy.
 - Confirm public markdown render enhancements are mirrored in admin preview unless the task explicitly scopes them out.
+- Confirm `main` is not the only way to edit h2 sections that appear before the admin edit boundary.
