@@ -1,5 +1,12 @@
-## 序
+## Update Log
+2026-06-20 Edited
+Current Version: 1.5.9
 
+1. bug fix
+2. 美化
+
+---
+## 序
 ***“道在迩而求诸远，事在易而求之难”***
 
 参商周转，落花如旧
@@ -12,15 +19,7 @@
 
 ---
 ~~其实啊这只是两年前开的一个坑罢了~~
-![输入图片说明](https://picui.ogmua.cn/s1/2026/05/31/6a1c1d178e0b8.webp)
-
----
-2026-05-31 Edited
-Current Version: 1.5.7
-
-Update Log:
-1. 序言重写
-2. 美化
+![](/images/168.png)
 
 ---
 **Menu**
@@ -55,10 +54,7 @@ Update Log:
 
 ---
 ## Part 1. Outra
-
 ### 1.1. Clients
-不同颜色文字之意: 重要  优势 挑刺  锐评
-
 重要性: 缺点＞优点。即使你很喜欢某个端的优势部分，但如果其缺点无法接受，还是建议换成最“不痛”的那个。至少目前没有一款能使所有人都满意的Client
 
 [patcher]: 本指sk1er的mod [Patcher](https://sk1er.club/mods/patcher) for 1.8.9 / 1.12.2。这里把语义缩小，仅指“修复材质包读取时内存溢出问题bug”这一模块。
@@ -72,17 +68,13 @@ Optimized Resource Pack Discovery. When using more than 50 resource packs, the s
 无patcher - 材质包＞300时读取逐渐缓慢，指数增长
 
 Q: 太长不看，怎么选
-A:
-![输入图片说明](https://picui.ogmua.cn/s1/2026/05/31/6a1c1d1735ccd.webp)
-
+A: ![](/images/169.png)
 建议去用lcqt，这个图我忘记在哪画的了，不改了
 
 Q: 后门?
-
 A: 所有端都没有后门。但你硬要觉得有那我希望它真有
 
-----------
-
+---
 #### 1.1.1. 维护中
 
 这一分组保持着更新，但无一例外存在“对笔者而言极其恶劣的bug”，虽然将来有被修复之可能¿
@@ -567,7 +559,7 @@ ind: [https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
 - Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
-A: ![输入图片说明](https://picui.ogmua.cn/s1/2026/05/31/6a1c1d178e0b8.webp)
+A: ![](/images/170.jpg)
 
 ---
 ### 1.3. Servers
@@ -975,8 +967,7 @@ more: https://massgrave.dev/windows_ltsc_links
 Idiol elo series: [https://www.bilibili.com/video/av685287849](https://www.bilibili.com/video/av685287849)
 
 - Tringed elo series
-  - [https://www.bilibili.com/video/BV1JP4y1s7jc/](https://www.bilibili.com/video/BV1JP4y1s7jc/)
-  - 
+[https://www.bilibili.com/video/BV1JP4y1s7jc/](https://www.bilibili.com/video/BV1JP4y1s7jc/)
 [https://www.bilibili.com/video/BV1DS4y1C7q2/](https://www.bilibili.com/video/BV1DS4y1C7q2/)
 
 isla elo series 2023: [https://www.bilibili.com/video/BV13c411J76V/](https://www.bilibili.com/video/BV13c411J76V/)
@@ -1099,8 +1090,6 @@ BCZ抄袭酥桃吧·。。。。
 - [qVarious] Best of qVarious ~ Farewell 👋
 [https://www.youtube.com/watch?v=kpBnzq_HldM](https://www.youtube.com/watch?v=kpBnzq_HldM)
 drill不好看，不看了
-
----
 ## Part 3. Video
 
 **Intro**
