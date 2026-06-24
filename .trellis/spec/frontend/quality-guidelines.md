@@ -149,6 +149,23 @@ doc.sections
   .forEach(section => modules.push(toEditModule(section)));
 ```
 
+### Pattern: Keep admin edit module controls anchored and adjacent
+
+**What**
+
+Admin edit module selection should load at the selected module's top. When switching from edit to preview, scroll preview to the selected module start, not the textarea caret or deepest visible child heading. In the add-module modal, changing either boundary select must auto-fill the other select to the adjacent valid boundary.
+
+**Why**
+
+Edit modules are copy/paste units. Mode switches that land at the bottom of a module and boundary pairs that can become non-adjacent both make routine editing slower and error-prone.
+
+**Example**
+
+```js
+const anchorLine = getActiveEditModuleStartLine();
+after.value = getBoundaryOptionValue(beforeIndex + 1, options);
+```
+
 ---
 
 ## Testing Requirements
@@ -161,6 +178,7 @@ doc.sections
 - For table scrolling changes, verify public content and admin preview both wrap tables and keep table cell styling intact.
 - For post-render markdown enhancements, verify the public page and admin preview both apply the enhancement to the same `.floor-body` elements.
 - For admin edit module parsing, verify `main` appears directly below `ALL IN ONE`, and a manually added h2 before `Part 3. Video` also appears in the edit dropdown.
+- For admin edit controls, verify preview/edit switching lands at the selected module top and add-module before/after selects auto-pair to adjacent boundaries.
 
 ---
 
@@ -171,3 +189,4 @@ doc.sections
 - Confirm primary fetch and fallback image load use the same referrer policy.
 - Confirm public markdown render enhancements are mirrored in admin preview unless the task explicitly scopes them out.
 - Confirm `main` is not the only way to edit h2 sections that appear before the admin edit boundary.
+- Confirm add-module boundary selectors cannot remain in a non-adjacent state after a user changes one side.

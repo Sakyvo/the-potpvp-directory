@@ -89,7 +89,8 @@ body {
   background: var(--accent); border-color: var(--accent); color: #fff;
 }
 .view-toggle.module-control {
-  width: 180px; min-width: 140px; overflow: visible;
+  width: clamp(140px, var(--edit-module-select-width, 18ch), 420px);
+  min-width: 140px; overflow: visible;
 }
 .edit-module-select {
   width: 100%; height: 100%; border: none; background: var(--bg);
@@ -334,7 +335,7 @@ body {
   .admin-mode-toggle button { padding: 0 8px; }
   .view-toggle { min-width: 0; }
   .view-toggle.module-control {
-    width: min(42vw, 168px);
+    width: clamp(96px, min(42vw, var(--edit-module-select-width, 168px)), 168px);
     min-width: 96px;
   }
   .btn-publish { padding: 0 10px; }

@@ -939,15 +939,22 @@
     select.value = value;
   }
 
+  function getBoundaryOptionIndex(value, options) {
+    if (value === 'start') return -1;
+    if (value === 'end') return options.length;
+    return options.findIndex(option => option.key === value);
+  }
+
+  function getBoundaryOptionValue(index, options) {
+    if (index < 0) return 'start';
+    if (index >= options.length) return 'end';
+    return options[index].key;
+  }
+
   function getAddInsertionLine(level, beforeValue, afterValue, doc = getAdminDoc()) {
     const options = getAddModuleOptions(level, doc);
-    const boundaryIndex = value => {
-      if (value === 'start') return -1;
-      if (value === 'end') return options.length;
-      return options.findIndex(option => option.key === value);
-    };
-    const beforeIndex = boundaryIndex(beforeValue);
-    const afterIndex = boundaryIndex(afterValue);
+    const beforeIndex = getBoundaryOptionIndex(beforeValue, options);
+    const afterIndex = getBoundaryOptionIndex(afterValue, options);
     if (beforeIndex < -1 || afterIndex < 0) {
       return { ok: false, error: '请选择有效的前后片段。' };
     }
@@ -1355,6 +1362,10 @@
     return entry?.lineIndex || 0;
   }
 
+  function getActiveEditModuleStartLine(doc = getAdminDoc()) {
+    return activeEditRange?.startLine ?? ensureActiveEditModule(doc)?.startLine ?? 0;
+  }
+
   function initAdminModeToggle() {
     const group = $('#admin-mode-toggle');
     if (!group) return;
@@ -1365,7 +1376,7 @@
       const mode = btn.dataset.workMode === 'edit' ? 'edit' : 'preview';
       if (mode === adminWorkMode) return;
       const bindPreviewToEditLine = adminWorkMode === 'edit' && mode === 'preview';
-      const anchorLine = getCurrentAdminAnchorLine();
+      const anchorLine = bindPreviewToEditLine ? getActiveEditModuleStartLine() : getCurrentAdminAnchorLine();
       if (currentView === 'source') pushUndo();
       syncSourceEditorToBuffer();
       adminWorkMode = mode;
@@ -1409,12 +1420,15 @@
       const doc = getAdminDoc();
       const modules = buildEditModules(doc);
       ensureActiveEditModule(doc);
+      const selectWidth = Math.max(12, Math.min(48, Math.max(...modules.map(module => module.label.length)) + 4));
       wrap.classList.add('module-control');
+      wrap.style.setProperty('--edit-module-select-width', `${selectWidth}ch`);
       wrap.innerHTML = `<select class="edit-module-select" id="edit-module-select" aria-label="编辑片段">
         ${modules.map(module => `<option value="${escapeHtml(module.key)}"${module.key === activeEditModuleKey ? ' selected' : ''}>${escapeHtml(module.label)}</option>`).join('')}
       </select>`;
       return;
     }
+    wrap.style.removeProperty('--edit-module-select-width');
     wrap.classList.remove('module-control');
     wrap.innerHTML = `
       <button class="toggle-btn${adminMode === 'full' ? ' active' : ''}" type="button" data-preview-mode="full" aria-pressed="${adminMode === 'full' ? 'true' : 'false'}">full</button>
@@ -1460,6 +1474,8 @@
         endLine: module.endLine
       } : null;
       source.value = module ? getEditModuleMarkdown(module, doc) : sourceBuffer;
+      source.scrollTop = 0;
+      source.selectionStart = source.selectionEnd = 0;
       source.focus();
       buildAdminToc(doc);
     } else {
@@ -2121,6 +2137,28 @@
       : '';
   }
 
+  function syncAddModuleBoundary(changed) {
+    const before = $('#add-module-before');
+    const after = $('#add-module-after');
+    if (!before || !after) return;
+    const options = getAddModuleOptions(pendingAddModuleLevel, getAdminDoc());
+    if (changed === 'before') {
+      let beforeIndex = getBoundaryOptionIndex(before.value, options);
+      if (beforeIndex >= options.length) {
+        beforeIndex = options.length - 1;
+        before.value = getBoundaryOptionValue(beforeIndex, options);
+      }
+      if (beforeIndex >= -1) after.value = getBoundaryOptionValue(beforeIndex + 1, options);
+      return;
+    }
+    let afterIndex = getBoundaryOptionIndex(after.value, options);
+    if (afterIndex <= -1) {
+      afterIndex = 0;
+      after.value = getBoundaryOptionValue(afterIndex, options);
+    }
+    if (afterIndex >= 0) before.value = getBoundaryOptionValue(afterIndex - 1, options);
+  }
+
   function openAddModuleModal(level) {
     pendingAddModuleLevel = level === 2 ? 2 : 1;
     const input = $('#add-module-name');
@@ -2162,8 +2200,14 @@
       const error = $('#add-module-error');
       if (error) error.textContent = result.ok ? '' : result.error;
     };
-    $('#add-module-before')?.addEventListener('change', updateError);
-    $('#add-module-after')?.addEventListener('change', updateError);
+    $('#add-module-before')?.addEventListener('change', () => {
+      syncAddModuleBoundary('before');
+      updateError();
+    });
+    $('#add-module-after')?.addEventListener('change', () => {
+      syncAddModuleBoundary('after');
+      updateError();
+    });
     form.addEventListener('submit', e => {
       e.preventDefault();
       const name = $('#add-module-name').value;
