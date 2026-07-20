@@ -20,6 +20,6 @@
     return;
   }
 
-  const isAdmin = !!(await CodebergAPI.verifySavedToken());
+  const isAdmin = !!(await GitHubAPI.verifySavedToken());
   if (isAdmin) location.replace('./');
 })();

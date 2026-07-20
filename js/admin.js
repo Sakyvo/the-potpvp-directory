@@ -239,7 +239,7 @@
     if (!path) return null;
     if (publishedImageCache.has(path)) return publishedImageCache.get(path);
     try {
-      const file = await CodebergAPI.getFile(path);
+      const file = await GitHubAPI.getFile(path);
       const content = normalizeBase64Content(file.content);
       publishedImageCache.set(path, content);
       return content;
@@ -529,19 +529,19 @@
   // ═══ Login ═══
 
   async function tryLogin(token) {
-    const storedToken = CodebergAPI.getToken();
+    const storedToken = GitHubAPI.getToken();
     $('#login-error').textContent = '';
     $('#login-btn').disabled = true;
     $('#login-btn').textContent = '验证中...';
     try {
-      const d = await CodebergAPI.verifyToken(token);
+      const d = await GitHubAPI.verifyToken(token);
       if (!d) throw new Error('Token 无效');
-      CodebergAPI.setToken(token);
+      GitHubAPI.setToken(token);
       $('#login-screen').style.display = 'none';
       $('#editor-screen').style.display = '';
       initEditor();
     } catch(e) {
-      if (token && token === storedToken) CodebergAPI.clearToken();
+      if (token && token === storedToken) GitHubAPI.clearToken();
       $('#login-screen').style.display = '';
       $('#login-error').textContent = e.message || '验证失败';
     } finally {
@@ -553,7 +553,7 @@
   $('#login-btn').addEventListener('click', () => tryLogin($('#token-input').value.trim()));
   $('#token-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin($('#token-input').value.trim()); });
 
-  const saved = CodebergAPI.getToken();
+  const saved = GitHubAPI.getToken();
   if (saved) tryLogin(saved);
 
   // ═══ Init Editor ═══
@@ -588,7 +588,7 @@
 
   async function loadIndex() {
     try {
-      const data = await CodebergAPI.getFile('content/_index.json');
+      const data = await GitHubAPI.getFile('content/_index.json');
       indexSha = data.sha;
       indexData = JSON.parse(decodeBase64Utf8(data.content));
     } catch {
@@ -597,7 +597,7 @@
     }
     if (!indexSha) {
       try {
-        const data = await CodebergAPI.getFile('content/_index.json');
+        const data = await GitHubAPI.getFile('content/_index.json');
         indexSha = data.sha;
       } catch {}
     }
@@ -620,7 +620,7 @@
     // Single file mode
     if (indexData.file) {
       try {
-        const data = await CodebergAPI.getFile(indexData.file);
+        const data = await GitHubAPI.getFile(indexData.file);
         fileShas[indexData.file] = data.sha;
         return decodeBase64Utf8(data.content);
       } catch {
@@ -634,7 +634,7 @@
     const flat = flatFiles();
     const results = await Promise.all(flat.map(async f => {
       try {
-        const data = await CodebergAPI.getFile(f.file);
+        const data = await GitHubAPI.getFile(f.file);
         fileShas[f.file] = data.sha;
         return decodeBase64Utf8(data.content);
       } catch {
@@ -2314,7 +2314,7 @@
             img.replacement = `![${img.alt}](/${originalPath})`;
           } else {
             const fname = `${++nextImageIndex}.${payload.ext}`;
-            await CodebergAPI.uploadImage(fname, payload.b64, `Upload ${fname}`);
+            await GitHubAPI.uploadImage(fname, payload.b64, `Upload ${fname}`);
             img.replacement = `![${img.alt}](/images/${fname})`;
           }
           setStep(si, 'done');
@@ -2335,11 +2335,11 @@
       try {
         if (!fileShas[mainFile]) {
           try {
-            const existing = await CodebergAPI.getFile(mainFile);
+            const existing = await GitHubAPI.getFile(mainFile);
             fileShas[mainFile] = existing.sha;
           } catch {}
         }
-        const result = await CodebergAPI.putFile(mainFile, md, 'Update content', fileShas[mainFile]);
+        const result = await GitHubAPI.putFile(mainFile, md, 'Update content', fileShas[mainFile]);
         fileShas[mainFile] = result.content.sha;
         setStep(si, 'done');
       } catch(e) {
@@ -2356,7 +2356,7 @@
         file: mainFile
       };
       try {
-        const result = await CodebergAPI.putFile(
+        const result = await GitHubAPI.putFile(
           'content/_index.json',
           JSON.stringify(newIndex, null, 2),
           'Update index to single file mode',
@@ -2367,8 +2367,8 @@
         setStep(si, 'done');
       } catch(e) {
         try {
-          const fresh = await CodebergAPI.getFile('content/_index.json');
-          const result = await CodebergAPI.putFile('content/_index.json', JSON.stringify(newIndex, null, 2), 'Update index', fresh.sha);
+          const fresh = await GitHubAPI.getFile('content/_index.json');
+          const result = await GitHubAPI.putFile('content/_index.json', JSON.stringify(newIndex, null, 2), 'Update index', fresh.sha);
           indexSha = result.content.sha;
           indexData = newIndex;
           setStep(si, 'done');
@@ -2397,7 +2397,7 @@
 
   async function loadMaintenance() {
     try {
-      const data = await CodebergAPI.getFile('maintenance.json');
+      const data = await GitHubAPI.getFile('maintenance.json');
       maintSha = data.sha;
       const parsed = JSON.parse(decodeBase64Utf8(data.content));
       maintActive = !!parsed.active;
@@ -2432,7 +2432,7 @@
     try {
       maintActive = !maintActive;
       const content = JSON.stringify({ active: maintActive });
-      const result = await CodebergAPI.putFile('maintenance.json', content, maintActive ? 'Enable maintenance' : 'Disable maintenance', maintSha);
+      const result = await GitHubAPI.putFile('maintenance.json', content, maintActive ? 'Enable maintenance' : 'Disable maintenance', maintSha);
       maintSha = result.content.sha;
       updateMaintBtn();
       setStatus(maintActive ? '已开启维护模式' : '已关闭维护模式');

@@ -143,7 +143,7 @@
   let showMaintBadge = false;
   const maintenanceState = await loadMaintenanceState();
   if (maintenanceState.active) {
-    const isAdmin = !!(await CodebergAPI.verifySavedToken());
+    const isAdmin = !!(await GitHubAPI.verifySavedToken());
     if (!isAdmin) {
       location.replace('maintenance.html');
       return;

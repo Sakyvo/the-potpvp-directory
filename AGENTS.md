@@ -2,14 +2,14 @@
 
 ## 项目定位
 
-The PotPvP Directory 是一个由 Markdown 内容驱动的静态知识站，包含公开阅读页和 Codeberg 管理后台。
+The PotPvP Directory 是一个由 Markdown 内容驱动的静态知识站，包含公开阅读页和 GitHub 管理后台。
 公开渲染、后台预览与编辑都围绕同一份完整 Markdown 文档工作；修改时优先保持三者行为一致。
 
 ## 技术栈与结构
 
 - 技术栈：原生 HTML、CSS、JavaScript；浏览器端使用 marked 与 highlight.js；无构建步骤。
 - `index.html`、`js/app.js`、`css/main.css`：公开阅读、目录、搜索与 Markdown 渲染。
-- `admin/`、`js/admin.js`、`css/admin.css`：Codeberg 登录、编辑、预览、维护与发布。
+- `admin/`、`js/admin.js`、`css/admin.css`：GitHub 登录、编辑、预览、维护与发布。
 - `content/`：Markdown 内容及内容索引；`images/`、`assets/`：站点媒体资源。
 - `.docs/`：活跃 issue、长期细则与历史归档。
 
