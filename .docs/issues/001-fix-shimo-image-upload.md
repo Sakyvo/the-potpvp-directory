@@ -1,4 +1,4 @@
-Status: open
+Status: done
 Source: `.docs/archive/trellis-tasks/06-09-fix-shimo-image-upload`
 
 ## What to build
@@ -11,13 +11,18 @@ remote and local image imports must retain their existing behavior.
 
 - [x] Shimo and Shimonote URLs use the no-referrer path in both fetch and image fallback handling.
 - [x] The host-specific behavior does not alter the fetch path for other remote image hosts.
-- [ ] Validate a representative `uploader.shimo.im` URL through the complete upload flow.
-- [ ] Run the focused JavaScript syntax and regression checks.
+- [x] Validate a representative `uploader.shimo.im` URL through the complete upload flow.
+- [x] Run the focused JavaScript syntax and regression checks.
 
 ## Progress so far
 
 Implementation landed in commit `2cb81f6`. The current code detects Shimo
 hosts and scopes `referrerPolicy: 'no-referrer'` to those URLs.
+
+Validated on 2026-07-20 with a historical live sample through headless admin
+paste and a mocked Codeberg publish boundary. The uploaded PNG matched the
+redirected image byte-for-byte. Per user decision, no further Shimo-specific
+validation is needed because this integration is scheduled for migration.
 
 ## Blocked by
 
