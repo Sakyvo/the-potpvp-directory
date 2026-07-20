@@ -1,0 +1,31 @@
+{
+  "id": "navigation-markdown-ux-improvements",
+  "name": "navigation-markdown-ux-improvements",
+  "title": "Plan navigation and markdown UX improvements",
+  "description": "Plan TOC tracking/depth controls, mobile table scrolling, full-mode search offset retention, and StackEdit-inspired heading/list layout fixes.",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "Sakyvo",
+  "assignee": "Sakyvo",
+  "createdAt": "2026-06-10",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "pages",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "06-10-toc-depth-track",
+    "06-10-mobile-table-scroll",
+    "06-10-stackedit-markdown-spacing",
+    "06-10-search-offset-query-memory"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
