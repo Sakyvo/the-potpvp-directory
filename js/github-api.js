@@ -108,7 +108,7 @@ const GitHubAPI = (function() {
   }
 
   async function uploadImage(filename, base64Data, message) {
-    const path = `images/${filename}`;
+    const path = `imgs/${filename}`;
     let sha;
     try {
       const existing = await getFileMetadata(path);

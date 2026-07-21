@@ -176,7 +176,7 @@
   }
 
   function repoImagePathFromSrc(src) {
-    const match = (src || '').trim().match(/^(?:\.\.\/|\/)?(images\/[^)\s?#]+)$/i);
+    const match = (src || '').trim().match(/^(?:\.\.\/|\/)?(imgs\/[^)\s?#]+)$/i);
     return match ? match[1] : '';
   }
 
@@ -220,7 +220,7 @@
   function getMaxNumberedImageIndex(images) {
     return images.reduce((max, image) => {
       const path = repoImagePathFromSrc(image.src);
-      const match = path.match(/^images\/(\d+)\.[a-z0-9]+$/i);
+      const match = path.match(/^imgs\/(\d+)\.[a-z0-9]+$/i);
       return match ? Math.max(max, Number(match[1])) : max;
     }, 0);
   }
@@ -2315,7 +2315,7 @@
           } else {
             const fname = `${++nextImageIndex}.${payload.ext}`;
             await GitHubAPI.uploadImage(fname, payload.b64, `Upload ${fname}`);
-            img.replacement = `![${img.alt}](/images/${fname})`;
+            img.replacement = `![${img.alt}](/imgs/${fname})`;
           }
           setStep(si, 'done');
         } catch(e) {
