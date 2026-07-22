@@ -27,15 +27,7 @@
     });
   }
 
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return code;
-    },
-    breaks: true
-  });
+  marked.setOptions({ breaks: true });
 
   const IMG_URL_RE = /(https?:\/\/[^\s<>)\]"']+\.(?:png|jpe?g|gif|webp|svg|bmp)(?:![a-zA-Z]+)?(?:\?[^\s<>)\]"']*)?)/gi;
   const WORD_JOINER = '\u2060';
@@ -45,6 +37,95 @@
   const TOC_LEGACY_COLLAPSED_KEY = 'ppdir-toc-collapsed';
   const JUMP_FLASH_MS = 1400;
   const HASH_SCROLL_STABILIZE_MS = 1200;
+  const HIGHLIGHT_BASE = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build';
+  const HIGHLIGHT_LANGUAGES = {
+    javascript: 'javascript',
+    js: 'javascript',
+    java: 'java',
+    json: 'json',
+    bash: 'bash',
+    shell: 'bash',
+    sh: 'bash'
+  };
+  let githubApiPromise = null;
+  let highlightCorePromise = null;
+  let highlightStylePromise = null;
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`Unable to load ${src}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadStylesheet(href) {
+    return new Promise((resolve, reject) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.onload = resolve;
+      link.onerror = () => reject(new Error(`Unable to load ${href}`));
+      document.head.appendChild(link);
+    });
+  }
+
+  async function loadGitHubApi() {
+    if (typeof GitHubAPI !== 'undefined') return GitHubAPI;
+    if (!githubApiPromise) {
+      githubApiPromise = loadScript('js/github-api.js?v=2').then(() => {
+        if (typeof GitHubAPI === 'undefined') throw new Error('GitHub API unavailable');
+        return GitHubAPI;
+      });
+    }
+    return githubApiPromise;
+  }
+
+  function getHighlightLanguage(code) {
+    for (const className of code.classList) {
+      if (!className.startsWith('language-')) continue;
+      return HIGHLIGHT_LANGUAGES[className.slice(9).toLowerCase()] || '';
+    }
+    return '';
+  }
+
+  function ensureHighlightCore() {
+    if (!highlightCorePromise) {
+      highlightCorePromise = loadScript(`${HIGHLIGHT_BASE}/highlight.min.js`);
+    }
+    return highlightCorePromise;
+  }
+
+  function ensureHighlightStyle() {
+    if (!highlightStylePromise) {
+      highlightStylePromise = loadStylesheet(`${HIGHLIGHT_BASE}/styles/github.min.css`);
+    }
+    return highlightStylePromise;
+  }
+
+  async function highlightCodeBlocks(root) {
+    const targets = [...root.querySelectorAll('.floor-body pre > code')]
+      .map(code => ({ code, language: getHighlightLanguage(code) }))
+      .filter(item => item.language && !item.code.dataset.highlighted);
+    if (!targets.length) return;
+
+    await Promise.all([ensureHighlightStyle(), ensureHighlightCore()]);
+    if (typeof hljs === 'undefined') return;
+    targets.forEach(({ code, language }) => {
+      if (hljs.getLanguage(language) && code.isConnected && root.contains(code) && !code.dataset.highlighted) {
+        hljs.highlightElement(code);
+      }
+    });
+  }
+
+  function scheduleSyntaxHighlighting(root) {
+    const run = () => highlightCodeBlocks(root).catch(() => {});
+    if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 1500 });
+    else setTimeout(run, 0);
+  }
 
   function escapeHtml(text) {
     return (text || '').replace(/[&<>"']/g, char => ({
@@ -111,20 +192,45 @@
     md = normalizeWhiteTextStyles(md);
     md = normalizeCjkStrong(md);
 
+    // Keep explicit blank-line spacers while parsing each rendered section once.
     const parts = md.split(/(\n{2,})/);
-    let html = '';
+    const blocks = [];
     for (let i = 0; i < parts.length; i++) {
       if (i % 2 === 1) {
         const n = parts[i].length - 1;
-        for (let j = 0; j < n; j++) html += '<div class="bl"></div>';
+        blocks.push(`<!--PDIR-BL:${n}-->`);
       } else {
         let block = parts[i].trim();
         if (!block) continue;
         block = block.replace(/%%CB(\d+)%%/g, (_, k) => codeBlocks[+k]);
-        html += marked.parse(block);
+        blocks.push(block);
       }
     }
-    return html.replace(/\uFFFC/g, '-').replace(/\u2060/g, '');
+    return marked.parse(blocks.join('\n\n'))
+      .replace(/\s*<!--PDIR-BL:(\d+)-->\s*/g, (_, count) => '<div class="bl"></div>'.repeat(Number(count)))
+      .replace(/\uFFFC/g, '-')
+      .replace(/\u2060/g, '');
+  }
+
+  async function fetchMd(path) {
+    try {
+      const res = await fetch(path);
+      if (!res.ok) return null;
+      return await res.text();
+    } catch {
+      return null;
+    }
+  }
+
+  async function loadRawMarkdown() {
+    try {
+      const indexResp = await fetch('content/_index.json');
+      if (!indexResp.ok) return null;
+      const indexData = await indexResp.json();
+      return fetchMd(indexData.file || 'content/main.md');
+    } catch {
+      return null;
+    }
   }
 
   async function loadMaintenanceState() {
@@ -140,10 +246,15 @@
     }
   }
 
+  const contentPromise = loadRawMarkdown();
   let showMaintBadge = false;
   const maintenanceState = await loadMaintenanceState();
   if (maintenanceState.active) {
-    const isAdmin = !!(await GitHubAPI.verifySavedToken());
+    let isAdmin = false;
+    try {
+      const githubApi = await loadGitHubApi();
+      isAdmin = !!(await githubApi.verifySavedToken());
+    } catch {}
     if (!isAdmin) {
       location.replace('maintenance.html');
       return;
@@ -165,6 +276,11 @@
   const modeToggle = $('#mode-toggle');
   const tocDepthControl = $('#toc-depth-control');
   const tocTrackToggle = $('#toc-track-toggle');
+  const rawMd = await contentPromise;
+  if (rawMd === null) {
+    contentEl.innerHTML = '<p style="padding:40px;color:red;">无法加载内容。</p>';
+    return;
+  }
   if (showMaintBadge) {
     const badge = $('#maint-badge');
     if (badge) badge.hidden = false;
@@ -196,6 +312,36 @@
     const copied = document.execCommand('copy');
     textarea.remove();
     if (!copied) throw new Error('Copy failed');
+  }
+
+  function createRenderedFragment(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    template.content.querySelectorAll('img').forEach(img => {
+      if (!img.hasAttribute('loading')) img.loading = 'lazy';
+      if (!img.hasAttribute('decoding')) img.decoding = 'async';
+    });
+    return template.content;
+  }
+
+  function setRenderedContent(container, html) {
+    container.replaceChildren(createRenderedFragment(html));
+  }
+
+  function appendRenderedContent(container, html) {
+    container.append(createRenderedFragment(html));
+  }
+
+  function yieldToBrowser() {
+    if (window.scheduler && typeof window.scheduler.yield === 'function') {
+      return window.scheduler.yield();
+    }
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
+  function waitForInitialPaint() {
+    if (typeof requestAnimationFrame !== 'function') return yieldToBrowser();
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
   }
 
   function enhanceCodeBlocks(root = contentEl) {
@@ -235,25 +381,6 @@
       table.parentNode.insertBefore(wrap, table);
       wrap.appendChild(table);
     });
-  }
-
-  let indexData;
-  try {
-    const res = await fetch('content/_index.json');
-    indexData = await res.json();
-  } catch {
-    contentEl.innerHTML = '<p style="padding:40px;color:red;">无法加载内容索引。</p>';
-    return;
-  }
-
-  async function fetchMd(path) {
-    try {
-      const res = await fetch(path);
-      if (!res.ok) return '';
-      return await res.text();
-    } catch {
-      return '';
-    }
   }
 
   function slugify(text) {
@@ -836,16 +963,33 @@
       ${buildPagerHtml([section.urlSlug, child.urlSlug], partPages)}`;
   }
 
-  function renderAllPage(sections) {
-    const html = sections.map(section => `
+  function renderAllFloor(section) {
+    return `
       <div class="floor" id="floor-${escapeHtml(section.id)}" data-section-id="${escapeHtml(section.id)}" data-url-slug="${escapeHtml(section.urlSlug)}">
         <div class="floor-header">${escapeHtml(section.floorNum)} &nbsp; ${escapeHtml(section.title)}</div>
         <div class="floor-body">${renderMd([section.intro, ...section.children.map(child => `${'#'.repeat(section.childLevel || 3)} ${child.rawTitle}\n${child.md}`)].filter(Boolean).join('\n\n'))}</div>
-      </div>`).join('');
-    contentEl.innerHTML = html;
+      </div>`;
+  }
+
+  async function renderAllPage(sections, version) {
+    const progressive = !parseHashPath().length && sections.length > 2;
+    const initialCount = progressive ? Math.min(2, sections.length) : sections.length;
+    setRenderedContent(contentEl, sections.slice(0, initialCount).map(renderAllFloor).join(''));
+
+    if (progressive) {
+      await waitForInitialPaint();
+      if (version !== renderVersion) return false;
+      for (let i = initialCount; i < sections.length; i++) {
+        appendRenderedContent(contentEl, renderAllFloor(sections[i]));
+        await yieldToBrowser();
+        if (version !== renderVersion) return false;
+      }
+    }
+    if (version !== renderVersion) return false;
+
     const targetByPath = new Map();
     const allIds = new Set();
-    document.querySelectorAll('.floor').forEach((floorEl, i) => {
+    contentEl.querySelectorAll('.floor').forEach((floorEl, i) => {
       const id = floorEl.dataset.sectionId || `floor-${i}`;
       const sectionSlug = sections[i]?.urlSlug || '';
       targetByPath.set(sectionSlug, { target: `floor-${id}`, urlSlug: sectionSlug });
@@ -883,6 +1027,7 @@
       });
     });
     renderToc(appState.tocEntries, { mode: 'full', targetByPath });
+    return true;
   }
 
   function renderToc(entries, options = {}) {
@@ -927,6 +1072,7 @@
   let pendingPartSearchQuery = '';
   let fullModeSearchQuery = '';
   let searchOpenMode = activeMode;
+  let renderVersion = 0;
 
   function assignNestedAnchors(root, baseId) {
     if (!root) return;
@@ -1413,7 +1559,6 @@
     scrollPartTarget(activeSection, activeChild, parseHashPath(), enableFlash);
   }
 
-  const rawMd = await fetchMd(indexData.file || 'content/main.md');
   const sections = splitMarkdownSections(rawMd);
   const appState = {
     sections,
@@ -1442,19 +1587,20 @@
     const child = parts[1] ? section.childMap.get(parts[1]) : null;
     if (parts[1] && !child && section.children.length) {
       setHash([section.urlSlug], true);
-      contentEl.innerHTML = renderPartSectionPage(section, appState.partPages);
+      setRenderedContent(contentEl, renderPartSectionPage(section, appState.partPages));
       renderPartToc(appState.sections, section, null);
       return initPartModeInteraction(section, null, enableFlash);
     }
-    contentEl.innerHTML = child
+    setRenderedContent(contentEl, child
       ? renderPartChildPage(section, child, appState.partPages)
-      : renderPartSectionPage(section, appState.partPages);
+      : renderPartSectionPage(section, appState.partPages));
     contentEl.querySelectorAll('.floor.floor-part .floor-body').forEach(el => assignNestedAnchors(el, el.dataset.anchorBase || section.id));
     renderPartToc(appState.sections, section, child);
     initPartModeInteraction(section, child, enableFlash);
   }
 
-  function renderApp(options) {
+  async function renderApp(options) {
+    const version = ++renderVersion;
     teardownDynamicEvents();
     clearSearchUi();
     modeToggle.textContent = activeMode;
@@ -1463,17 +1609,23 @@
     const enableFlash = typeof options === 'object' && options !== null ? !!options.flash : !!options;
     if (activeMode === 'part') renderPartPage(enableFlash);
     else {
-      renderAllPage(appState.sections);
+      const complete = await renderAllPage(appState.sections, version);
+      if (!complete || version !== renderVersion) return;
       initAllModeInteraction(enableFlash);
     }
+    if (version !== renderVersion) return;
     enhanceScrollableTables(contentEl);
     enhanceCodeBlocks(contentEl);
+    scheduleSyntaxHighlighting(contentEl);
     applyTocDepthState();
     setExternalLinks();
+    if (activeMode === 'full' && searchPanel.classList.contains('open') && searchInput.value.trim()) {
+      doAllModeSearch(searchInput.value);
+    }
   }
 
   bindStaticEvents();
-  renderApp(false);
+  await renderApp(false);
 
   const siteFooter = document.getElementById('site-footer');
   if (siteFooter) {

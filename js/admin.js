@@ -462,15 +462,7 @@
 
   // ═══ Marked config ═══
 
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs && hljs.getLanguage && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return code;
-    },
-    breaks: true
-  });
+  marked.setOptions({ breaks: true });
 
   function setCodeCopyButtonState(button, copied) {
     button.classList.toggle('is-copied', copied);
@@ -495,6 +487,27 @@
     const copied = document.execCommand('copy');
     textarea.remove();
     if (!copied) throw new Error('Copy failed');
+  }
+
+  function setRenderedPreview(container, html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    template.content.querySelectorAll('.floor-body img').forEach(img => {
+      if (!img.hasAttribute('loading')) img.loading = 'lazy';
+      if (!img.hasAttribute('decoding')) img.decoding = 'async';
+    });
+    container.replaceChildren(template.content);
+  }
+
+  function enhanceSyntaxHighlighting(root) {
+    if (typeof hljs === 'undefined') return;
+    root.querySelectorAll('.floor-body pre > code').forEach(code => {
+      const languageClass = [...code.classList].find(name => name.startsWith('language-'));
+      const language = languageClass ? languageClass.slice(9) : '';
+      if (language && hljs.getLanguage(language) && !code.dataset.highlighted) {
+        hljs.highlightElement(code);
+      }
+    });
   }
 
   function enhanceCodeBlocks(root) {
@@ -1537,20 +1550,24 @@
     md = normalizeWhiteTextStyles(md);
     md = normalizeCjkStrong(md);
 
+    // Keep explicit blank-line spacers while parsing each rendered section once.
     const parts = md.split(/(\n{2,})/);
-    let html = '';
+    const blocks = [];
     for (let i = 0; i < parts.length; i++) {
       if (i % 2 === 1) {
         const n = parts[i].length - 1;
-        for (let j = 0; j < n; j++) html += '<div class="bl"></div>';
+        blocks.push(`<!--PDIR-BL:${n}-->`);
       } else {
         let block = parts[i].trim();
         if (!block) continue;
         block = block.replace(/%%CB(\d+)%%/g, (_, k) => codeBlocks[+k]);
-        html += marked.parse(block);
+        blocks.push(block);
       }
     }
-    return html.replace(/\uFFFC/g, '-').replace(/\u2060/g, '');
+    return marked.parse(blocks.join('\n\n'))
+      .replace(/\s*<!--PDIR-BL:(\d+)-->\s*/g, (_, count) => '<div class="bl"></div>'.repeat(Number(count)))
+      .replace(/\uFFFC/g, '-')
+      .replace(/\u2060/g, '');
   }
 
   function renderPreview() {
@@ -1564,14 +1581,17 @@
       return;
     }
 
+    let html;
     if (adminMode === 'part') {
       const segment = ensureActiveSegment(doc);
-      container.innerHTML = segment ? renderAdminPartPreview(segment, doc) : '<div class="paste-hint">没有可预览的分段。</div>';
+      html = segment ? renderAdminPartPreview(segment, doc) : '<div class="paste-hint">没有可预览的分段。</div>';
     } else {
-      container.innerHTML = doc.sections.map(section => renderAdminSectionPreview(section, doc, false)).join('');
+      html = doc.sections.map(section => renderAdminSectionPreview(section, doc, false)).join('');
     }
+    setRenderedPreview(container, html);
     assignAdminPreviewAnchors(doc);
     enhanceScrollableTables(container);
+    enhanceSyntaxHighlighting(container);
     enhanceCodeBlocks(container);
 
     container.querySelectorAll('a[href]').forEach(a => {
