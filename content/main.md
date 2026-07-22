@@ -1723,11 +1723,12 @@ aigc已截图:
 
 ---
 ### 3.3. Upscaling
+
 ##### Semi-Intro
 Q: 为什么要upscaling?
 A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选项黑盒不可控，徒增渲染时间。因此vv的渲染设置中导入分辨率与素材一致即可，接下来交给——
 
-![](/imgs/88.png)
+![](https://uploader.shimo.im/f/rj34SWMyiOAt1zJB.png!thumbnail)
 
 ---
 ##### A. ffmpeg
@@ -1735,24 +1736,31 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 [https://www.bilibili.com/video/av116463977371129/](https://www.bilibili.com/video/av116463977371129/)
 
 ###### 测试算法
-- p2 - Anime4K: 通过轻量级卷积神经网络和定向边缘锐化技术，针对二维动画特有的高对比度线条，和大面积平滑色块进行专门优化的实时放大算法，对方块人对砍有意外之效。依赖外部glsl
-- p3 - FSRCNNX: 使用浅层卷积神经网络提取图像特征，基于深度学习的快速超分辨率算法；能通过模型「无中生有」地仿造真实的纹理细节。依赖外部glsl
-- p4 - FSR: 边缘自适应空间放大算法过分析局部像素的梯度以识别边缘方向，沿边缘走向定向插值，随后进行高频细节锐化，保持边缘清晰的同时避免锯齿。依赖外部glsl
-- p5 - ewa_lanczos: 椭圆加权平均 (aka. ewa) Lanczos滤波；将传统的正交Lanczos插值转换为极坐标系下的径向插值，消除传统lanczos常见的对角线锯齿和方向性伪影。需要libplacebo库
-- p6 - ewa_lanczossharp: 锐化版ewa_lanczos，微调了模糊半径和窗口参数；通过收紧采样权重，牺牲少量平滑度来换取更高锐度。需要libplacebo库
-- p7 - ewa_lanczos4sharpest: 更锐的ewa_lanczos；采用更大的采样半径和最激进的锐化参数，纹理细节更极限，但在强对比度边缘易产生明显的光晕(振铃效应)。需要libplacebo库
-- p8 - lanczos: 传统高阶正交插值算法；一维插值易产生光晕。ffmpeg原生 (社区里大多数都是这个，拉完了只能说)
-- p9 - spline: 样条插值算法；使用分段多项式平滑拟合像素点间的过渡，相比lanczos画面过渡更自然，光晕感显著减弱，但整体画面相对偏“软”。ffmpeg原生
-- p10 - spline_catmull-rom: Catmull-Rom三次样条插值；通过相邻控制点计算切线，强制插值曲线精确穿过所有原始像素点。在锐度和抗锯齿之间取得平衡，锐度明显高于普通spline，而振铃效应又弱于lanczos。ffmpeg原生
+4K 放大算法简介
+- p1 - 原视频
+- p2 - `Lunatic`: 月都科技；基于 **Anime4K Restore CNN Soft M** 的内容自适应恢复方案，优先增强爱心、盾牌和文字等复杂 HUD，纯色区域尽量旁路，并限制亮度与颜色漂移，再由 **ewa_lanczossharp** 完成 2 倍放大。兼顾二压后的清晰度与原画稳定性。依赖外部 glsl 和 libplacebo 库
+- p3 - `Anime4K`: 通过轻量级卷积神经网络和定向边缘锐化技术，针对二维动画特有的高对比度线条，和大面积平滑色块进行专门优化的实时放大算法，对方块人对砍有意外之效。依赖外部glsl
+- p4 - `FSRCNNX:` 使用浅层卷积神经网络提取图像特征，基于深度学习的快速超分辨率算法；能通过模型「无中生有」地仿造真实的纹理细节。依赖外部glsl
+- p5 - `FSR`: 边缘自适应空间放大算法过分析局部像素的梯度以识别边缘方向，沿边缘走向定向插值，随后进行高频细节锐化，保持边缘清晰的同时避免锯齿。依赖外部glsl
+- p6 - `ewa_lanczos`: 椭圆加权平均 (aka. ewa) Lanczos滤波；将传统的正交Lanczos插值转换为极坐标系下的径向插值，消除传统lanczos常见的对角线锯齿和方向性伪影。需要libplacebo库
+- p7 - `ewa_lanczossharp`: 锐化版ewa_lanczos，微调了模糊半径和窗口参数；通过收紧采样权重，牺牲少量平滑度来换取更高锐度。需要libplacebo库
+- p8 - `ewa_lanczos4sharpest`: 更锐的ewa_lanczos；采用更大的采样半径和最激进的锐化参数，纹理细节更极限，但在强对比度边缘易产生明显的光晕(振铃效应)。需要libplacebo库
+- p9 - `neighbor`: 最近邻插值；每个输出像素直接复制距离最近的源像素，不混合颜色，也不生成新细节。能严格保留像素格、纯色和硬边，速度快且无光晕，但会同步放大源画面的锯齿、模糊和抗锯齿痕迹，复杂图标与斜边容易显脏lanczos: 传统高阶正交插值算法；一维插值易产生光晕。ffmpeg原生 (社区里大多数都是这个，拉完了只能说)
+- p10 - `spline`: 样条插值算法；使用分段多项式平滑拟合像素点间的过渡，相比lanczos画面过渡更自然，光晕感显著减弱，但整体画面相对偏“软”。ffmpeg原生
+- p11 - `spline_catmull-rom`: Catmull-Rom三次样条插值；通过相邻控制点计算切线，强制插值曲线精确穿过所有原始像素点。在锐度和抗锯齿之间取得平衡，锐度明显高于普通spline，而振铃效应又弱于lanczos。ffmpeg原生
+- p12 - `spline`: 样条插值算法；使用分段多项式平滑拟合像素点间的过渡，相比lanczos画面过渡更自然，光晕感显著减弱，但整体画面相对偏“软”。ffmpeg原生
+- p13 - `lanczos`: 传统高阶正交插值算法；一维插值易产生光晕。ffmpeg原生 (白皮用的大多数都是这个，拉完了只能说)
 
 ---
 ###### 总结
 
-- Anime4K: 后二者的平衡
-- FSRCNNX: 较锐利，界限明显
-- FSR: 较圆滑，边缘略柔
-- ewa*3: 都差不多，机器放大天花板，sharp最好
-- 原生*3: 拉了，catmull-rom勉强能看
+- `Lunatic`: 神
+- `Anime4K`: 半神
+- `FSRCNNX`: 较锐利，界限明显
+- `FSR`: 较圆滑，边缘略柔
+- `ewa*3`: 都差不多，机器放大天花板，sharp最好
+- `neighbor`: 画面还行，细节雷霆
+- `原生*3`: 拉了，catmull-rom勉强能看
 
 ---
 ###### 获取
@@ -1760,103 +1768,275 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 官网是精简版，第三方库需在gyan.dev下载
 
 - 脚本: [https://sakyvo.lanzouu.com/i17613rwztfc](https://sakyvo.lanzouu.com/i17613rwztfc)
-包含测试视频中所有脚本和对应的glsl文件，但个人只推荐3个超分 (Anime4K, FSR, FSRCNNX) 和 ewa_lanczossharp
+包含测试视频中所有脚本和对应的glsl文件，但个人只推荐`Lunatic`
 
 ---
 ###### 使用
-没有做双击直接upscale，因为那样会把文件夹里所有视频全部加入任务队列，很烦。脚本含两种方案，其一为拖拽，不多赘述；其二为Windows发送到aka. Send to，配置方法如下
+没有做双击直接upscale，因为那样会把文件夹里所有视频全部加入任务队列，很烦。脚本含两种方案，其一为拖拽，不多赘述；其二为`Windows发送到` aka. `Send to`，配置方法如下
 
 1. 解压ffmpeg，更改文件夹名称`ffmpeg-date-git-num-full_build`为`ffmpeg` ，移动到 C:\ 根目录下
-![](/imgs/89.png)
+![](https://uploader.shimo.im/f/e2tPRdolXZVpnRgu.png!thumbnail)
 
 2. 安置脚本，将glsl文件与脚本放在同一文件夹
-![](/imgs/90.png)
+![输入图片说明](/imgs/205.png)
 
-3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![](/imgs/91.png)
+3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![](https://uploader.shimo.im/f/zCFu16rI4btg3LTb.png!thumbnail)
 
 4. 按住alt拖动鼠标，将脚本的快捷方式移动至Sendto文件夹
-![](/imgs/92.png)
-
+![输入图片说明](/imgs/206.png)
+![输入图片说明](/imgs/207.png)
 5. 随后即可通过发送到快捷调用
-![](/imgs/93.png)
+![输入图片说明](/imgs/208.png)
 
 ---
 ###### extra
-以ewa_lanczossharp为例简要讲讲脚本
+以`Lunatic`为例简要讲讲脚本
 ```
 @echo off
 chcp 65001 >nul
-setlocal EnableExtensions EnableDelayedExpansion
+setlocal EnableExtensions DisableDelayedExpansion
 set "FFMPEG=C:\ffmpeg\bin\ffmpeg.exe"
+if not exist "%FFMPEG%" (
+    echo [ERROR] 找不到 FFmpeg："%FFMPEG%"
+    pause
+    exit /b 1
+)
+pushd "%~dp0" >nul
+if errorlevel 1 (
+    echo [ERROR] 无法进入脚本目录："%~dp0"
+    pause
+    exit /b 1
+)
+if not exist "Lunatic.glsl" (
+    echo [ERROR] 脚本目录中缺少 Lunatic.glsl
+    echo 请前往 https://www.mediafire.com/file/51z9qlfd3sqzxpa 下载
+    popd
+    pause
+    exit /b 1
+)
 rem ====================== 画质参数 ======================
 set "CQ=12"
 set "VBR=80M"
 set "LOOKAHEAD=32"
 echo.
 echo ================================================
-echo ewa_lanczossharp 4K Upscale (NVIDIA NVENC)
+echo Lunatic 4K Upscale (Soft Restore M + ewa_lanczossharp)
 echo 右键 Send To / 拖拽 时仅处理选中的视频
 echo ================================================
 echo.
-rem ====================== 处理 Send To / 拖拽文件 ======================
 set "FILES_PROCESSED=0"
 
 if "%~1"=="" (
     echo 未检测到 Send To / 拖拽 的文件
     echo 请右键视频 - 发送到 - 本脚本
     echo 或直接拖拽视频到 bat 上
+    popd
     pause
     exit /b 0
-) else (
-    for %%a in (%*) do call :ProcessFile "%%~a"
 )
 
-if %FILES_PROCESSED%==0 (
-    echo.
-    echo 【WARNING】未处理任何文件
-)
+:ProcessNext
+if "%~1"=="" goto Finished
 
-echo.
-echo ====================== 完成 ======================
-pause
-exit /b 0
-
-:ProcessFile
-set "INPUT=%~1"
 set /a FILES_PROCESSED+=1
-echo.
-echo ===== Processing: %~nx1 =====
+set "INPUT=%~f1"
+set "OUTPUT=%~dpn1-4K-Lunatic.mp4"
+set "INPUT_NAME=%~nx1"
+setlocal EnableDelayedExpansion
 
-rem --- 内置 upscaler=ewa_lanczossharp; 已移除探测; 色彩/像素格式/帧率由 libplacebo 默认保留 ---
+echo.
+echo ===== Processing: "!INPUT_NAME!" =====
+
+if not exist "!INPUT!" (
+    echo [ERROR] 视频文件不存在："!INPUT!"
+    endlocal
+    shift
+    goto ProcessNext
+)
+
+rem --- 不强制像素格式或颜色标签；由滤镜 auto 与 NVENC 保留输入属性和位深 ---
 rem --- 10系(Pascal)及更旧显卡: 删除下方 -multipass / -temporal_aq / -bf / -b_ref_mode 四行 ---
-"%FFMPEG%" -y -init_hw_device vulkan=vk ^
--i "%INPUT%" ^
--vf "libplacebo=w=3840:h=2160:upscaler=ewa_lanczossharp" ^
+"!FFMPEG!" -y -init_hw_device vulkan=vk ^
+-i "!INPUT!" ^
+-vf "libplacebo=w=3840:h=2160:upscaler=ewa_lanczossharp:custom_shader_path=Lunatic.glsl" ^
 -c:v hevc_nvenc ^
 -preset:v p7 ^
 -tune:v hq ^
 -rc:v vbr ^
 -multipass:v fullres ^
--cq:v %CQ% ^
--b:v %VBR% ^
+-cq:v !CQ! ^
+-b:v !VBR! ^
 -maxrate:v 120M ^
 -bufsize:v 240M ^
--rc-lookahead:v %LOOKAHEAD% ^
+-rc-lookahead:v !LOOKAHEAD! ^
 -spatial_aq:v 1 ^
 -temporal_aq:v 1 ^
 -aq-strength:v 12 ^
 -bf:v 4 ^
 -b_ref_mode:v middle ^
 -c:a copy ^
-"%~dpn1-4K-ewa_lanczossharp.mp4"
-if %ERRORLEVEL%==0 (
-    echo ✓ 成功: %~nx1
+"!OUTPUT!"
+set "FFMPEG_EXIT=!ERRORLEVEL!"
+
+if not "!FFMPEG_EXIT!"=="0" (
+    echo [ERROR] 失败（FFmpeg 退出码 !FFMPEG_EXIT!）: "!INPUT_NAME!"
 ) else (
-    echo ❌ 失败: %~nx1
+    echo [OK] 成功: "!INPUT_NAME!"
 )
-goto :eof
+
+endlocal
+shift
+goto ProcessNext
+
+:Finished
+echo.
+echo ====================== 完成（%FILES_PROCESSED% 个） ======================
+popd
+pause
+exit /b 0
 ```
-我操了好像没啥可讲的先贴这算了，不懂的问ai去
+Lunatic 放大脚本原理
+
+---
+1. 简要流程
+```
+输入视频
+   │
+   ├─ FFmpeg 读取视频和音频
+   │
+   ├─ Vulkan + libplacebo
+   │    ├─ 加载 Lunatic.glsl
+   │    └─ 使用 ewa_lanczossharp 放大到 3840x2160
+   │
+   ├─ NVIDIA NVENC 编码 HEVC
+   │
+   └─ 复制原音频，输出 原文件名-4K-Lunatic.mp4
+```
+在放大时只对更可能属于线条，图标边缘或细节的区域施加受控修复。对于 PotPvP 画面，兼顾生命值，盔甲值，物品栏和 HUD 文字等不同类型的区域
+
+---
+2. 两个文件各自负责什么
+
+`Eirin Lunatic.bat`的 BAT 文件负责“调度”和“编码”，包括：
+- 检查 `C:\ffmpeg\bin\ffmpeg.exe` 是否存在
+- 进入 BAT 自身目录，确保能找到旁边的 `Lunatic.glsl`
+- 接收拖拽或“发送到”传入的一个或多个文件
+- 为每个输入构造输出名，并调用 FFmpeg
+- 选择 Vulkan、libplacebo、滤镜、NVENC 和音频处理参数
+- 保存 FFmpeg 退出码，报告每个文件成功或失败
+
+`Lunatic.glsl`的 GLSL 文件负责“像素处理”。它采用 mpv hook 格式，由 libplacebo 的 `custom_shader_path` 加载。文件中的矩阵和偏置是已经训练/拟合好的 CNN 权重，无需再放另一模型文件
+
+---
+3. GLSL 的实际处理链
+当前文件包含 10 个 hook 阶段
+
+3.1 Anime4K Soft Restore M CNN
+前 7 个阶段的名称是 `Anime4K-v4.0-Restore-CNN-Soft-(M)`：
+1. 一个 `4x3x3x3` 卷积阶段，从 3x3 邻域提取初始特征
+2. 六个 `4x3x3x8` 卷积阶段继续组合局部特征
+3. 每层用 `max(x, 0)` 和 `max(-x, 0)` 分离正、负响应，再交给下一层。这相当于保留带符号的特征，同时使用 ReLU 风格的非线性
+4. 最后的 `3x1x1x56` 阶段把各层特征汇总为 `POTION_CNN`，作为候选细节/残差，而不是直接覆盖原始像素
+这里的“Soft Restore”很重要：它倾向于恢复边缘和局部结构，不是FSRCNNX强锐化那样对所有高对比度边界都增加白线，也不是凭空生成完整纹理
+
+3.2 自适应残差门控
+`PotionPvP-v1.0-Adaptive-Residual-Gate` 不直接采用 CNN 的全部输出，而是先计算 3x3 邻域特征：
+- 用 `0.25 / 0.50 / 0.25` 的 RGB 权重估计局部亮度
+- 求 3x3 区域的最小值、最大值和范围 `local_range`
+- 同时比较横纵方向和对角方向的曲率，估计这里是平坦色块、普通纹理还是硬边缘
+- 检查 CNN 残差本身是否足够明显
+最终权重为：
+```text
+mask = flat_mask × residual_mask × structure_weight
+```
+变量名虽然叫 `flat_mask`，但它使用 `smoothstep(0.010, 0.055, local_range)`，所以真正非常平的区域权重接近 0，局部变化更明显的区域权重才会上升。`structure_weight` 最低为 `0.35`，硬边缘时逐步接近 `1.0`。
+这一步的效果是：
+- 物品栏纯色背景不会被 CNN 残差大面积污染
+- 生命值，盔甲值边缘和文字等有结构的区域仍可获得修复
+- 很小或不可信的残差会被 `residual_mask` 丢弃
+门控阶段保存两个值：候选残差亮度和 `mask`，供下一阶段使用
+
+3.3 零均值亮度应用
+`PotionPvP-v1.0-Zero-Mean-Luma-Apply` 是保持亮度观感的关键阶段。
+它先对候选残差计算 3x3 加权局部均值，再使用：
+```
+零均值残差 = 当前残差 - 局部残差均值
+```
+因此，连续的一大片区域不会因为残差整体偏正或偏负而一起变亮，变暗
+随后应用多重限制：
+- `POTION_STRENGTH = 0.65`：只使用候选修复的一部分
+- `POTION_MAX_DELTA = 0.018`：限制绝对亮度变化
+- `POTION_RELATIVE_DELTA = 0.15`：靠近黑位或白位时进一步收紧变化幅度
+- 亮度限制在邻域最小值与最大值之间，减少过冲和振铃
+- RGB 通道限制在有效范围内，避免负值或超过 1.0 的溢出
+- 高饱和区域在加法修复和比例缩放之间平滑混合，降低生命值，药水等彩色区域的色偏
+- 最后保留原始 alpha 通道
+即“预测残差、判断可信度、再以受限方式加入残差”
+
+---
+4. `ewa_lanczossharp` 在哪里发挥作用
+滤镜参数是：
+```text
+libplacebo=w=3840:h=2160:
+    upscaler=ewa_lanczossharp:
+    custom_shader_path=Lunatic.glsl
+```
+- `w=3840:h=2160`：把输出尺寸固定为 4K UHD
+- `upscaler=ewa_lanczossharp`：使用 libplacebo 的椭圆加权 Lanczos 锐化插值，负责连续的尺寸重采样
+- `custom_shader_path=Lunatic.glsl`：加载自定义 hook 处理链
+`ewa_lanczossharp` 不是 CNN，也不会读取 Lunatic 的权重。它负责几何放大和采样平滑；GLSL 负责内容感知的残差修复。二者组合后，既不会像 neighbor 那样保留明显方块，也不会把所有文字边缘都用同一强度硬化
+FFmpeg 文档只保证 `custom_shader_path` 会加载 mpv `.hook` GLSL；具体 hook 调度由 libplacebo 的 shader 管线处理。它并不是简单的“先完整跑 CNN、再完整跑 Lanczos”两步串行滤镜，而是同一 libplacebo 管线中的自定义 shader 与内置缩放器协同工作，更加协调
+
+---
+5. NVENC 编码参数
+| 参数 | 作用 | 对结果的影响 |
+| --- | --- | --- |
+| `-c:v hevc_nvenc` | 使用 NVIDIA 硬件 HEVC 编码 | 编码速度高，依赖显卡和驱动支持 |
+| `-preset:v p7` | NVENC 最慢、质量取向最强的预设 | 更慢，通常压缩效率更好 |
+| `-tune:v hq` | 高质量调优 | 优先画质而非低延迟 |
+| `-rc:v vbr` | 可变码率控制 | 复杂画面可以使用更多比特 |
+| `-multipass:v fullres` | 使用全分辨率多遍分析 | 提高码控判断，增加显存/时间开销 |
+| `-cq:v 12` | VBR 下的目标质量等级 | 这是质量目标，不是固定码率；数值越低通常越重 |
+| `-b:v 80M` | 目标/平均码率参考 | 影响整体文件大小和码控倾向 |
+| `-maxrate:v 120M` | 码率上限 | 限制瞬时峰值，便于平台上传和二次压缩 |
+| `-bufsize:v 240M` | VBV 码控缓冲区 | 与峰值上限共同约束码率波动 |
+| `-rc-lookahead:v 32` | 向前分析 32 帧 | 能更早判断场景变化，代价是延迟和显存 |
+| `-spatial_aq:v 1` | 开启空间自适应量化 | 复杂区域获得更多比特 |
+| `-temporal_aq:v 1` | 开启时间自适应量化 | 根据运动和帧间变化分配比特 |
+| `-aq-strength:v 12` | 空间 AQ 强度 | 1 到 15，12 属于偏强的细节保护 |
+| `-bf:v 4` | 使用最多 4 个 B 帧 | 提高压缩效率，但增加重排延迟 |
+| `-b_ref_mode:v middle` | 部分 B 帧作为参考帧 | 进一步提高压缩效率，兼容性要求更高 |
+| `-c:a copy` | 音频流直接复制 | 不重新编码音频，不增加音频损失 |
+`80M/120M/240M` 是码控约束，不代表每个视频都会严格输出 80 Mbps。实际码率还取决于分辨率、运动、画面复杂度、CQ、编码器版本和驱动
+
+---
+6. BAT 的文件名兼容设计
+脚本外层使用：
+```bat
+setlocal EnableExtensions DisableDelayedExpansion
+```
+先在关闭 delayed expansion 时从 `%~1` 派生绝对输入路径、输出路径和文件名，再在单个文件处理区间局部开启 delayed expansion。这避免了 `!` 在 Windows CMD 二次解析时被吞掉，同时避免 `%`、`&`、括号、`^`、方括号和中文路径被无引号展开
+脚本还使用 `Shift` 顺序处理参数，而不是把 `%*` 展开后交给 `for` 或 `call` 二次解析。这样一次拖入多个文件时，每个参数都保持独立
+
+---
+7. 运行前提与兼容性
+- `C:\ffmpeg\bin\ffmpeg.exe` 必须存在，并且包含 Vulkan、libplacebo 与 NVENC 支持
+- `Lunatic.glsl` 必须与 BAT 位于同一目录；脚本通过 `pushd "%~dp0"` 后使用相对 shader 路径
+- 需要支持 HEVC NVENC 的 NVIDIA 显卡和正常工作的 Vulkan 驱动
+- Pascal（10 系）及更旧显卡可能不支持 `multipass`、`temporal_aq`、B 帧或 B 帧参考的组合。遇到初始化失败时，应按注释逐项删除这些高级参数
+- 当前脚本不显式写入 `-pix_fmt`、`-color_range`、`-colorspace`、`-color_trc` 或 `-color_primaries`。它的设计是让 FFmpeg/libplacebo/NVENC 自动协商并尽量保留输入属性；不同输入、FFmpeg 构建、驱动和显卡代际仍可能产生差异，发布或上传前应使用 `ffprobe` 检查输出
+
+---
+8. 其他
+虽然经过PotPvP特化调优，但它在某些极端情况下可能没有`neighbor`观感好
+如果输入是非方块人视频，建议传统插值的`ewa_lanczossharp`。
+
+---
+9. 来源与许可证
+GLSL文件开头保留 Anime4K 相关 MIT License 声明。分发 `Lunatic.glsl` 时应保留该声明，并同时遵守所使用 shader 和 FFmpeg/libplacebo 的许可证要求。
+- Anime4K 项目：https://github.com/bloc97/Anime4K
+- FFmpeg 文档：https://ffmpeg.org/ffmpeg-all.html
+- Lunatic.glsl下载链接：https://www.mediafire.com/file/51z9qlfd3sqzxpa
 
 ---
 ##### B. Topaz
@@ -1866,43 +2046,40 @@ dl: [https://filecr.com/windows/topaz-video-enhance-ai/](https://filecr.com/wind
 ###### 效果对比
 
 - origin 1080p
-![](/imgs/94.png)
+![](https://uploader.shimo.im/f/wkvQYGQ1E0iEzMCN.png!thumbnail)
 - Topaz Proteus
-![](/imgs/95.png)
+![](https://uploader.shimo.im/f/VA22gEdnFwewi7Mv.png!thumbnail)
 
 贴图边缘改善非常明显，锐度降低的同时保留画质，比机器超分还强
 
 ---
 ###### 代价
-
-![](/imgs/96.png)
-
+![](https://uploader.shimo.im/f/4F9wWTHNlVT8mHuH.png!thumbnail)
 无敌死慢，本人i5 10400 + RTX 3060一个2min视频得处理2小时，现在还在用GTX的还是算了吧
 
 ---
 ###### 模型
 
-- Starlight: 扩散模型，擅长生成式放大和修复极低质量/老旧视频，细节丰富
-- Starlight Mini: Starlight轻量版，相比更快(依然比传统模型慢的多)
-- Proteus: 最通用全能模型，支持参数微调，适合大多数视频的去噪、锐化和增强
-- Iris: 专精面部恢复和压缩伪影去除，适合人脸特写或采访视频
-- Nyx: 专注强力去噪，适合噪点/颗粒严重的视频，先去噪再增强
-- Rhea: 细节保留准确，适合低运动场景，大倍数放大强
-- Artemis: 自动增强能力强，适合质量差、噪点多的视频，速度较快
-- Gaia: 温和自然增强，破坏最小，适合动画、CG 和原质量较高的视频
-- Theia: 类似 Gaia 的温和模型，速度稍快，适合高质量源视频的轻度锐化和提升
+- `Starlight` 扩散模型，擅长生成式放大和修复极低质量/老旧视频，细节丰富
+- `Starlight Mini`: Starlight轻量版，相比更快(依然比传统模型慢的多)
+- `Proteus`: 最通用全能模型，支持参数微调，适合大多数视频的去噪、锐化和增强
+- `Iris`: 专精面部恢复和压缩伪影去除，适合人脸特写或采访视频
+- `Nyx`: 专注强力去噪，适合噪点/颗粒严重的视频，先去噪再增强
+- `Rhea`: 细节保留准确，适合低运动场景，大倍数放大强
+- `Artemis`: 自动增强能力强，适合质量差、噪点多的视频，速度较快
+- `Gaia`: 温和自然增强，破坏最小，适合动画、CG 和原质量较高的视频
+- `Theia`: 类似 Gaia 的温和模型，速度稍快，适合高质量源视频的轻度锐化和提升
 
-方块人对砍能用的也就Proteus和Gaia；扩散模型即使是mini也超级慢，且会凭空造帧还原素材，可能会很诡异。一般还是用Proteus
+方块人对砍能用的也就`Proteus`和`Gaia`；扩散模型即使是mini也超级慢，且会凭空造帧还原素材，可能会很诡异。一般还是用`Proteus`
 
 ---
 ###### 参考设置
-![](/imgs/97.png)
-
+![](https://uploader.shimo.im/f/80iyk9WhIoWOFvum.png!thumbnail)
 更细的yt搜吧这玩意我带不动也懒得折腾，性价比不是很高差不多得了
-
 其实这玩意还能补帧，但感觉不如Smoothie
 
 ---
+
 ### 3.4. Interpolation
 #### Semi-Intro
 现代补帧科技的进步，让渣机也能渲染出好看的动态模糊。想想2022那会咱还在看Blyard的PR蒙版RSMB教程，真觉得现在的创作条件简直是天堂。但是！2026了还有一堆人视频拿个必剪剪完就发不渲染的，甚至cos Verzide Kyzuko OTFZaiji的，闹麻了好吗洼完了好吗你们这代人完蛋了好吗。现在立刻马上把世界最强补帧教学端上来，冰沙Smoothie——参见！
