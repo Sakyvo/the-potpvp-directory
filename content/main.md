@@ -1437,291 +1437,299 @@ ctt:
 ---
 
 ### 3.2. Vegas
+
 #### Semi-Intro
 宇宙级大坑来了，怕不是填到pvp圈解散都填不完。先从核心要点往外扩得了，这个那个的tweak设置直接默认专业厂商比你懂，剪辑教程啥的，自己悟吧
+
 什么why vegas not pr? 离经叛道的自刎归天好不好，已经2026了孩子你还用光流法补帧？还是说你指望那个破烂帧混合出奇迹？什么你想要极致特效？AE，请
-~~vv 2026也不是不行(~~
 
+vv 2026也不是不行(
 
+---
 #### 3.2.1. Info
-##### **本体**
+##### 本体
 DL: [https://t.bilibili.com/1128839283738673156](https://t.bilibili.com/1128839283738673156)
 Credit: Milk_Cha
 
 123云盘下不了的话:
-22 (最佳版本): [https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file](https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file)
-14: [https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file](https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file)
-安人网站filecr (14 - 2026, 老版本见Previous version): [https://filecr.com/windows/magix-vegas/](https://filecr.com/windows/magix-vegas/)
+- 22 (最佳版本): [https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file](https://www.mediafire.com/file/rnopo5x8iqdkoy4/VEGAS_22_Cracked.zip/file)
+- 14: [https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file](https://www.mediafire.com/file/46n4brjp37hdizr/Vegas_14_Cracked.zip/file)
+- 安人网站filecr (14 - 2026, 老版本见Previous version): [https://filecr.com/windows/magix-vegas/](https://filecr.com/windows/magix-vegas/)
 
-##### **Sapphire FX 蓝宝石**
-![Image_1](/imgs/36.png)
-filecr: [https://filecr.com/windows/borisfx-sapphire-0002/](https://filecr.com/windows/borisfx-sapphire-0002/)
-mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafire.com/file/esbxxdxyzqefmdi/)
+---
+##### Sapphire FX 蓝宝石
+![](https://uploader.shimo.im/f/mRf5ao9LQUWprlFu.png!thumbnail)
+- filecr: [https://filecr.com/windows/borisfx-sapphire-0002/](https://filecr.com/windows/borisfx-sapphire-0002/)
+- mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafire.com/file/esbxxdxyzqefmdi/)
 特效插件，PotPvP剪辑常用
-![Image_2](/imgs/37.png)
+
+![](https://uploader.shimo.im/f/jWD11Q47tg9oh5Vf.png!thumbnail)
+filecr下载时
 请选择 dl 4 ofx
-蓝宝石插件读取不了: [https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a](https://grok.com/share/c2hhcmQtNQ_a0b7bad2-9707-4442-8d3d-9eea495a646a)
 
-##### **部分版本说明**
-2026 (本该是24): MAGIX被Boris收购了，从版本号命名改为Boris传统的年份命名，特效战未来但目前建议观望
-23: crk疑似跟蓝宝石不兼容
-22: 最强最稳最快版本
-21 build 315: 分水岭，优化了视频预览卡顿问题
-14: 较稳定版本，浅色界面下比高版本好看
+---
+##### 部分版本说明
+ 
+ 2026 (本该是24): MAGIX被Boris收购了，从版本号命名改为Boris传统的年份命名，特效战未来但目前建议观望
+- 23: crk疑似跟蓝宝石不兼容
+- 22: 最强最稳最快版本
+- 21 build 315: 分水岭，优化了视频预览卡顿问题
+- 14: 较稳定版本，浅色界面下比高版本好看
 
-##### Issues
-**Offcial forum**: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
-**Offcial tutorial:** [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
+---
+#### 3.2.2. Issues
+##### Offical
+- Offcial forum: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
+- Offcial tutorial: [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
 
-**VEGAS Pro 各种疑难杂症及其解决方案的整理**
-[https://zzzzzz9125.github.io/VegTips/zh/](https://zzzzzz9125.github.io/VegTips/zh/)
+---
+##### zzzzzz9125
+- VEGAS Pro 各种疑难杂症及其解决方案的整理:
+https://zzzzzz9125.github.io/VegTips/zh/
+by [bilibili zzzzzz9125](https://9125.ibio/sp.ibio/745)，
 
-by [bilibili zzzzzz9125](https://space.bilibili.com/12355745)，解决**98.46%** vv问题，极其推荐看这个 ~~所以有问题别来烦我~~
-
-![Image_3](/imgs/38.png)
+解决98.46% vv问题，极其推荐看这个
+![](https://uploader.shimo.im/f/C4hbyphA497bmjSl.png!thumbnail)
 “22最新版”也就是22 build 250，[mediafire](https://www.mediafire.com/file/rnopo5x8iqdkoy4)里那个
-![Image_4](/imgs/39.png)
+![](https://uploader.shimo.im/f/i7xMHUQ6hMfvm1Ke.png!thumbnail)
 
-
-**专栏里没提的一些问题**:
-1. 预览卡飞了，一播放cpu gpu双双飙100%
-![Image_5](/imgs/40.png)
+---
+##### 专栏里没提的一些问题:
+###### 1. 预览卡飞了，一播放cpu gpu双双飙100%
+![](https://uploader.shimo.im/f/vZea7l8xrOYRAvvR.png!thumbnail)
 通常出现在15+版本。禁用这两个，如果本来就是禁用的那就打开
 别的首选项不推荐瞎改，软件工程师比你懂软件
 
-2. 高版本vv(如22)无法读取boris sapphire插件，但低版本(如14)就可以
+###### 2. 高版本vv(如22)无法读取boris sapphire插件，但低版本(如14)就可以
 原因为高版本VEGAS对OFX插件的DLL加载机制变化，找不到Sapphire的OpenImageIO依赖库
-- 以vv22为例，打开vv文件夹，找到vegas220.exe.local并进入，没有就新建文件夹然后重命名
-- 找到Sapphire的依赖文件文件夹，标准路径为
+以vv22为例，打开vv文件夹，找到`vegas220.exe.local`并进入，没有就新建文件夹然后重命名
+找到Sapphire的依赖文件文件夹，标准路径为
+`C:\Program Files\Common Files\OFX\Plugins\Sapphire.ofx.bundle\Contents\Win64\BorisFX.Sapphire.OpenImageIO.em64t\`
+将该文件夹里的所有文件全部复制到`vegas220.exe.local`文件夹里
+重启vv，使vv重建插件缓存
 
-```
-C:\Program Files\Common Files\OFX\Plugins\Sapphire.ofx.bundle\Contents\Win64\BorisFX.Sapphire.OpenImageIO.em64t\
-```
-
-- 将该文件夹里的所有文件全部**复制**到vegas220.exe.local文件夹里
-- 重启vv，使vv重建插件缓存
-
-
-3. vv渲染设置中，nv编码器的“预配置”丢失，尝试渲染报错，intel qsv和hevc正常
-![Image_6](/imgs/41.png)![Image_7](/imgs/42.png)
-NVIDIA新驱动 (591.xx+) 的已知 bug，新驱动里移除了VEGAS pre 23使用的旧版NVENC SDK支持，唯有回退驱动或换23/2026解决 (推荐581.57 Studio)
+###### 3. vv渲染设置中，nv编码器的“预配置”丢失，尝试渲染报错，intel qsv和hevc正常
+![](https://uploader.shimo.im/f/UyNhwK1MTccETTSo.png!thumbnail)![](https://uploader.shimo.im/f/ZlFAgYa3Ii44TF3o.png!thumbnail)
+NVIDIA新驱动 (`591.xx+`) 的已知 bug，新驱动里移除了VEGAS pre 23使用的旧版`NVENC SDK`支持，唯有回退驱动或换23/2026解决 (推荐`581.57 Studio`)
 NVCleanstall: [https://www.techpowerup.com/download/techpowerup-nvcleanstall/](https://www.techpowerup.com/download/techpowerup-nvcleanstall/)
-Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和调试高级选项
+**Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和调试高级选项*
 参考设置:
-![Image_8](/imgs/43.png)![Image_9](/imgs/44.png)
-
+![](https://uploader.shimo.im/f/2NvOoooCTJ5dLAZr.png!thumbnail)![](https://uploader.shimo.im/f/62rxbuvJhJubC0Ug.png!thumbnail)
 
 ---
-#### 3.2.2. Render
-**写在前面**: Vegas渲染原理是帧混合，即混合前后两帧的图像生成新的中间帧，意味着混合前也就是原素材的fps越高，混合后的效果越好即拖影越少。所以这些个玩意主要影响的是画质，录不了高帧的，还是拿Smoothie补吧
+#### 3.2.3. Render
+写在前面: Vegas渲染原理是帧混合，即混合前后两帧的图像生成新的中间帧，意味着混合前也就是原素材的fps越高，混合后的效果越好即拖影越少。所以这些个玩意主要影响的是画质，录不了高帧的，还是拿Smoothie补吧
+
 引经据典:
-![Image_10](/imgs/45.png)
-不同录制fps的差异: [https://www.bilibili.com/video/av714303917](https://www.bilibili.com/video/av714303917)
+![](https://uploader.shimo.im/f/U4IKfvhFKrX1BfSK.png!thumbnail)
 
-**项目属性**中将**重采样**调为**帧混合**才能出动态模糊
-![Image_11](/imgs/46.png)
-![Image_12](/imgs/47.png)
+**不同录制fps的差异**: [https://www.bilibili.com/video/av714303917](https://www.bilibili.com/video/av714303917)
 
-**H.264 & H.265**: 同等画质下，h.265的文件体积约为h.264的一半，反过来同等文件体积下h.265的画质是h.264的两倍。h.264兼容性更好，但在2026，这点完全可以忽略。能选265就265吧
-![Image_13](/imgs/48.png)
+项目属性中将重采样调为帧混合才能出动态模糊
+![](https://uploader.shimo.im/f/i85cMby6YGdyHTJA.png!thumbnail)
+![](https://uploader.shimo.im/f/ZrAqJXSX6nARp8g0.png!thumbnail)
 
-![Image_14](/imgs/49.png)
+**H.264 & H.265**:
+同等画质下，h.265的文件体积约为h.264的一半，反过来同等文件体积下h.265的画质是h.264的两倍。h.264兼容性更好，但在2026，这点完全可以忽略。能选265就265吧
+![](https://uploader.shimo.im/f/byd1C1asWqwXqQEM.png!thumbnail)
+
+![](https://uploader.shimo.im/f/7KkReBPynN6j4p9Z.png!thumbnail)
 至于这玩意，给[专业卡](https://www.nvidia.cn/products/workstations/professional-desktop-gpus/)用的你就别碰了
 
 ---
-##### **CORE:**
+##### CORE:
 高帧素材，降到30fps，依靠帧混合得到动态模糊，质量至上
-在此前提下，最重要的是：
-1. 帧大小: 与素材相同
-2. 码率模式: VBR，可变比特率
-3. 编码模式
-5. 色彩空间: Rec.709 / sRGB
-6. 颜色范围 (YCbCr 输出): 限制 / 完整
+在此前提下，最重要的是:
+- 帧大小: 与素材相同
+- 码率模式: VBR (可变比特率)
+- 编码模式
+  MainConcept AVC (绝对质量优先/非常慢) [极其慢且提升不大]
+  - NVENC (质量略低/快的多):
+    - 预设: 高质量
+  RC 模式: VBR - 高品质
+  - 色彩空间: Rec.709 / sRGB
+  - 颜色范围 (YCbCr 输出): 限制 / 完整
 
-与obs相同，两条线对应才能出最佳效果
+与OBS相同，两条线对应才能出最佳效果
 
-![Image_15](/imgs/50.png)![Image_16](/imgs/51.png)
-![Image_17](/imgs/52.png)![Image_18](/imgs/53.png)
+![](https://uploader.shimo.im/f/K6xTkIZ2tUVkeGTl.png!thumbnail)![](https://uploader.shimo.im/f/ZsS9p1EuYdsCRgQH.png!thumbnail)
 
+![](https://uploader.shimo.im/f/fzVEUrMdaAsEDTUZ.png!thumbnail)![](https://uploader.shimo.im/f/aSoeYA3Bg2A0K2tj.png!thumbnail)
 
 ---
-##### **I. 帧大小(<u>S</u>)**
-![Image_19](/imgs/54.png)
+##### I. 帧大小(S)
+![](https://uploader.shimo.im/f/ERp8vn8Jpbb2PgGW.png!thumbnail)
+
 原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
-upscale: 机器放大，仅仅强制将每帧的像素大小逐个放大，并不会增强画质。但视频平台给4k分配的码率高于1080p，所以利用upscale强改分辨率获得额外的码率分配
+- upscale: 机器放大，仅仅强制将每帧的像素大小逐个放大，并不会增强画质。但视频平台给4k分配的码率高于1080p，所以利用upscale强改分辨率获得额外的码率分配
 
 ---
-##### **II. 配置文件(<u>P</u>)**
-![Image_20](/imgs/55.png)
+##### II. 配置文件(P)
+![](https://uploader.shimo.im/f/GmlpwTVlqZt1R1IA.png!thumbnail)
+
 H.265的底层编码逻辑变了，所以选项与H.264 有所不同
-- H.264: 分为 Baseline（低端）、Main（中端）、High（高端）来适应不同算力的播放设备，High才能保证最佳画质。
-- H.265: 作为新一代标准，其起步点（Default aka. Main）在算法复杂度和压缩效率上，就已经超越了H.264的High Profile.
-
+- H.264: 分为 Baseline（低端）、Main（中端）、High（高端）来适应不同算力的播放设备，High才能保证最佳画质
+- H.265: 作为新一代标准，其起步点（Default aka. Main）在算法复杂度和压缩效率上，就已经超越了H.264的High Profile
 
 ---
-##### **III. 帧速率(<u>R</u>)**
-![Image_21](/imgs/56.png)
+##### III. 帧速率(R)
+![](https://uploader.shimo.im/f/mOGJcKEC7oPq96fQ.png!thumbnail)
+
 传b站就30，60没有大会员看二压的30会非常难受
 不推荐29 31 36等邪门帧率
 
 ---
-##### **IV. 场顺序(<u>F</u>)**
-![Image_22](/imgs/57.png)
-有且只有: **无(逐行扫描）**，但应该会有人疑惑为啥是逐行扫描:
-逐行扫描 (Progressive scan) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
-尽管没出现，提一下与逐行扫描相对的隔行扫描 (Interlaced Scan)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
-很明显隔行是**技术妥协**的产物，现代将其删掉是理所当然的。
+##### IV. 场顺序(F)
+![](https://uploader.shimo.im/f/hEK74RzU6nRwMv9r.png!thumbnail)
+
+有且只有: 无(逐行扫描），但应该会有人疑惑为啥是逐行扫描:
+
+- 逐行扫描 (Progressive scan) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
+- 尽管没出现，提一下与逐行扫描相对的隔行扫描 (Interlaced Scan)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
+
+很明显隔行是技术妥协的产物，现代将其删掉是理所当然的。
 
 ---
-##### **V. 码率模块**
-![Image_23](/imgs/58.png)
-**V - A. 比特率**
-1. **恒定比特率（CBR）**
-2. **可变比特率（VBR）**
-
-
-**VBR & CBR：**
-- <span style="font-size:11pt">质量:</span><span style="font-size:11pt"> VBR 更高且稳定；CBR 在复杂画面下质量下降</span>
-- <span style="font-size:11pt">文件大小:</span><span style="font-size:11pt"> VBR 难以预估；CBR 固定可控</span>
-- <span style="font-size:11pt">兼容性:</span><span style="font-size:11pt"> VBR 偶尔会在极老旧设备上不兼容；CBR 兼容性极好</span>
-
-
-**CBR:** 整个视频维持固定码率
-优点：
-- 码率稳定
-- 对直播、广播、严格带宽限制场景有用
-
-缺点：
-- 码率分配不聪明
-- 简单画面浪费码率，复杂画面又不够
-- 同平均体积下，画质通常不如 VBR
-
-适合：
-- 直播
-- 实时编码
-
-
-**VBR:** 简单画面少给码率省空间，复杂画面多给码率保质量
-优点：
-- 同文件体积下画质更好
-- 更适合高速运动/镜头甩动/细节变化大的视频
-
-缺点：
-- 码率不恒定，文件体积不稳定
-- 某些极端老旧设备/流程不喜欢
-
-适合：
-- 离线成片输出
-- 高质量上传前成片
-
-
-**所以无脑VBR吧**
+##### V. 码率模块
+![](https://uploader.shimo.im/f/Kdn8fd2t4hTvkfDS.png!thumbnail)
 
 ---
-**VBR - 最大值(bps)**
-意思：
-- VBR允许冲到的上限
+###### V - A. 比特率
+- 恒定比特率（CBR）
+- 可变比特率（VBR）
+- 最大值(bps)
+- 平均值(bps)
 
-作用：
-- 复杂画面瞬时吃得更猛
-- 减少快速转镜时，粒子、HUD、纹理变化时的崩坏
+**VBR & CBR**:
+- 质量: VBR更高且稳定；CBR在复杂画面下质量下降
+- 文件大小: VBR难以预估；CBR固定可控
+ 
+兼容性: VBR偶尔会在极老旧设备上不兼容；CBR兼容性极好
+CBR: 整个视频维持固定码率
+    - 优点: 码率稳定
+对直播、广播、严格带宽限制场景有用
+    - 缺点: 码率分配不聪明
+简单画面浪费码率，复杂画面又不够,同平均体积下，画质通常不如 VBR
+    - 适合: 直播
+实时编码  - 
+VBR: 简单画面少给码率省空间，复杂画面多给码率保质量
+    - 优点: 同文件体积下画质更好，更适合高速运动/镜头甩动/细节变化大的视频
+    - 缺点: 码率不恒定，文件体积不稳定，
 
-设太低的问题：
-- 复杂画面突然变糊
+某些极端老旧设备兼容性差 
+离线成片输出  高质量上传前成片
 
-设太高的问题：
-- 文件更大
-- 极少数设备兼容性可能差一点
-
-
-**VBR - 平均值(bps)**
-意思：
-- 整体平均码率目标
-
-作用：
-- 决定总体体积和总体画质上限
-
+所以无脑VBR吧
 
 ---
-举例: 源是 **1080p 480fps**，但成片是 **1080p 30fps**
-要帧混合动态模糊，意味着：
+VBR - 最大值(bps)
+
+- 意思: VBR允许冲到的上限
+- 作用: 复杂画面瞬时吃得更猛,减少快速转镜时，粒子、HUD、纹理变化时的崩坏
+- 设太低的问题复杂画面突然变糊
+- 设太高的问题文件更大
+
+VBR - 平均值(bps)
+- 意思: 整体平均码率目标
+- 作用: 决定总体体积和总体画质上限
+
+---
+举例: 源是 1080p 480fps，但成片是 1080p 30fps
+
+要帧混合动态模糊，意味着:
 - 源素材瞬时信息量极高
-- 但成片输出只有30fps，帧混合会把**16**帧混成1帧的视觉效果
+- 但成片输出只有30fps，帧混合会把16帧混成1帧的视觉效果
 - 这会让运动变“连续”，但单帧内细节也会被模糊掉一部分
 
-所以最终编码问题在于：
+所以最终编码问题在于:
 - **Gui / Scoreboard / Chat**
-- **方块硬边**
-- **高对比纹理**
-- **粒子**
-- **拉镜**
+- **
 
-这些地方最吃码率。
+方块硬边 / 
 
+高对比纹理 / 粒子 / 拉镜**
+
+粒子
+
+拉镜
+
+这些地方最吃码率
+
+---
 So
-- 最大：240,000,000
-- 平均：120,000,000
+最大：240,000,000
+平均120,000,000
 
-这已经非常高了。b站的4k视频码率限制也就 **20Mbps**，yt 4k在 **60Mbps** 左右。再往上加都会被平台吞掉，虽然**不会**触发更狠的压缩，但也没有额外收益，白白浪费上传时间和流量
+这已经非常高了。b站的4k视频码率限制也就 20Mbps，yt 4k在 60Mbps 左右。再往上加都会被平台吞掉，虽然不会触发更狠的压缩，但也没有额外收益，白白浪费上传时间和流量
+
 那为什么还要120M呢? 娥因为我这边原素材就是120M的不想被一压
 
 ---
-**V - B. 编码模式(<u>M</u>)**
-![Image_24](/imgs/59.png)
+###### V - B. 编码模式(M)
+![](https://uploader.shimo.im/f/JygjU6yWzimK9y81.png!thumbnail)
+
 (以下内容Au/A卡用户同理)
 
 **Intel QSV** (Intel Quick Sync Video) [核显编码]:
-使用 Intel CPU内置核显 的硬件加速编码器
-**优势:** 速度相比软解较快，且功耗比NVENC低很多，有独显的情况下可以边渲染边玩；如果是Intel平台(主要为11代以后带Xe核显或Arc独显)，表现更好。
-**画质:** 基本与独显处于同一水平，部分老版本QSV会稍弱一些，现代差距已经很小
--
-**NV 编码器** (NVIDIA NVENC) [独显编码]:
-使用 NVIDIA独立显卡 的硬件加速编码器
-**优势:** 速度最快，只吃GPU，CPU几乎无占用。
-**画质:** 现代NVENC (尤其是Ada/Ampere架构以后) 已经非常接近软件编码，但在极高码率或复杂运动场景下，仍可能比软件编码略逊一筹
--
+- 使用 Intel CPU内置核显 的硬件加速编码器
+- 优势: 速度相比软解较快，且功耗比NVENC低很多，有独显的情况下可以边渲染边玩；如果是Intel平台(主要为11代以后带Xe核显或Arc独显)，表现更好。
+- 画质: 基本与独显处于同一水平，部分老版本QSV会稍弱一些，现代差距已经很小
+
+**NV编码器** (NVIDIA NVENC) [独显编码]:
+- 使用 NVIDIA独立显卡 的硬件加速编码器
+- 优势: 速度最快，只吃GPU，CPU几乎无占用。
+- 画质: 现代NVENC (尤其是Ada/Ampere架构以后) 已经非常接近软件编码，但在极高码率或复杂运动场景下，仍可能比软件编码略逊一筹
+
 **Mainconcept HEVC** [软件编码]
-纯CPU编码，不调用任何硬件加速 (也就是VEGAS自带的MainConcept HEVC编码器)
-**优势:** 画质最高，细节保留和压缩效率最佳
-**缺点:** 速度最慢，渲染时间可能是硬件模式的2-5倍，CPU满载，渲染期间基本没法用系统
+- 纯CPU编码，不调用任何硬件加速 (也就是VEGAS自带的MainConcept HEVC编码器)
+- 优势: 画质最高，细节保留和压缩效率最佳
+- 缺点: 速度最慢，渲染时间可能是硬件模式的2-5倍，CPU满载，渲染期间基本没法用系统
 
 **总结**
-- 有独显: **NV 编码器** (最快+画质已足够好)
-- 有时间: **Mainconcept HEVC** (凹画质)
-- 贪玩: **Intel QSV** (核显渲染独显玩)
 
+ - 有独显: NV 编码器 (最快+画质已足够好)
+ - 有时间: Mainconcept HEVC (凹画质)
+ - 贪玩: Intel QSV (核显渲染独显玩)
 
 ---
-**V - C. 预配置 & RC模式**
-![Image_25](/imgs/60.png)![Image_26](/imgs/61.png)
-这些玩意实际和obs output里的**预设**差不多，那些低延迟预设会关闭B帧从而**牺！牲！画！质！**来换取极限的响应速度。所以选标准预设，质量拉最高就行了
+###### V - C. 预配置 & RC模式
+![](https://uploader.shimo.im/f/bnDAlamESM8xHt4k.png!thumbnail)![](https://uploader.shimo.im/f/yOiysPtHdJw8VLOO.png!thumbnail)
+
+这些玩意实际和obs output里的预设差不多，那些低延迟预设会关闭B帧从而牺！牲！画！质！来换取极限的响应速度。所以选标准预设，质量拉最高就行了
 别碰无损，死慢，最后照样被压。况且你obs录的都不是无损就算导出来也不是真无损
-对“画质至上”的需求，**RC 模式别碰任何低延迟，也别碰普通 CBR**
+对“画质至上”的需求，RC 模式别碰任何低延迟，也别碰普通 CBR
 
 ---
-**V - D. 每像素位数**
-![Image_27](/imgs/62.png)
+###### V - D. 每像素位数
+![](https://uploader.shimo.im/f/FHpQP4n8hIPTCMht.png!thumbnail)
+
 aigc已截图:
-![Image_28](/imgs/63.png)
+![](https://uploader.shimo.im/f/VSlihptofRxzBjUJ.png!thumbnail)
+
 总结:
-10-bit: 颜色更细腻，防色带，战未来 (YouTube only)
-8-bit: 足够用，更稳，更快 (没强烈渐变8-bit够了)
+- 10-bit: 颜色更细腻，防色带，战未来 (YouTube only)
+- 8-bit: 足够用，更稳，更快
 
 ---
-##### **VI. 颜色**
-![Image_29](/imgs/64.png)![Image_30](/imgs/65.png)
+##### VI. 颜色
+![](https://uploader.shimo.im/f/EsfyIi8cc4DtDdIn.png!thumbnail)![](https://uploader.shimo.im/f/oYd3yNLsvHq3GQ8y.png!thumbnail)
+
 跟obs那边类似，
-**709 - Limited**
-**sRGB - Full**
+
+- 709 - Limited
+- sRGB - Full
+
 709原生适配，sRGB线饱和度更高。你obs怎么设置的这边就怎么对应
 
 ---
 ##### VII. 音频&系统
-![Image_31](/imgs/66.png)![Image_32](/imgs/67.png)![Image_33](/imgs/68.png)
-**音频**跟原素材相关，默认就行，音质不能凭空变出来，况且平台也有限制
-**系统**也是你原素材项目的设置，固定在那的，改不了也不用改
+![](https://uploader.shimo.im/f/RHygxI7ywqM0wK8h.png!thumbnail)![](https://uploader.shimo.im/f/zDzrRX4J0T2CqYK0.png!thumbnail)![](https://uploader.shimo.im/f/J2TER2cEcFIQ77Dc.png!thumbnail)
+
+- 音频跟原素材相关，默认就行，音质不能凭空变出来，况且平台也有限制
+- 系统也是你原素材项目的设置，固定在那的，改不了也不用改
 
 ---
+
 ### 3.3. Upscaling
 
 ##### Semi-Intro
