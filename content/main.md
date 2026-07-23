@@ -1458,12 +1458,12 @@ Credit: Milk_Cha
 
 ---
 ##### Sapphire FX 蓝宝石
-![](https://uploader.shimo.im/f/mRf5ao9LQUWprlFu.png!thumbnail)
+![输入图片说明](/imgs/209.png)
 - filecr: [https://filecr.com/windows/borisfx-sapphire-0002/](https://filecr.com/windows/borisfx-sapphire-0002/)
 - mediafire: [https://www.mediafire.com/file/esbxxdxyzqefmdi/](https://www.mediafire.com/file/esbxxdxyzqefmdi/)
 特效插件，PotPvP剪辑常用
 
-![](https://uploader.shimo.im/f/jWD11Q47tg9oh5Vf.png!thumbnail)
+![输入图片说明](/imgs/210.png)
 filecr下载时
 请选择 dl 4 ofx
 
@@ -1477,30 +1477,34 @@ filecr下载时
 - 14: 较稳定版本，浅色界面下比高版本好看
 
 ---
-#### 3.2.2. Issues
+#### 3.2.2.# Issues
 ##### Offical
-- Offcial forum: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
+- 
+ Offcial forum: [https://forum.borisfx.com/c/vegas-pro/55](https://forum.borisfx.com/c/vegas-pro/55)
 - Offcial tutorial: [https://www.vegascreativesoftware.com/vegas-pro/learn/](https://www.vegascreativesoftware.com/vegas-pro/learn/)
 
 ---
 ##### zzzzzz9125
 - VEGAS Pro 各种疑难杂症及其解决方案的整理:
 https://zzzzzz9125.github.io/VegTips/zh/
+
 by [bilibili zzzzzz9125](https://9125.ibio/sp.ibio/745)，
 
-解决98.46% vv问题，极其推荐看这个
-![](https://uploader.shimo.im/f/C4hbyphA497bmjSl.png!thumbnail)
+解决98.46% vv问题，极其推荐看这个 ~~所以有问题别来烦我~~
+
+---
+![输入图片说明](/imgs/211.png)
 “22最新版”也就是22 build 250，[mediafire](https://www.mediafire.com/file/rnopo5x8iqdkoy4)里那个
-![](https://uploader.shimo.im/f/i7xMHUQ6hMfvm1Ke.png!thumbnail)
+![输入图片说明](/imgs/212.png)
 
 ---
 ##### 专栏里没提的一些问题:
-###### 1. 预览卡飞了，一播放cpu gpu双双飙100%
-![](https://uploader.shimo.im/f/vZea7l8xrOYRAvvR.png!thumbnail)
+###### 1. **预览卡飞了，一播放cpu gpu双双飙100%**
+![输入图片说明](/imgs/213.png)
 通常出现在15+版本。禁用这两个，如果本来就是禁用的那就打开
 别的首选项不推荐瞎改，软件工程师比你懂软件
 
-###### 2. 高版本vv(如22)无法读取boris sapphire插件，但低版本(如14)就可以
+###### 2. **高版本vv(如22)无法读取boris sapphire插件，但低版本(如14)就可以**
 原因为高版本VEGAS对OFX插件的DLL加载机制变化，找不到Sapphire的OpenImageIO依赖库
 以vv22为例，打开vv文件夹，找到`vegas220.exe.local`并进入，没有就新建文件夹然后重命名
 找到Sapphire的依赖文件文件夹，标准路径为
@@ -1508,32 +1512,35 @@ by [bilibili zzzzzz9125](https://9125.ibio/sp.ibio/745)，
 将该文件夹里的所有文件全部复制到`vegas220.exe.local`文件夹里
 重启vv，使vv重建插件缓存
 
-###### 3. vv渲染设置中，nv编码器的“预配置”丢失，尝试渲染报错，intel qsv和hevc正常
-![](https://uploader.shimo.im/f/UyNhwK1MTccETTSo.png!thumbnail)![](https://uploader.shimo.im/f/ZlFAgYa3Ii44TF3o.png!thumbnail)
+###### 3. **vv渲染设置中，nv编码器的“预配置”丢失，尝试渲染报错，intel qsv和hevc正常**
+![输入图片说明](/imgs/214.png)
+![输入图片说明](/imgs/215.png)
 NVIDIA新驱动 (`591.xx+`) 的已知 bug，新驱动里移除了VEGAS pre 23使用的旧版`NVENC SDK`支持，唯有回退驱动或换23/2026解决 (推荐`581.57 Studio`)
 NVCleanstall: [https://www.techpowerup.com/download/techpowerup-nvcleanstall/](https://www.techpowerup.com/download/techpowerup-nvcleanstall/)
 **Techpowerup科技社区的工具，可以极其方便地安装老版本驱动和调试高级选项*
 参考设置:
-![](https://uploader.shimo.im/f/2NvOoooCTJ5dLAZr.png!thumbnail)![](https://uploader.shimo.im/f/62rxbuvJhJubC0Ug.png!thumbnail)
+![输入图片说明](/imgs/216.png)
+
+![输入图片说明](/imgs/217.png)
 
 ---
-#### 3.2.3. Render
+#### 3.2.32. Render
 写在前面: Vegas渲染原理是帧混合，即混合前后两帧的图像生成新的中间帧，意味着混合前也就是原素材的fps越高，混合后的效果越好即拖影越少。所以这些个玩意主要影响的是画质，录不了高帧的，还是拿Smoothie补吧
 
 引经据典:
-![](https://uploader.shimo.im/f/U4IKfvhFKrX1BfSK.png!thumbnail)
+![输入图片说明](/imgs/218.png)
 
 **不同录制fps的差异**: [https://www.bilibili.com/video/av714303917](https://www.bilibili.com/video/av714303917)
 
 项目属性中将重采样调为帧混合才能出动态模糊
-![](https://uploader.shimo.im/f/i85cMby6YGdyHTJA.png!thumbnail)
-![](https://uploader.shimo.im/f/ZrAqJXSX6nARp8g0.png!thumbnail)
+![输入图片说明](/imgs/219.png)
+![输入图片说明](/imgs/220.png)
 
 **H.264 & H.265**:
 同等画质下，h.265的文件体积约为h.264的一半，反过来同等文件体积下h.265的画质是h.264的两倍。h.264兼容性更好，但在2026，这点完全可以忽略。能选265就265吧
-![](https://uploader.shimo.im/f/byd1C1asWqwXqQEM.png!thumbnail)
+![输入图片说明](/imgs/221.png)
 
-![](https://uploader.shimo.im/f/7KkReBPynN6j4p9Z.png!thumbnail)
+![输入图片说明](/imgs/222.png)
 至于这玩意，给[专业卡](https://www.nvidia.cn/products/workstations/professional-desktop-gpus/)用的你就别碰了
 
 ---
@@ -1552,20 +1559,21 @@ NVCleanstall: [https://www.techpowerup.com/download/techpowerup-nvcleanstall/](h
 
 与OBS相同，两条线对应才能出最佳效果
 
-![](https://uploader.shimo.im/f/K6xTkIZ2tUVkeGTl.png!thumbnail)![](https://uploader.shimo.im/f/ZsS9p1EuYdsCRgQH.png!thumbnail)
+![输入图片说明](/imgs/223.png)
+![输入图片说明](/imgs/224.png)
 
-![](https://uploader.shimo.im/f/fzVEUrMdaAsEDTUZ.png!thumbnail)![](https://uploader.shimo.im/f/aSoeYA3Bg2A0K2tj.png!thumbnail)
+![输入图片说明](/imgs/225.png)![输入图片说明](/imgs/226.png)
 
 ---
 ##### I. 帧大小(S)
-![](https://uploader.shimo.im/f/ERp8vn8Jpbb2PgGW.png!thumbnail)
+![输入图片说明](/imgs/227.png)
 
-原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
+原素材多少就设置多少，Vegas自带的upscale效果甚微，徒增渲染时间。建议后期使用 [ffmpeg](https://ghfast.top/https://github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z) / [Topaz](https://filecr.com/windows/topaz-video-enhance-ai/) 进行放大
 - upscale: 机器放大，仅仅强制将每帧的像素大小逐个放大，并不会增强画质。但视频平台给4k分配的码率高于1080p，所以利用upscale强改分辨率获得额外的码率分配
 
 ---
 ##### II. 配置文件(P)
-![](https://uploader.shimo.im/f/GmlpwTVlqZt1R1IA.png!thumbnail)
+![输入图片说明](/imgs/228.png)
 
 H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 - H.264: 分为 Baseline（低端）、Main（中端）、High（高端）来适应不同算力的播放设备，High才能保证最佳画质
@@ -1573,30 +1581,29 @@ H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 
 ---
 ##### III. 帧速率(R)
-![](https://uploader.shimo.im/f/mOGJcKEC7oPq96fQ.png!thumbnail)
-
+![输入图片说明](/imgs/229.png)
 传b站就30，60没有大会员看二压的30会非常难受
 不推荐29 31 36等邪门帧率
 
 ---
 ##### IV. 场顺序(F)
-![](https://uploader.shimo.im/f/hEK74RzU6nRwMv9r.png!thumbnail)
+![输入图片说明](/imgs/230.png)
 
 有且只有: 无(逐行扫描），但应该会有人疑惑为啥是逐行扫描:
 
-- 逐行扫描 (Progressive scan) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
-- 尽管没出现，提一下与逐行扫描相对的隔行扫描 (Interlaced Scan)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
+- **逐行扫描** (`Progressive scan`) 通常用 "p" 表示 (如 1080p)。原理为电子束或像素电路按照从上到下、从左到右的顺序，一次性完成整帧画面 (所有行) 的扫描，将每帧的所有像素同时显示。
+- 尽管没出现，提一下与逐行扫描相对的**隔行扫描** (`Interlaced Scan`)，用 "i" 表示。原理为将一帧画面分成两部分进行扫描，即奇数行 (奇数场) 和偶数 (偶数场)，两场交替显示，利用人眼的视觉暂留效应合成一幅完整的图像。常用于传统的电视系统中 (千禧年的那种大头显示器)。
 
 很明显隔行是技术妥协的产物，现代将其删掉是理所当然的。
 
 ---
 ##### V. 码率模块
-![](https://uploader.shimo.im/f/Kdn8fd2t4hTvkfDS.png!thumbnail)
+![输入图片说明](/imgs/231.png)
 
 ---
 ###### V - A. 比特率
-- 恒定比特率（CBR）
-- 可变比特率（VBR）
+- 恒定比特率（`CBR`）
+- 可变比特率（`VBR`）
 - 最大值(bps)
 - 平均值(bps)
 
@@ -1605,14 +1612,14 @@ H.265的底层编码逻辑变了，所以选项与H.264 有所不同
 - 文件大小: VBR难以预估；CBR固定可控
  
 兼容性: VBR偶尔会在极老旧设备上不兼容；CBR兼容性极好
-CBR: 整个视频维持固定码率
+`CBR`: 整个视频维持固定码率
     - 优点: 码率稳定
 对直播、广播、严格带宽限制场景有用
     - 缺点: 码率分配不聪明
 简单画面浪费码率，复杂画面又不够,同平均体积下，画质通常不如 VBR
     - 适合: 直播
 实时编码  - 
-VBR: 简单画面少给码率省空间，复杂画面多给码率保质量
+`VBR`: 简单画面少给码率省空间，复杂画面多给码率保质量
     - 优点: 同文件体积下画质更好，更适合高速运动/镜头甩动/细节变化大的视频
     - 缺点: 码率不恒定，文件体积不稳定，
 
@@ -1643,22 +1650,16 @@ VBR - 平均值(bps)
 
 所以最终编码问题在于:
 - **Gui / Scoreboard / Chat**
-- **
-
-方块硬边 / 
-
+- **方块硬边 / 
 高对比纹理 / 粒子 / 拉镜**
-
-粒子
-
-拉镜
-
+- 粒子
+- 拉镜
 这些地方最吃码率
 
 ---
 So
-最大：240,000,000
-平均120,000,000
+最大: 240,000,000
+平均: 120,000,000
 
 这已经非常高了。b站的4k视频码率限制也就 20Mbps，yt 4k在 60Mbps 左右。再往上加都会被平台吞掉，虽然不会触发更狠的压缩，但也没有额外收益，白白浪费上传时间和流量
 
@@ -1666,7 +1667,7 @@ So
 
 ---
 ###### V - B. 编码模式(M)
-![](https://uploader.shimo.im/f/JygjU6yWzimK9y81.png!thumbnail)
+![输入图片说明](/imgs/232.png)
 
 (以下内容Au/A卡用户同理)
 
@@ -1693,7 +1694,7 @@ So
 
 ---
 ###### V - C. 预配置 & RC模式
-![](https://uploader.shimo.im/f/bnDAlamESM8xHt4k.png!thumbnail)![](https://uploader.shimo.im/f/yOiysPtHdJw8VLOO.png!thumbnail)
+![输入图片说明](/imgs/233.png)![输入图片说明](/imgs/234.png)
 
 这些玩意实际和obs output里的预设差不多，那些低延迟预设会关闭B帧从而牺！牲！画！质！来换取极限的响应速度。所以选标准预设，质量拉最高就行了
 别碰无损，死慢，最后照样被压。况且你obs录的都不是无损就算导出来也不是真无损
@@ -1701,10 +1702,10 @@ So
 
 ---
 ###### V - D. 每像素位数
-![](https://uploader.shimo.im/f/FHpQP4n8hIPTCMht.png!thumbnail)
+![输入图片说明](/imgs/235.png)
 
 aigc已截图:
-![](https://uploader.shimo.im/f/VSlihptofRxzBjUJ.png!thumbnail)
+![输入图片说明](/imgs/236.png)
 
 总结:
 - 10-bit: 颜色更细腻，防色带，战未来 (YouTube only)
@@ -1712,7 +1713,7 @@ aigc已截图:
 
 ---
 ##### VI. 颜色
-![](https://uploader.shimo.im/f/EsfyIi8cc4DtDdIn.png!thumbnail)![](https://uploader.shimo.im/f/oYd3yNLsvHq3GQ8y.png!thumbnail)
+![输入图片说明](/imgs/237.png)![输入图片说明](/imgs/238.png)
 
 跟obs那边类似，
 
@@ -1723,7 +1724,7 @@ aigc已截图:
 
 ---
 ##### VII. 音频&系统
-![](https://uploader.shimo.im/f/RHygxI7ywqM0wK8h.png!thumbnail)![](https://uploader.shimo.im/f/zDzrRX4J0T2CqYK0.png!thumbnail)![](https://uploader.shimo.im/f/J2TER2cEcFIQ77Dc.png!thumbnail)
+![输入图片说明](/imgs/239.png)![输入图片说明](/imgs/240.png)![输入图片说明](/imgs/241.png)
 
 - 音频跟原素材相关，默认就行，音质不能凭空变出来，况且平台也有限制
 - 系统也是你原素材项目的设置，固定在那的，改不了也不用改
