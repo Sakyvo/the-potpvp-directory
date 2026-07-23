@@ -1737,7 +1737,7 @@ aigc已截图:
 Q: 为什么要upscaling?
 A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选项黑盒不可控，徒增渲染时间。因此vv的渲染设置中导入分辨率与素材一致即可，接下来交给——
 
-![](https://uploader.shimo.im/f/rj34SWMyiOAt1zJB.png!thumbnail)
+![输入图片说明](/imgs/242.png)
 
 ---
 ##### A. ffmpeg
@@ -1773,7 +1773,7 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 
 ---
 ###### 获取
-- ffmpeg (包含libplacebo库): [https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z](https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z)
+- ffmpeg (包含libplacebo库): [https://ghfast.top/https://github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z](https://ghfast.top/https://github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z])
 官网是精简版，第三方库需在gyan.dev下载
 
 - 脚本: [https://sakyvo.lanzouu.com/i17613rwztfc](https://sakyvo.lanzouu.com/i17613rwztfc)
@@ -1784,18 +1784,18 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 没有做双击直接upscale，因为那样会把文件夹里所有视频全部加入任务队列，很烦。脚本含两种方案，其一为拖拽，不多赘述；其二为`Windows发送到` aka. `Send to`，配置方法如下
 
 1. 解压ffmpeg，更改文件夹名称`ffmpeg-date-git-num-full_build`为`ffmpeg` ，移动到 C:\ 根目录下
-![](https://uploader.shimo.im/f/e2tPRdolXZVpnRgu.png!thumbnail)
+![输入图片说明](/imgs/243.png)
 
 2. 安置脚本，将glsl文件与脚本放在同一文件夹
-![输入图片说明](/imgs/205.png)
+![输入图片说明](/imgs/244.png)
 
-3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![](https://uploader.shimo.im/f/zCFu16rI4btg3LTb.png!thumbnail)
+3. Win+R - 输入`shell:sendto`打开"发送到"文件夹![输入图片说明](/imgs/245.png)
 
 4. 按住alt拖动鼠标，将脚本的快捷方式移动至Sendto文件夹
-![输入图片说明](/imgs/206.png)
+![输入图片说明](/imgs/246.png)
 ![输入图片说明](/imgs/207.png)
 5. 随后即可通过发送到快捷调用
-![输入图片说明](/imgs/208.png)
+![输入图片说明](/imgs/247.png)
 
 ---
 ###### extra
@@ -1904,7 +1904,9 @@ popd
 pause
 exit /b 0
 ```
-Lunatic 放大脚本原理
+---
+
+**Lunatic 放大脚本原理**
 
 ---
 1. 简要流程
@@ -2055,15 +2057,15 @@ dl: [https://filecr.com/windows/topaz-video-enhance-ai/](https://filecr.com/wind
 ###### 效果对比
 
 - origin 1080p
-![](https://uploader.shimo.im/f/wkvQYGQ1E0iEzMCN.png!thumbnail)
+![输入图片说明](/imgs/248.png)![输入图片说明](/imgs/249.png)
 - Topaz Proteus
-![](https://uploader.shimo.im/f/VA22gEdnFwewi7Mv.png!thumbnail)
+![输入图片说明](/imgs/250.png)
 
 贴图边缘改善非常明显，锐度降低的同时保留画质，比机器超分还强
 
 ---
 ###### 代价
-![](https://uploader.shimo.im/f/4F9wWTHNlVT8mHuH.png!thumbnail)
+![输入图片说明](/imgs/251.png)
 无敌死慢，本人i5 10400 + RTX 3060一个2min视频得处理2小时，现在还在用GTX的还是算了吧
 
 ---
@@ -2083,7 +2085,7 @@ dl: [https://filecr.com/windows/topaz-video-enhance-ai/](https://filecr.com/wind
 
 ---
 ###### 参考设置
-![](https://uploader.shimo.im/f/80iyk9WhIoWOFvum.png!thumbnail)
+![输入图片说明](/imgs/252.png)
 更细的yt搜吧这玩意我带不动也懒得折腾，性价比不是很高差不多得了
 其实这玩意还能补帧，但感觉不如Smoothie
 
