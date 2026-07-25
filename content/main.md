@@ -1742,7 +1742,7 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 ---
 ##### A. ffmpeg
 ###### 参考视频
-[https://www.bilibili.com/video/av116463977371129/](https://www.bilibili.com/video/av116463977371129/)
+https://www.bilibili.com/video/av116463977371129/
 
 ###### 测试算法
 4K 放大算法简介
@@ -1773,10 +1773,10 @@ A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选
 
 ---
 ###### 获取
-- ffmpeg (包含libplacebo库): [https://ghfast.top/https://github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z](https://ghfast.top/https://github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z])
+- ffmpeg (包含libplacebo库): https://ghfast.top/github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z
 官网是精简版，第三方库需在gyan.dev下载
 
-- 脚本: [https://sakyvo.lanzouu.com/i17613rwztfc](https://sakyvo.lanzouu.com/i17613rwztfc)
+- 脚本: https://sakyvo.lanzouu.com/i17613rwztfc
 包含测试视频中所有脚本和对应的glsl文件，但个人只推荐`Lunatic`
 
 ---
@@ -2039,8 +2039,7 @@ setlocal EnableExtensions DisableDelayedExpansion
 
 ---
 8. 其他
-虽然经过PotPvP特化调优，但它在某些极端情况下可能没有`neighbor`观感好
-如果输入是非方块人视频，建议传统插值的`ewa_lanczossharp`。
+由于经过PotPvP特化调优，如果输入是非方块人视频，建议传统插值的`ewa_lanczossharp`。
 
 ---
 9. 来源与许可证
@@ -2052,16 +2051,17 @@ GLSL文件开头保留 Anime4K 相关 MIT License 声明。分发 `Lunatic.glsl`
 ---
 ##### B. Topaz
 **! ! ! 渣机止步 ! ! !**
-dl: [https://filecr.com/windows/topaz-video-enhance-ai/](https://filecr.com/windows/topaz-video-enhance-ai/)
+dl: https://filecr.com/windows/topaz-video-enhance-ai/
 
 ###### 效果对比
 
 - origin 1080p
-![输入图片说明](/imgs/248.png)![输入图片说明](/imgs/249.png)
+![输入图片说明](/imgs/248.png)
+![输入图片说明](/imgs/248.png)
 - Topaz Proteus
 ![输入图片说明](/imgs/250.png)
 
-贴图边缘改善非常明显，锐度降低的同时保留画质，比机器超分还强
+贴图边缘改善非常明显，锐度降低的同时保留画质，比glsl还强
 
 ---
 ###### 代价
