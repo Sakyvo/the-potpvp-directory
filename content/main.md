@@ -1772,7 +1772,7 @@ https://www.bilibili.com/video/av116463977371129/
 
 ---
 ###### 获取
-- ffmpeg (包含libplacebo库): https://ghfast.top/github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z
+- ffmpeg (包含libplacebo库): https://ghfast.top/github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-full_build.7z
 官网是精简版，第三方库需在gyan.dev下载
 
 - 脚本: https://sakyvo.lanzouu.com/iVNlg3xclntc
