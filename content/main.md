@@ -1732,7 +1732,6 @@ aigc已截图:
 ---
 
 ### 3.3. Upscaling
-
 ##### Semi-Intro
 Q: 为什么要upscaling?
 A: Vegas渲染自带的upscaler锁死bicubic插值，效果十分差劲，且选项黑盒不可控，徒增渲染时间。因此vv的渲染设置中导入分辨率与素材一致即可，接下来交给——
@@ -1776,7 +1775,7 @@ https://www.bilibili.com/video/av116463977371129/
 - ffmpeg (包含libplacebo库): https://ghfast.top/github.com/GyanD/codexffmpeg/releases/download/2026-04-30-git-cc3ca17127/ffmpeg-2026-04-30-git-cc3ca17127-essentials_build.7z
 官网是精简版，第三方库需在gyan.dev下载
 
-- 脚本: https://sakyvo.lanzouu.com/i17613rwztfc
+- 脚本: https://sakyvo.lanzouu.com/iVNlg3xclntc
 包含测试视频中所有脚本和对应的glsl文件，但个人只推荐`Lunatic`
 
 ---
@@ -2090,7 +2089,6 @@ dl: https://filecr.com/windows/topaz-video-enhance-ai/
 其实这玩意还能补帧，但感觉不如Smoothie
 
 ---
-
 ### 3.4. Interpolation
 
 #### Semi-Intro
