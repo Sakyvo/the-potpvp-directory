@@ -14,6 +14,15 @@
 ![输入图片说明](/imgs/259.png)
 
 ---
+## Update Log
+2026-08-01 Edited
+Current Version: 1.7.2
+
+1. OBS-PT!
+2. Lunatic 4k ffmpeg upscaler!
+3. iil pack folder v4补全
+
+---
 **Menu**
 
 **序**
