@@ -1,13 +1,5 @@
-## Update Log
-2026-06-23 Edited
-Current Version: 1.6.0
-
-1. 插帧fix
-2. 大的要来了
-
----
 ## 序
-***“道在迩而求诸远，事在易而求之难”***
+> ***“道在迩而求诸远，事在易而求之难”***
 
 参商周转，落花如旧
 
@@ -19,7 +11,7 @@ Current Version: 1.6.0
 
 ---
 ~~其实啊这只是两年前开的一个坑罢了~~
-![](/imgs/168.png)
+![输入图片说明](/imgs/259.png)
 
 ---
 **Menu**
@@ -60,15 +52,13 @@ Current Version: 1.6.0
 [patcher]: 本指sk1er的mod [Patcher](https://sk1er.club/mods/patcher) for 1.8.9 / 1.12.2。这里把语义缩小，仅指“修复材质包读取时内存溢出问题bug”这一模块。
 
 原文:
-```
-Optimized Resource Pack Discovery. When using more than 50 resource packs, the screen to view them may take a while. This should now be much quicker. (Credits: Moulberry)
-```
+> Optimized Resource Pack Discovery. When using more than 50 resource packs, the screen to view them may take a while. This should now be much quicker. (Credits: Moulberry)
 
 有patcher - 材质包秒读取
 无patcher - 材质包＞300时读取逐渐缓慢，指数增长
 
 Q: 太长不看，怎么选
-A: ![](/imgs/169.png)
+A: ![](https://uploader.shimo.im/f/iyebxzNUSSGsxhfj.png!thumbnail)
 建议去用lcqt，这个图我忘记在哪画的了，不改了
 
 Q: 后门?
@@ -81,7 +71,7 @@ A: 所有端都没有后门。但你硬要觉得有那我希望它真有
 
 此分组均包含patcher
 
-- Lunar Client: [https://www.lunarclient.com](https://www.lunarclient.com/)
+- Lunar Client: [https://www.lunarclient.com](https://www.lunarclient.com)
   - Pros: 
 Mod最充足，社交优势，hcf服务器自动适配
   - Cons: 
@@ -426,7 +416,8 @@ ind: [https://wwxt.lanzout.com/b00tathp7e](https://wwxt.lanzout.com/b00tathp7e)
 看视频我只看棍母官方
   - v4
 [https://www.bilibili.com/video/av113889899450919](https://www.bilibili.com/video/av113889899450919)
-aio: 看视频我只看棍母官方
+ind: https://blatantcheater.lanzouu.com/b00jfgfypg
+密码: 9xt9
   - v5
 [https://www.bilibili.com/video/av113172925190122](https://www.bilibili.com/video/av113172925190122)
 ind: [https://wwxt.lanzout.com/b00tawzswd](https://wwxt.lanzout.com/b00tawzswd)
@@ -559,7 +550,7 @@ ind: [https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
 - Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
-A: ![](/imgs/170.jpg)
+A: ![](https://uploader.shimo.im/f/VohAYUifnu1sloc9.jpeg!thumbnail)
 
 ---
 ### 1.3. Servers
