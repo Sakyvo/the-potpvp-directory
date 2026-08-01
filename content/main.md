@@ -67,7 +67,7 @@ Current Version: 1.7.2
 无patcher - 材质包＞300时读取逐渐缓慢，指数增长
 
 Q: 太长不看，怎么选
-A: ![](https://uploader.shimo.im/f/iyebxzNUSSGsxhfj.png!thumbnail)
+A: ![输入图片说明](/imgs/260.png)
 建议去用lcqt，这个图我忘记在哪画的了，不改了
 
 Q: 后门?
@@ -559,7 +559,7 @@ ind: [https://pastebin.com/ZL4Vh3mc](https://pastebin.com/ZL4Vh3mc)
 - Ranked Bedwars (Proxy): [https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1](https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1)
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
-A: ![](https://uploader.shimo.im/f/VohAYUifnu1sloc9.jpeg!thumbnail)
+A: ![输入图片说明](/imgs/261.png)
 
 ---
 ### 1.3. Servers
@@ -756,7 +756,7 @@ more: [https://sspai.com/post/98911](https://sspai.com/post/98911)
 ---
 #### 1.4.3. Productivity
 
-- 重装系统: [https://linux.do/t/topic/1667411](https://linux.do/t/topic/1667411)
+- 重装系统: https://linux.do/t/topic/2561124
 by @[akane](https://space.bilibili.com/507699321)
 
 - Bandizip 7.06: [https://www.lanzn.com/iUP8Hv0taej](https://www.lanzn.com/iUP8Hv0taej)
