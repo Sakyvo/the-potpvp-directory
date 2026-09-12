@@ -28,8 +28,8 @@ The PotPvP Directory 是一个由 Markdown 内容驱动的静态知识站，包�
 
 ## 按需读取索引
 
-- 修改 `admin/`、`js/`、`css/`、Markdown 渲染或图片导入时，读 `.docs/frontend-quality-guidelines.md`。
-- 开始或继续存量开发任务时，读 `.docs/issues/` 中对应的开放 issue。
+- 修改 `admin/`、`js/`、`css/`、Markdown 渲染或图片导入时，读 `.docs/spec/frontend-quality-guidelines.md`。
+- 开始或继续存量开发任务时，读 `.docs/tasks/` 中对应的开放 issue。
 - 需要追溯 Trellis 任务原始 PRD、设计或进度时，从 `.docs/archive/trellis-tasks/INDEX.md` 进入。
 
 ## 优先级
