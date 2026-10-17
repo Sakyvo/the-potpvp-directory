@@ -1,24 +1,31 @@
-## 序
-> ***“道在迩而求诸远，事在易而求之难”***
+> It was a circle of winning/losing/raging.  Not good for brain, but I mean, uploading video Maybe can give a smile to some ppl who just likes i upload, everything was born in function of this thought
+——11/10/2025, 22:17  RVLZefew
 
-参商周转，落花如旧
+所以，一切想法由此而生——
 
-十年以来，PotPvP社区所构建之瑰宝并不在少数，然因体系松散，并未得以扩大，实数遗憾。继而令资料查阅极为繁琐，既提入坑门槛，又阻社区体验
+坑已开了一年，似乎有的填似乎又没有，硬要说是有的，但不想填了——大概真的，到时候了
 
-事实上，我们完全有理由相信社区的潜力，不光是我们辉煌的历史，更因独立自强的特质，而为每一PvPer塑造之能动性与创造力的天分。那些未开发的，或昙花一现之事物，唯缺一激活条件，即可重获新生。植吧 https://wiki.pvz1.com/doku.php?id=事件:328事件 同样是伟大的亚文化社区，而它从僵化中复苏继而迈向巅峰，花了十年有余。我们同样的历久弥新，同样的富于创造力和钻研性，未必便没有这样的幸运
+事情没法再回到它“该有的样子”，或者说——
 
-因此，作此`pdir`之知识库的必要性已是板上钉钉，不仅仅是为资料查询提供便利，更是为那个可见的，不同往日的崭新未来
+那个“该”，是谁定义的？
+
+无论如何，能帮到你就好。毕竟——
+
+**我们没法玩一辈子游戏，但可以试着去做一辈子朋友**
+
+这是一个**Promise**，**很久很久**之前许下的**Promise**
 
 ---
-~~其实啊这只是两年前开的一个坑罢了~~
-![输入图片说明](/imgs/259.png)
+~~wip~~
+![wip](/imgs/wip.png)
 
 ---
 ## Update Log
-2026-09-01 Edited
-Current Version: 1.7.3
+2026-10-17 Edited
+Current Version: 1.7.9
 
-1. 美化
+1. 说明重置
+2. 客户端小修小补
 
 ---
 **Menu**
@@ -54,56 +61,67 @@ Current Version: 1.7.3
 ---
 ## Part 1. Outra
 ### 1.1. Clients
-重要性: 缺点＞优点。即使你很喜欢某个端的优势部分，但如果其缺点无法接受，还是建议换成最“不痛”的那个。至少目前没有一款能使所有人都满意的Client
+选择权重: 缺点＞优点
+- 即使你很喜欢某个端的优势部分，但如果其缺点无法接受，依然建议换成最“不痛”的那个
+至少目前没有一款能使所有人都满意的Client——不过，“某些人”在尽量解决
 
 [patcher]: 本指sk1er的mod [Patcher](https://sk1er.club/mods/patcher) for 1.8.9 / 1.12.2。这里把语义缩小，仅指“修复材质包读取时内存溢出问题bug”这一模块。
 
 原文:
 > Optimized Resource Pack Discovery. When using more than 50 resource packs, the screen to view them may take a while. This should now be much quicker. (Credits: Moulberry)
 
-有patcher - 材质包秒读取
-无patcher - 材质包＞300时读取逐渐缓慢，指数增长
+有patcher: 材质包秒读取
+无patcher: 材质包＞300时读取逐渐缓慢，指数增长
 
 Q: 太长不看，怎么选
-A: ![输入图片说明](/imgs/260.png)
-建议去用lcqt，这个图我忘记在哪画的了，不改了
+A: ![client-selection](/imgs/client-selection.png)
+建议去用lcqt / Kazer Client，这个图我忘记在哪画的了，不改了
 
 Q: 后门?
 A: 所有端都没有后门。但你硬要觉得有那我希望它真有
 
 ---
 #### 1.1.1. 维护中
-
-这一分组保持着更新，但无一例外存在“对笔者而言极其恶劣的bug”，虽然将来有被修复之可能¿
-
+这一分组保持着维护和更新
 此分组均包含patcher
 
+- **Kazer Client**
+https://github.com/CANRXGG/Kazer-Client
+  - pros:
+OFFHER个人开发，基座为神秘魔改cb和LC逆向产物[LunarForge](https://codeberg.org/MegaPVP/LunarForge)，旨在修复一切月球客户牛鬼蛇神bug
+  - cons:
+微波产品，不开源
+  - extra
+千河神兑现了他五年前的诺言
+![kazer-client](/imgs/kazer-client.png)
+
 - Lunar Client: https://www.lunarclient.com
-  - Pros: 
+  - pros:
 Mod最充足，社交优势，hcf服务器自动适配
-  - Cons: 
-史山代码，材质包mcmeta文件unicode字符会导致读取失败，材质包选定后随机性加载失败，进服时的logging in速度死慢还不能disconnect
+  - cons:
+史山代码各种逆天掉帧和花哨饰品，材质包选定后随机性加载失败，进服时的logging in速度死慢还不能disconnect
 
 - Celestial (3rd party LC launcher): https://codeberg.org/earthsworth/celestial/releases/latest
 https://t.me/qbychannel
 or 798082966 qq group
-  - Pros: 
-LC上位，相比LC启动更快 (慢于cb)，免费饰品 & Freelook & NoClickDelay etc.
-  - Cons: 
-折腾起来麻烦，LC客户端内的bug它也有。另外开发者做的是启动器而非客户端，别指望他们修LC客户端bug
+  - pros:
+LC上位，相比LC启动更快，免费饰品 & Freelook & NoClickDelay etc.
+  - cons:
+折腾起来麻烦；且这只是启动器，对客户端无裨益
 
 - CheatBreaker Net: https://cheatbreaker.net/download
-  - Pros: 
+  - pros:
 优化好，免费饰品，交互丝滑，menu blur舒适
-  - Cons: 
+  - cons:
 下载慢，server.dat可能被清
-身份验证bug: 启动/关闭游戏加速器后session可能会掉
+身份验证bug: 启动/关闭游戏加速器后session可能会掉，必须重启游戏
+白皮修了，大逆不道
 
 ---
 #### 1.1.2. 无维护
-这一分组没有Developer维护，意味着不会更新，且存在无法弥补的缺点。但之所以放在这里，是由于其优点相比第一组里的各种史山，太耀眼，，，
+这一分组没有Developer维护，意味着不再会更新，且存在无法弥补的缺点。但之所以放在这里，是由于其优点十分耀眼
 
-- Lunar Client - Offline: THE BEST CHOICE EVER
+- Lunar Client - Offline
   - LCQT v1: https://github.com/Youded-byte/lunar-client-qt
 前置启动器
   - v2.17.7-2447: https://pastefy.app/s4ePMPN0
@@ -112,46 +130,45 @@ multiver，使用LCQT 1.5.7启动
   - c888646/master: https://www.mediafire.com/file/djeuh13n3jyzao6/
 Lunar 2022年5月版本，mapping更新后，较为精简
 versions，使用LCQT 1.2.5启动
-  -  Pro:
+    - pros:
 相比现代LC史山更少
-  - Cons:
-拆东墙补西墙&折腾麻烦
-  - Extra
+    - cons:
+拆东墙补西墙，一代版本有一代的烂&折腾麻烦
+    - extra:
 约2021年12月以后的版本都有patcher
 
 - LCQT v2.5.0: https://codeberg.org/Candicey/2TQCL
 被DMCA砸似了，有无人能给它复活的
 
 - Tellinq CheatBreaker-2_f87fb83/master [1.7.10]: https://sakyvo.lanzouu.com/igU9y1mpiebc
-  - Pros: 
+  - pros:
 合并前最新的cb2 (所有cb2都无饰品)。有patcher，优化好，极速启动
-  - Cons: 
+  - cons:
 材质包bug : 无pack.png的材质包，客户端启动时不会第一时间显示，需等待约10min；游戏运行时向resourcepack文件夹中热添加pack时，也需等待10min刷新
 无中文输入，中文输入法下按键盘会直接崩端
 
 - Tellinq CheatBreaker-2_9594402/master [1.7.10]: https://www.mediafire.com/file/5ihdp395pf8h85z/
-Hyperpop牢大认证版本
-  - Pros: 
-旧一点的cb2，优缺点大差不差
-  - Cons: 
+  - pros:
+Hyperpop和iil用的，旧一点的cb2，优缺点大差不差
+  - cons:
 Real Time Clock不能显示秒，且显示的是中文 上午/下午 而非 AM./PM.
-  - Extra:
+  - extra:
 无中文输入，但切中文不会崩端
 
 - Tellinq CheatBreaker-2 [1.8.9]: https://sakyvo.lanzouu.com/iul8S21bzq5g
-  - Pros:
-有patcher，优化好，简约(对1.8而言)；自带Freelook, NoClickDelay
-  - Cons:
-材质包bug: 同1.7；
+  - pros:
+有patcher，优化好，简约(对1.8而言)；自带Hypixel Freelook & NoClickDelay
+  - cons:
+材质包bug: 同1.7
 
-- MMC Client (skid cb2) [1.7.10]: https://sakyvo.lanzouu.com/iKDq60j83xmb
+- MMC Client (skidded cb2) [1.7.10]: https://sakyvo.lanzouu.com/iKDq60j83xmb
 同1.7 cb2；喜欢purple theme就换这个
 
 - CheatBreaker-last-legacy [1.7.10]: https://www.mediafire.com/file/w50f0wfadoh74rn/
-  - Pros: 
+  - pros:
 更旧的cb2，功能跟最新cb2差不多，没有材质bug
-  - Cons: 
-但没patcher
+  - cons:
+但没patcher，材质包多的有福了
 
 - CheatBreaker-Legacy [1.7.10]: https://www.mediafire.com/file/llvn68mslbt5j5l/
 同上，但还要旧
@@ -159,17 +176,17 @@ Real Time Clock不能显示秒，且显示的是中文 上午/下午 而非 AM./
 - CheatBreaker Plus [1.7.10]: https://www.mediafire.com/file/ls5y64chw639elt/
 or
 https://www.mediafire.com/file/4oaq1a9dmd79bcv
-  - Pros:
+  - pros:
 功能跟最新cb2差不多，支持LC Alpha theme
-- Cons:
-无patcher，无饰品，gui界面左下角有  巨大的cbplus logo
+- cons:
+无patcher，无饰品，gui界面左下角有  巨大的cbplus logo碍眼
 
 - Protocol CheatBreaker-1.6.25 [1.7.10]: https://www.mediafire.com/file/40uzwkfeznczmj6/CheatBreaker_Protocol.7z/file
-  - Pros:
+  - pros:
 优化好，极速启动，极简界面
-  - Cons:
+  - cons:
 无patcher，动态模糊为old blur。protocol.rip倒闭后饰品和好友功能不再可用
-  - Extra:
+  - extra:
 个人认为这个端可以作为CB 2018的全面上位
 
 ---
@@ -183,13 +200,13 @@ FPS很高，无动态模糊，中文会乱码
 
 - CheatBreaker_b302ec0 [1.7.10]: https://www.mediafire.com/file/fdg3ywyi9jtcz3q/
 0424 & 抗火药儿 双重认证
-cb2018换上lunar alpha的背景罢了
+cb2018 with lunar alpha background
 
 - Arcane Client [1.7.10]: https://www.mediafire.com/file/zr47umejg38y6w9/
 cb2018换皮，无敌配色好看到炸
 
 - RookieGod CheatBreaker [1.7.10]: https://www.mediafire.com/file/efzv4jdsixkslrf/
-国人魔改cb2017，有Xray，但存在各种渲染bug材质错乱
+菜鸟神的cb2017逆向patch，bug依然多
 
 - OCMC-2.3 [1.7.10]: https://sakyvo.lanzouu.com/isdzh3owz2yb
 3s极速启动
@@ -205,7 +222,7 @@ cb2018换皮，无敌配色好看到炸
 Zonix换皮
 
 - Kihar Client [1.7.10]: https://www.mediafire.com/file/qo9wknq5xby6wmw/
-Zonix换皮，有一个空壳staff module可以装逼
+Zonix换皮，但有一个空壳staff module可以装逼
 
 - Lunar Client Alpha [1.7.10]: https://www.mediafire.com/file/yxgdgrry2mezwj7/
 cb2018换皮，仅支持Mojang账户登录故需要搭配外置登录器
@@ -218,10 +235,9 @@ cb2018换皮，仅支持Mojang账户登录故需要搭配外置登录器
 空壳，只有启动器，啥也启动不了
 
 ---
-
 ### 1.2. Packs
 pack，和它周边的东西
-在此再次提醒@我和akane问材质之前请先翻kpf
+**不要找我要deproved packs**
 
 ---
 ####  1.2.1. 一步到位
@@ -249,7 +265,6 @@ ind: https://pastebin.com/Y1TqE13q
 重量级，鸡选天天读，功力日日深
 
 ---
-
 #### 1.2.2. 知名
 #####  I. AD
 依旧广子
@@ -269,7 +284,7 @@ https://www.mediafire.com/folder/q88yrv5x6hdz5/
 https://www.bilibili.com/video/av96756008
 ind: https://pastebin.com/ZkkaiXgk
 aio: http://www.mediafire.com/file/wx6xh7vu70hobrt/yung_pack_folder.zip/file
-爹
+**爹**
 
 - Zefew
   - THE BEST OF ZEFEWS PACK BUNDLES
@@ -287,7 +302,7 @@ https://www.bilibili.com/video/av115427917171396
 ind: https://www.mediafire.com/folder/9voovnagnjkp0/Packs
 or: https://emt.lanzouq.com/b0mc2gqti
 密码: f9kg
-我最香草的pvper——1st: Zefew
+**妈**
 
 ---
 #####  II. Basic
@@ -297,13 +312,13 @@ or: https://emt.lanzouq.com/b0mc2gqti
 https://www.bilibili.com/video/av678139558
 ind: https://l22333.lanzouw.com/b02oq4zda
 密码: l233
-经典pack合集
+*经典pack合集*
 
 - woklywo
 https://www.youtube.com/watch?v=4AeOGGGu7OM
 ind: https://pastebin.com/bJJXQW1X
 aio: https://www.mediafire.com/file/wu94k8lyl0691vp/resourcepacks.zip/file
-still经典pack合集
+*still经典pack合集*
 
 - Nakoso
   - 2021
@@ -313,32 +328,32 @@ aio: https://www.mediafire.com/file/jx25splfc69ynxf/resourcepacks.zip/file
   - 2022
 https://www.bilibili.com/video/av725750421
 aio: https://www.mediafire.com/file/1y80tkhsq4tjcoe/resourcepacks.zip/file
-same as woklywo
+*same as woklywo*
 
 - PuffedUP
 https://www.bilibili.com/video/av974484330
 ind: https://4everluvu.lanzoui.com/b010nu7re
 密码: b4g8
 aio: https://www.mediafire.com/file/e7x3g3yhl2lp8r0/resourcepacks.zip/file
-21年经典风格，一键回到方块人活时代
+*21年经典风格，一键回到方块人活时代*
 
 - Tye3315
   - PotPvP Pack Folder | (40+ Packs + Private Packs)
-https://.wwwyoutube.com/watch?v=s9XUVxVJbVM
+https://wwwyoutube.com/watch?v=s9XUVxVJbVM
 ind: https://pastebin.com/RneHNtXE
   - Private Pack Bundle Release | Lunar Cape Giveaway
-https://.wwwyoutube.com/watch?v=0mvAN6UozCc
+https://wwwyoutube.com/watch?v=0mvAN6UozCc
 ind: https://pastebin.com/Wgx1WywT
   - 3k | Pack Folder Release
-https://.wwwyoutube.com/watch?v=cJW1TAgkFX8
+https://wwwyoutube.com/watch?v=cJW1TAgkFX8
 ind: https://pastefy.app/dkAYcNLM/raw
   - Pack Bundle #1 (Private Packs)
-https://.wwwyoutube.com/watch?v=KL9yE0hzRaQ
+https://wwwyoutube.com/watch?v=KL9yE0hzRaQ
 ind: https://pastebin.com/SDjzzz2s
   - 5k Pack Bundle Release
 https://www.youtube.com/watch?v=mga6cxsDVUQ
 ind: https://pastebin.com/tpwe18yz
-优质原创&量大管饱
+*优质原创&量大管饱*
 
 - ByRez
   - pf
@@ -348,7 +363,7 @@ aio: http://www.mediafire.com/file/16sycguizhdwh0g/ByRez%2527s_Pack_Folder.rar/f
   - pb#3
 https://www.bilibili.com/video/av981948918
 aio: https://www.mediafire.com/file/roqfjwbij5506bl/PotPvP_Pack_Folder_Release_%255B31_packs%255D.rar/file
-Gang Gang Gang，多为暗色系
+*Gang Gang Gang，多为暗色系*
 
 - Adviser
   - 2017
@@ -358,12 +373,12 @@ aio: http://www.mediafire.com/file/x66ufy7rq7o6s1n/
   - 2020
 https://www.bilibili.com/video/av839715453
 ind: https://www.mediafire.com/folder/r4jetefz94w7a/
-Exposed之神严选
+*Exposed之神严选*
 
 - Bhoze (aka 2017年35个最经典的材质包)
 https://www.bilibili.com/video/av699982532
 ind: https://pastebin.com/qrW7ZpcG
-典，爱来自佳诺
+*典，爱来自佳诺*
 
 - ZefewMD pb:
 v1: https://www.bilibili.com/video/BV17V41187kU/
@@ -378,7 +393,7 @@ v7: https://www.bilibili.com/video/BV1CS4y1f7Fe/
 - Elleptical FPS Pack Folder
 https://www.youtube.com/watch?v=rET6Fu2cDjw
 ind: https://www.mediafire.com/folder/wij0jonzv51x3/
-犹大赞助商
+*犹大赞助商*
 
 - Lastro
   - 2k
@@ -391,24 +406,26 @@ ind: https://pastebin.com/N9ehhEML
 https://www.bilibili.com/video/av113644012572315
 ind: https://emt.lanzouq.com/b0mb4ppgj
 密码: d1ez
-还行
+*还行*
 
 - Kaoliar
 https://www.bilibili.com/video/av1000138494
 ind: https://jack-laogewen.lanzouv.com/b01a1boeh
 密码: 8wds
-垃圾。
+*垃圾。*
 
-- 冰糖脆桃核武库(link见视频)
+- 天使律动の核武库(
 900: https://www.bilibili.com/video/av1156485686
 1100: https://www.bilibili.com/video/av114204069664334
 300: https://www.bilibili.com/video/av115192163735635
 1000: https://www.bilibili.com/video/av115254541423165
-给材质神跪了
+*根本没有这样的材质
+我只是怕了
+艾特 天使律动*
 
 ---
 ##### III. HCF
-“Nightmare”
+区
 
 - iil
   - v1
@@ -429,13 +446,13 @@ ind: https://blatantcheater.lanzouu.com/b00jfgfypg
 https://www.bilibili.com/video/av113172925190122
 ind: https://wwxt.lanzout.com/b00tawzswd
 密码: www
-万恶之源扫码了
+*区*
 
 - oeu
 https://www.bilibili.com/video/av113977073861175
   - ind pk: https://www.mediafire.com/folder/v7bi0ncdotvaf/pack_folder
   - ind overlay: https://www.mediafire.com/folder/137t4et2hvulm/overlays
-cleaner滚去扫厕所
+*cleaner滚去扫厕所*
 
 ---
 ##### IV. OG
@@ -444,15 +461,14 @@ cleaner滚去扫厕所
 - Elleptical
 https://www.bilibili.com/video/av926578255
 ind: https://www.mediafire.com/folder/bv3qg9u8xjviv/Pack_Folder
-没开pack display
+*没开pack display*
 
 - bcz
 https://www.bilibili.com/video/av804424850
 aio: http://www.mediafire.com/file/wchv9c1zio20zx1/
-没开pack display
+*没开pack display*
 
-----------
-
+---
 ##### V. 荣誉提名
 “The park of pack”
 
@@ -461,24 +477,24 @@ v1: ???
 v2: https://www.bilibili.com/video/av31845558
 v3: https://www.bilibili.com/video/av45846298
 v4: https://www.bilibili.com/video/av200009515
-顶尖重金属style
+*顶尖重金属style*
 
 - [Timon] SUPREME
 v1: https://www.bilibili.com/video/av22063574
 v2: https://www.bilibili.com/video/av44455478
-前卫gui设计，印象深刻
+*前卫gui设计，印象深刻*
 
 - [Timon] Vast 16x
 https://www.bilibili.com/video/av716845182=
-超绝渐变，恢宏流光
+*超绝渐变，恢宏流光*
 
 - [暮影Au7ismZ] Au7ismZ v2
 https://www.bilibili.com/video/av65372082
-来自19年的原创水晶剑，不应被忘记
+*19年的原创水晶钻剑*
 
 - [rAnbr0] "128x"es
 https://www.bilibili.com/video/av273237176
-优质二创
+*优质二创*
 
 - Deproved 1ks:
   - BlatantCheater
@@ -491,7 +507,7 @@ ind: https://wwbbs.lanzouq.com/b00odnzmcb
 密码: abu5
 aio: https://www.123865.com/s/A4Nojv-4dg5d
 or: https://www.mediafire.com/file/k5m11g47tun5m5w/allcolorski.zip/file
-致敬冲二打不过汗神冲一の疯狗Deproved
+*区*
 
 ---
 ##### VI: 似了
@@ -512,9 +528,8 @@ https://mega.nz/file/RD0G1Y4A#I7V6N1FQ5vg1VNXFxsuSEdQOmaDpoIg3qjRf19ydgdY
 
 ---
 ##### VII. 周边
-
 - [Happychon] Eum3杂谈: https://www.bilibili.com/video/av114484450434305
-翻译 by 香港3y_
+翻译 by 3y_
 
 - [Nlich/上海沧桑]
   - 原来有这么多经典POTPVP材质包你不知道？: https://www.bilibili.com/video/av451272715
@@ -523,12 +538,11 @@ https://mega.nz/file/RD0G1Y4A#I7V6N1FQ5vg1VNXFxsuSEdQOmaDpoIg3qjRf19ydgdY
 
 ---
 #### 1.2.3. CHAN
-
 - Timon Wong: https://space.bilibili.com/15505075/
 国内顶尖原创材质作者
 
 - Kazari: https://space.bilibili.com/339244769
-#CN Arissi
+CN Arissi
 
 - BlatantCheater (AngelBeat): https://space.bilibili.com/630656685/
 解决策の宝库
@@ -551,91 +565,83 @@ https://mega.nz/file/RD0G1Y4A#I7V6N1FQ5vg1VNXFxsuSEdQOmaDpoIg3qjRf19ydgdY
 
 ---
 #### 1.2.4. extra???
-
 - Bilibili Playlist: https://space.bilibili.com/1049515077/favlist?fid=1266851177
 - Youtube Playlist: https://www.youtube.com/playlist?list=PLuCj9dpMJyQuJDmrHHW02VdOzAo2FeGmI
 - Ranked Bedwars (Proxy): https://docs.google.com/document/u/0/d/1xqLvAHx2E_ZsDCnpW6u8FNZu_uzIvVjAzjQwxmT6VYY/mobilebasic?pli=1
 
 Q: 几把的我要看的不是这个，投票的材质包发展史呢？快端上来啊
-A: ![输入图片说明](/imgs/261.png)
+A: ![sry2kpuwt](/imgs/sry2kpuwt.png)
+顺带一提，大概率不会再有了——不过会以“另一种形式”展现的
 
 ---
 ### 1.3. Servers
-“当今恐是前所未有的服务器荒漠期”
-
 #### 1.3.1. INTL
 
 - Minemen
-as.minemen.club https://minemen.club (SG)
-eu.minemen.club https://eu.minemen.club (DE)
-na.minemen.club https://na.minemen.club (CA)
+as.minemen.club (SG)
+eu.minemen.club (DE)
+na.minemen.club (CA)
 dc: https://discord.gg/minemenclub
-日薄西山
+nothing changed
 
 - Kohi.lol
-as.kohi.lol https://as.kohi.lol (SG)
-eu.kohi.lol https://eu.kohi.lol (EU)
-na.kohi.lol https://na.kohi.lol (US)
-au.kohi.lol https://au.kohi.lol (AU)
+as.kohi.lol (SG)
+eu.kohi.lol (EU)
+na.kohi.lol (US)
+au.kohi.lol (AU)
 dc: https://discord.gg/SpyQmssDUQ
-复古服
+没人
 
 - Kaiya (1.7 → 1.21)
-eu.kaiya.rip https://eu.kaiya.rip (EU)
-na.kaiya.rip https://na.kaiya.rip (NA)
+eu.kaiya.rip (EU)
+na.kaiya.rip (NA)
 dc: https://discord.gg/dBZZbrADEU
-转伪高版本修了
+转伪高版本，修了
 
 ---
 #### 1.3.2. CN
-
-- Wihar
-wihar.top https://wihar.top (浙江)
+- PvPCN
+pvpcn.net (浙江)
 
 - Kazer
-kazer.cc https://kazer.cc (北京 → 上海)
-
-- Jealousy
-jealousy.cc https://jealousy.cc (湖北)
+kazer.cn (山东)
 
 - Micet
-micet.cc https://micet.cc (上海)
+micet.cc (上海)
 
-- Iceland
-potpvp.cc https://potpvp.cc (湖北)
+- ppc
+potpvp.cc (湖北)
 
 ---
 #### 1.3.3. AS
-
 - Syuu
-syuu.net https://syuu.net (JP)
+syuu.net (JP)
 dc: https://discord.gg/syuunet
 思乐
 
 - ArkaMC
-arkamc.net https://arkamc.net (KR)
+arkamc.net (KR)
 
+---
 #### 1.3.4. EU
-
 - PvPLounge
-beta.pvplounge.eu https://beta.pvplounge.eu (UK) [WL]
+beta.pvplounge.eu (UK) [WL]
 dc: https://discord.com/invite/J4KFkuZkcw
 高仿的lounge
-*dc发id获取免费白名单
+*dc发id获取免费白名单*
 
 - Renga
-renga.zip https://renga.zip (FI)
+renga.zip (FI)
 dc: https://discord.gg/JHVpzUnb8n
 毛子肘赢大芬兰了，酥桃认证服务器
 
 - PvPRivals
-pvprivals.net https://pvprivals.net (DE)
+pvprivals.net (DE)
 dc: https://discord.gg/pvprivals
 pre pvpgym, 主做uhc mode
 
 ---
 #### 1.3.5. NA
-
 - Nostalgia
 nostalgia.earth https://nostalgia.earth (CA) [WL] {pre HVBC}
 dc: https://discord.gg/jKpU7hfjXt
@@ -645,32 +651,30 @@ Melkiller从HVBC独走开的服，成本巨大。支持下布列塔尼二次元�
 - *~~Raze: 圈钱伪政府~~*
 
 - Ghostly
-ghostly.live https://ghostly.live (US) [拉美生态]
+ghostly.live (US) [拉美生态]
 dc: https://www.discord.gg/ghostly
 耐活王还在蒸，高延迟友好，玩法多样
-*反作弊稀烂
+**反作弊稀烂*
 
 - Astral
-astralmc.cc https://astralmc.cc (US) [拉美生态]
+astralmc.cc (US) [拉美生态]
 dc: https://discord.gg/astralmc
-玩法多样，最后一个比较像Lunar的服务器
-*反作弊稀烂，hcf & kitmap有点圈
+玩法多样，国际最后一个比较像Lunar的服务器
+**反作弊稀烂，hcf & kitmap有点圈*
 
 - Elevatemc
-elevatemc.com https://elevatemc.com (CA)
+elevatemc.com (CA)
 dc: https://discord.gg/hctranked
 主做hcf teamfight，高延迟不友好
 
 - Velt
-veltpvp.com https://veltpvp.com (US) [DEAD]
+veltpvp.com (US) [DEAD]
 dc: https://discord.gg/h5ywm25gKu
 十年老兵，在打复活赛
+*~~复活赛输给科比乐~~*
 
 ---
 ### 1.4. Tools
-
-“非我所有，为我所用”*
-
 #### 1.4.1. Social
 这个我本该裁掉的奈何愿无一人被遗忘发力了
 国内b站qq最多加个kook；国际yt dc最多加个x和tg
@@ -684,27 +688,30 @@ dc: https://discord.gg/h5ywm25gKu
 
 ---
 #### 1.4.2. Websites
-
 - Namemc: https://namemc.com/
 id & 皮肤 & 服务器 查询
 
-- 蓝奏云: https://up.woozooo.com/mydisk.php
+- NetDisks
+  - 蓝奏云: https://up.woozooo.com/mydisk.php
 国内盘，分享小型文件 (材质包再敢传百度夸克的试一个看看啊?)
-
-- Mediafire: https://app.mediafire.com/folder/myfiles
+  - Mediafire: https://app.mediafire.com/folder/myfiles
 国际盘，分享大型文件 (用临时邮箱注册可以无限薅)
-
-- Wormhole: https://wormhole.app/
+  - buzzheavier: https://buzzheavier.com/
+限时不限量，国内可访问不限速，临时分享大文件最佳之选
+  - Gofile: https://gofile.io/
+限时不限量，类似
+  - 1fichier: https://1fichier.com/
+300gb, 15d
+  - Wormhole: https://wormhole.app/
 端到端加密&限时限量大文件分享
-
-- workUpload: https://workupload.com/
+  - workUpload: https://workupload.com/
 欧公子版奶牛快传，dmca去死吧。支持阅后即焚
-
-- dlgg: https://download.gg/
+  - dlgg: https://download.gg/
 端到端加密，25gb limit
-
-- TmpLink: https://www.tmp.link/?tmpui_page=/vx&module=filelist&view=list
+  - TmpLink: https://www.tmp.link/?tmpui_page=/vx&module=filelist&view=list
 不限速不限文件大小，7d内无人下载文件自动删除
+  - FileCodeBox: https://share.lanol.cn/#/send
+20mb limit，多端传小文件方便
 
 - Pastebin: https://pastebin.com/
 维护式长文本分享
@@ -740,7 +747,7 @@ more: https://sspai.com/post/98911
 安人必备
 
 - rutor: http://rutor.info/
-丰矿的俄人网站
+丰矿的康米俄人网站
 
 - ???
   - GnDown: https://www.gndown.com/
@@ -749,13 +756,12 @@ more: https://sspai.com/post/98911
   - GHXI: https://www.ghxi.com/
   - FirePX: https://www.firepx.com/app/
   - MODSAPK: https://getmodsapk.com/
-不解释
+懂得都懂
 
 ---
 #### 1.4.3. Productivity
-
 - 重装系统: https://linux.do/t/topic/2561124
-by @akane https://space.bilibili.com/507699321
+by [@akane](https://space.bilibili.com/507699321)
 
 - Bandizip 7.06: https://www.lanzn.com/iUP8Hv0taej
 压缩文件查看器，选这个是因为可以快速preview图片方便看材质包；7.06有暴力破解压缩包密码功能
@@ -784,8 +790,8 @@ by @akane https://space.bilibili.com/507699321
 - PhotoShop 2026: https://filecr.com/windows/adobe-photoshop-download-0056/
 本该放在Video那边
 
-- Notepad3: https://www.gndown.com/2011.html
-最佳文本编辑器
+- notepad420: https://github.com/Sakyvo/notepad420
+forked from np4，本人微波的最佳文本编辑器
 
 - Recuva: https://filecr.com/windows/recuva/
 数据恢复，希望你用不上它
@@ -794,13 +800,12 @@ by @akane https://space.bilibili.com/507699321
 ## Part 2. In-Game
 ### 2.1. Tutorial
 #### Intro
-To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告知你一些game sense，要想消化它们，没个三年两载的Practicing是不现实的，不要妄想一步登天。
-自古以来所谓PvP教程乃是炒作重灾区，什么牛鬼蛇神都想来掺一脚博取小红点，社区流通的教学质量更是参差不齐。笔者经缜密考究后终得以下之清单，可供参考。
+To newgen: PvP是砍出来的，“教程”并不能代替实战，仅仅是告知你一些game sense，要想消化它们，没个三年两载的Practicing是不现实的，不要妄想一步登天
+自古以来所谓PvP教程乃是炒作重灾区，什么牛鬼蛇神都想来掺一脚圈小红点，社区流通的教学质量更是参差不齐。笔者经缜密考究后终得以下之清单，可供参考
 
 #### 2.1.1. Haiku
-
 - [Qzark] Gui排布: https://www.bilibili.com/video/BV1JL4y177WZ/
-再拿牛鬼蛇神gui录视频的拖出去枪毙
+再拿牛鬼蛇神gui录视频的行刑队拖出去枪毙
 
 - [iiLuna] Combo: https://www.bilibili.com/video/BV12m4y1i7MV
 经典老番，初学者最佳入门视频
@@ -829,27 +834,21 @@ Jump那段没啥用，重点在ad的节奏上
 
 - Sag Blockhit
 尽可能地让格挡「填满」两次攻击之间的「间隔」时间，以让对手的hit打在自己的block上减少伤害
-
   - [Lewelll] 效果展示: https://www.bilibili.com/video/BV1oy4y1n7NF
     - also精品elo series，建议多看
-
   - [LoveRenge/如果] Mid Sag (中文解说): https://www.bilibili.com/video/BV1mR4y1t77Q/
 视频同款，减kb挡伤两不误
-
   - [2665xg] Long Sag: https://www.bilibili.com/video/BV1q3411T7f4
 新手推荐，挡率更高但是kb sucks
-
   - [Lewelll] Mid Sag: https://www.bilibili.com/video/BV1dr4y1K7WD/
 Lewelll原教旨，改键了
-
   - [Staind] “完美Sag节奏”: https://www.bilibili.com/video/av802438732/?t=15
 kb reduce
 
 ---
 #### 2.1.3. Opus
-
 - [Raucous] Hit Select: https://www.bilibili.com/video/av974289805
-目前没几个驾驭得了
+有用性未知
 
 - [VoidRegion] RBW Experience: https://www.bilibili.com/video/BV1jN411s78u
 超现代sense，推荐加dc
@@ -858,11 +857,10 @@ kb reduce
 很长
 
 - [Revethere] Blog: https://revethere.github.io/
-中国顶尖sumo&理论玩家独家力作，顶级智斗超越Usegun假死
+“中国顶尖sumo&理论玩家独家力作，顶级智斗超越Usegun假死”
 
 ---
 #### 2.1.4. OSS
-
 - [Kirxo] BCZ jump: https://www.bilibili.com/video/BV1Wx41177GY
 combo加伤的，只有大优势局有用，表演价值高一点
 
@@ -881,7 +879,6 @@ another dead mode，给感兴趣的人
 
 ---
 #### 2.1.5. Tweak
-
 - [Nilch 抗火药儿] In-Game Settings: https://www.bilibili.com/video/av447677394
 本视频讲述了一位玩家的游戏优化经验，包括游戏设置和一些软件的使用。他强调不需要使用外部软件来优化游戏，只需要调整一些设置和清理内存即可。他还分享了一些其他的小技巧，如调整聊天栏大小和关闭一些动画等。--以上内容由AI视频小助理生成，关注解锁AI助理，由[@水肺药水](https://space.bilibili.com/280396990) 召唤发送
 
@@ -902,7 +899,6 @@ another dead mode，给感兴趣的人
   - https://www.bilibili.com/video/BV1v44Je3Ert/
 
 ---
-
 - ZyperWinHub: https://www.bilibili.com/video/av114843717733352
 
 - Dism++: https://www.bilibili.com/video/av113040737436391
@@ -993,10 +989,9 @@ https://www.bilibili.com/video/BV1SC4y1b72s/
 
 ---
 ### 2.3. Appreciation!
+***「Mythological Artascope of PotPvP Dynasty」***
 
-*「Mythological Artascope of PotPvP Dynasty」*
-
-*这是个脑子一热开了坑最终弃掉的，灵感来源于[这个](https://tieba.baidu.com/p/6593286560)和[那个](https://tieba.baidu.com/p/5272254427)的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了
+**这是个脑子一热开了坑最终弃掉的，灵感来源于[这个](https://tieba.baidu.com/p/6593286560)和[那个](https://tieba.baidu.com/p/5272254427)的申必扑克，完成度很低而且很尬(甚至link全几把失效了)，况且potpvp也搞不了这么雅的艺术。但这个标题很吊啊，留着纪念了*
 
 ---
 #### 2.3.1. Classic
@@ -1050,11 +1045,11 @@ https://www.bilibili.com/video/av18460181
 #### 2.3.3. Chill
 - [yungsaphars] i use reach lol (best eu)
 https://www.bilibili.com/video/av1550313132
-爹
+**爹**
 
 - [Zefew] Im the best (Pack Bundle) [Frozen]
 https://www.bilibili.com/video/av23480664
-妈
+**妈**
 
 - [Raucous] noob game
 https://www.bilibili.com/video/av208514606
@@ -1079,10 +1074,13 @@ https://www.bilibili.com/video/av544243967
 
 ---
 #### 2.3.4. Drill
-
 - [qVarious] Best of qVarious ~ Farewell 👋
 https://www.youtube.com/watch?v=kpBnzq_HldM
 drill不好看，不看了
+
+~~天哪这段永远不会更新了~~
+
+---
 ## Part 3. Video
 
 **Intro**
